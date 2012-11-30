@@ -21,6 +21,10 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem 'haml'
+gem 'hpricot'
+gem 'thin', :platforms => :ruby
+gem 'prawn'
 
 group :test do
   gem 'annotate'

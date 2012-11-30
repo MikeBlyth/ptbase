@@ -5,7 +5,7 @@ gem 'rails', '3.2.9'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+gem 'pg'
 
 
 # Gems used only for assets and not required
@@ -21,6 +21,32 @@ group :assets do
 end
 
 gem 'jquery-rails'
+
+group :test do
+  gem 'annotate'
+  gem "rspec-rails"
+  gem "capybara"
+  gem "guard"
+  gem "guard-spork"
+  gem "guard-rails"  # Restart development server when needed
+  gem 'guard-rspec'
+  gem "guard-annotate"
+  gem 'libnotify' # for use with libnotify
+  gem 'launchy'
+  gem 'shoulda-matchers'
+  gem 'debugger', :platforms => :ruby
+  gem 'ruby-debug',  :platforms => :jruby
+  gem 'pry'
+  gem 'pry-debugger', :platforms => :ruby  # https://github.com/nixme/pry-debugger
+  gem 'pry-rails'
+  gem "factory_girl"
+  gem "factory_girl_rails"
+  gem "selenium-client"
+  gem 'simplecov'
+#  gem 'capybara-webkit'  # Not yet available for Capybara 2.0
+  gem "database_cleaner" #, :git => 'git://github.com/bmabey/database_cleaner.git'
+  gem 'spork'
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

@@ -25,6 +25,12 @@ gem 'haml'
 gem 'hpricot'
 gem 'thin', :platforms => :ruby
 gem 'prawn'
+gem 'activeadmin'
+gem 'therubyracer'
+
+group :assets do
+  gem 'less-rails-bootstrap'
+end
 
 group :test do
   gem 'annotate'

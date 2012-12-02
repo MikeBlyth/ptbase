@@ -303,6 +303,7 @@ DEPENDENCIES
   launchy
   less-rails-bootstrap
   libnotify
+  multi_json
   pg
   prawn
   pry

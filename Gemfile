@@ -27,6 +27,7 @@ gem 'thin', :platforms => :ruby
 gem 'prawn'
 gem 'activeadmin'
 gem 'therubyracer'
+gem 'multi_json'
 
 group :assets do
   gem 'less-rails-bootstrap'

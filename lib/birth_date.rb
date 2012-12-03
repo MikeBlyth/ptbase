@@ -61,7 +61,10 @@ class DateTime
       when (1.month .. 2.months).include?(seconds)
         value = (seconds/1.week).floor
          "#{value} #{'week'.pluralize value}"
-      when (2.months .. 2.years).include?(seconds)
+      when (2.months .. 1.year).include?(seconds)
+        value = (seconds/1.month).floor
+        "#{value} months" + (sprintf(" (%0.2f year)", seconds/1.year) if expand)
+      when (1.year .. 2.years).include?(seconds)
         value = (seconds/1.month).floor
         "#{value} months" + (sprintf(" (%0.1f years)", seconds/1.year) if expand)
       when (2.years .. 7.years).include?(seconds)

@@ -32,6 +32,12 @@ describe "Validates record" do
     patient.errors[:ident].should include "has already been taken"
   end
 
+  it 'marks future birth date invalid' do
+    patient.birth_date = Date.tomorrow.to_datetime
+    patient.should_not be_valid
+    patient.errors[:birth_date].should include "cannot be in the future"
+
+  end
 
 
 end

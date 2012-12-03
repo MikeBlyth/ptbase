@@ -6,4 +6,8 @@ FactoryGirl.define do
     sex 'M'
     birth_date '2000-1-1'
   end
+
+  factory :admin_user do
+    email 'test@example.com'
+  end
 end

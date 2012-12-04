@@ -1,4 +1,4 @@
-require "rspec"
+require "spec_helper"
 
 describe "Validates record" do
   let(:patient) {FactoryGirl.build(:patient)}

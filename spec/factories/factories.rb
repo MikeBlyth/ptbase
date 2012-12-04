@@ -10,4 +10,9 @@ FactoryGirl.define do
   factory :admin_user do
     email 'test@example.com'
   end
+
+  factory :visit do
+    date '2008-01-01'
+
+  end
 end

@@ -13,10 +13,10 @@ describe PatientsController do
   context 'when user is logged in' do
 
     it "should redirect to login path" do
- @user = User.create(email: 'test@example.com', password: 'passxxx')
-sign_in @user
+      @user = User.create(email: 'test@example.com', password: 'passxxx')
+      sign_in @user
       get :index
-      response.should redirect_to new_user_session_path
+      response.status.should == 200
     end
   end
 

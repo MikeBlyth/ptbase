@@ -1,5 +1,9 @@
 Ptbase::Application.routes.draw do
 
+  resources :drugs do as_routes end
+
+  resources :diagnoses do as_routes end
+
   resources :visits do as_routes end
 
   resources :patients do as_routes end

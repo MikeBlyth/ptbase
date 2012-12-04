@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: patients
+#
+#  id               :integer          not null, primary key
+#  first_name       :string(255)
+#  last_name        :string(255)
+#  other_names      :string(255)
+#  birth_date       :date
+#  death_date       :date
+#  birth_date_exact :boolean
+#  ident            :string(255)
+#  sex              :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
+
 class Patient < ActiveRecord::Base
   has_many :visits
   attr_accessible :birth_date, :birth_date_exact, :death_date, :first_name, :ident, :last_name, :other_names, :sex

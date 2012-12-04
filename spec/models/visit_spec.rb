@@ -48,19 +48,28 @@
 #  scheduled               :boolean
 #
 
-class Visit < ActiveRecord::Base
-  belongs_to :patient
-  attr_protected
-  validates_presence_of :date
-  validate :date_past
-  validate :next_visit_future
+require "spec_helper"
 
-  private
-  def date_past
-    errors.add(:date, 'cannot be in the future') if date && (date >= DateTime.now)
+describe Visit do
+
+  describe "Validates record" do
+    let(:visit) {FactoryGirl.build(:visit)}
+
+    it "with all required data is valid" do
+      visit.should be_valid
+    end
+
+    it "missing date should be invalid" do
+      visit.date = nil
+      visit.should_not be_valid
+      visit.errors[:date].should include "can't be blank"
+    end
+
+    it 'marks future date invalid' do
+      visit.date = Date.tomorrow.to_datetime
+      visit.should_not be_valid
+      visit.errors[:date].should include "cannot be in the future"
+    end
   end
 
-  def next_visit_future
-    errors.add(:next_visit, 'date cannot be in the past') if next_visit && (next_visit < DateTime.now)
-  end
 end

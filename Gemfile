@@ -6,6 +6,9 @@ gem 'rails', '3.2.9'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'pg'
+gem 'active_scaffold', :git => 'git://github.com/activescaffold/active_scaffold.git'
+gem 'devise'
+
 
 
 # Gems used only for assets and not required
@@ -25,7 +28,7 @@ gem 'haml'
 gem 'hpricot'
 gem 'thin', :platforms => :ruby
 gem 'prawn'
-gem 'activeadmin'
+# gem 'activeadmin'
 gem 'therubyracer'
 gem 'multi_json'
 

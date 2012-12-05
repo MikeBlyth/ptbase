@@ -13,5 +13,7 @@
 #
 
 class Photo < ActiveRecord::Base
-  attr_accessible :comments, :content_type, :date, :name_string, :patient_id
+  attr_accessible :comments, :content_type, :date, :name_string
+  belongs_to :patient
+
 end

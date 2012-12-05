@@ -44,5 +44,7 @@
 #
 
 class Lab < ActiveRecord::Base
-  attr_accessible :patient_id
+  attr_protected :patient_id
+  belongs_to :patient
+  validates_presence_of :date, :patient_id
 end

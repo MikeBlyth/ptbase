@@ -1,4 +1,11 @@
 FactoryGirl.define do
+
+  factory :admission do
+    date '2008-01-01'
+    diagnosis_1 'pneumonia'
+    patient
+  end
+
   factory :patient do
     sequence(:last_name) {|n| "LastNameA_#{n}" }
     sequence(:first_name) {|n| "First_#{n}" }
@@ -13,6 +20,6 @@ FactoryGirl.define do
 
   factory :visit do
     date '2008-01-01'
-
+    patient
   end
 end

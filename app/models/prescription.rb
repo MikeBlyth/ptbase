@@ -16,5 +16,8 @@
 #
 
 class Prescription < ActiveRecord::Base
-  attr_accessible :confirmed, :date, :filled, :height, :patient_id, :prescriber_id, :voided, :weight
+  attr_accessible :confirmed, :date, :filled, :height, :prescriber_id, :voided, :weight
+  validates_presence_of :patient_id, :date, :prescriber_id
+  has_many :prescription_items, :dependent=>:destroy
+  belongs_to :patient
 end

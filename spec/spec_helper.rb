@@ -46,13 +46,14 @@ puts "PREFORK"
 end
 
 Spork.each_run do
-puts "SPORK EACH RUN"
+  puts "SPORK EACH RUN"
   # This code will be run each time you run your specs.
   ActiveSupport::Dependencies.clear
   ActiveRecord::Base.instantiate_observers
 
+  FactoryGirl.reload
+
   load "#{Rails.root}/config/routes.rb"
- # load "#{Rails.root}/spec/factories/factories.rb"
   Dir["#{Rails.root}/app/**/*.rb"].each { |f| load f }
 end
 

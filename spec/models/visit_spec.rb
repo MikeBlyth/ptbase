@@ -48,6 +48,7 @@
 #  scheduled               :boolean
 #
 
+
 require "spec_helper"
 
 describe Visit do
@@ -59,11 +60,9 @@ describe Visit do
       visit.should be_valid
     end
 
-    it "missing date should be invalid" do
-      visit.date = nil
-      visit.should_not be_valid
-      visit.errors[:date].should include "can't be blank"
-    end
+    it { should validate_presence_of(:date)}
+
+    it { should validate_presence_of(:patient_id)}
 
     it 'marks future date invalid' do
       visit.date = Date.tomorrow.to_datetime

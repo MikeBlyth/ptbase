@@ -19,10 +19,27 @@
 #  updated_at       :datetime         not null
 #
 
-class Admission < ActiveRecord::Base
-  include DateValidators
-  attr_accessible :date, :bed, :comments, :diagnosis_1, :diagnosis_2, :discharge_date, :discharge_status, :meds, :ward, :weight_admission, :weight_discharge
-  belongs_to :patient
-  validates_presence_of :date, :diagnosis_1, :patient_id
-  validate :not_future
+require "spec_helper"
+
+describe Admission do
+
+  describe "Validates record" do
+    let(:admission) {FactoryGirl.build(:admission)}
+
+    it "with all required data is valid" do
+      admission.should be_valid
+    end
+
+    it { should validate_presence_of(:date)}
+    it { should validate_presence_of(:diagnosis_1)}
+    it { should validate_presence_of(:patient_id)}
+
+    it 'marks future date invalid' do
+      admission.date = Date.tomorrow.to_datetime
+      admission.should_not be_valid
+      admission.errors[:date].should include "cannot be in the future"
+    end
+
+  end
+
 end

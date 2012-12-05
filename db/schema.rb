@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20121205093010) do
     t.string   "meds"
     t.float    "weight_admission"
     t.float    "weight_discharge"
-    t.datetime "admission_date"
+    t.datetime "date"
     t.datetime "discharge_date"
     t.string   "discharge_status"
     t.string   "comments"

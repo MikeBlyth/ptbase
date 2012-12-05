@@ -16,5 +16,7 @@
 #
 
 class DrugPrep < ActiveRecord::Base
-  attr_accessible :buy_price, :drug_id, :form, :mult, :quantity, :stock, :strength, :synonyms
+  attr_accessible :buy_price, :form, :mult, :quantity, :stock, :strength, :synonyms
+  belongs_to :drug
+  validates_presence_of :form
 end

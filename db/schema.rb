@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121205093010) do
+ActiveRecord::Schema.define(:version => 20121205162315) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -93,6 +93,8 @@ ActiveRecord::Schema.define(:version => 20121205093010) do
     t.string   "pneumo"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "patient_id"
+    t.date     "date"
   end
 
   create_table "labs", :force => true do |t|
@@ -197,6 +199,15 @@ ActiveRecord::Schema.define(:version => 20121205093010) do
     t.float    "height"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+  end
+
+  create_table "providers", :force => true do |t|
+    t.string   "last_name"
+    t.string   "first_name"
+    t.string   "other_names"
+    t.string   "ident"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "users", :force => true do |t|

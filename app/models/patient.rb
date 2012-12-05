@@ -18,8 +18,15 @@
 class Patient < ActiveRecord::Base
   include DateValidators
 
-  #  has_many :visits, :labs, :admissions, :immunizations, :photos, :prescriptions, dependent: :delete
-  attr_accessible :birth_date, :birth_date_exact, :death_date, :first_name, :ident, :last_name, :other_names, :sex
+  has_many :visits, dependent: :delete_all
+  has_many :labs, dependent: :delete_all
+  has_many :admissions, dependent: :delete_all
+  has_many :immunizations, dependent: :delete_all
+  has_many :prescriptions, dependent: :delete_all
+  has_many :photos, dependent: :delete_all
+  has_many :visits, dependent: :delete_all
+  attr_accessible :birth_date, :birth_date_exact, :death_date, :first_name, :ident, :last_name, :other_names,
+                  :sex
   validates_presence_of :last_name, :ident, :birth_date
   validates_uniqueness_of :ident
   validate :valid_birth_date

@@ -20,7 +20,7 @@
 #
 
 class PrescriptionItem < ActiveRecord::Base
-  attr_accessible :dose, :drug, :duration, :filled, :interval, :liquid,
+  attr_accessible :dose, :drug, :duration, :filled, :interval, :liquid, :prescription,
                   :other_description, :other_instructions, :route, :units, :use_liquid
   belongs_to :prescription
   validates_presence_of :drug, :prescription_id

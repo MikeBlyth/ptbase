@@ -1,3 +1,5 @@
+# NB This model is not used yet and it's not clear how it should be organized!
+
 # == Schema Information
 #
 # Table name: immunizations
@@ -35,6 +37,9 @@
 #
 
 class Immunization < ActiveRecord::Base
+  include DateValidators
   attr_protected
   belongs_to :patient
+  validates_presence_of :date, :patient_id
+  validate :not_future
 end

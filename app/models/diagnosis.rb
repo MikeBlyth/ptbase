@@ -15,4 +15,5 @@
 
 class Diagnosis < ActiveRecord::Base
   attr_protected
+  validates_presence_of :name
 end

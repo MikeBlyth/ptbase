@@ -13,7 +13,9 @@
 #
 
 class Photo < ActiveRecord::Base
-  attr_accessible :comments, :content_type, :date, :name_string
+  include DateValidators
+  attr_accessible :comments, :content_type, :date, :name_string, :patient_id, :patient
   belongs_to :patient
-
+  validates_presence_of :patient_id, :date
+  validate :not_future
 end

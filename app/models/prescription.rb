@@ -16,8 +16,14 @@
 #
 
 class Prescription < ActiveRecord::Base
-  attr_accessible :confirmed, :date, :filled, :height, :prescriber_id, :voided, :weight
-  validates_presence_of :patient_id, :date, :prescriber_id
-  has_many :prescription_items, :dependent=>:destroy
+  include DateValidators
+  attr_accessible :confirmed, :date, :filled, :height, :prescriber_id, :prescriber, :voided, :weight,
+                  :patient
+
   belongs_to :patient
+  belongs_to :prescriber, class_name: 'Provider'
+  has_many :prescription_items, :dependent=>:delete_all
+
+  validates_presence_of :patient_id, :date, :prescriber_id
+  validate :not_future
 end

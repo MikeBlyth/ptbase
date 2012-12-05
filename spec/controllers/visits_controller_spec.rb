@@ -12,8 +12,8 @@ describe VisitsController do
 
   context 'when user is logged in' do
 
-    it "should redirect to login path" do
-      @user = User.create(email: 'test@example.com', password: 'passxxx')
+    it "should not redirect to login path" do
+      @user = User.create(email: 'test@example.com', password: 'passxxx', username: 'SomeUser')
       sign_in @user
       get :index
       response.status.should == 200

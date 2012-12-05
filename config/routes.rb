@@ -1,5 +1,21 @@
 Ptbase::Application.routes.draw do
 
+  resources :photos do as_routes end
+
+  resources :labs do as_routes end
+
+  resources :admissions do as_routes end
+
+  resources :prescriptions do as_routes end
+
+  resources :prescription_items do as_routes end
+
+  resources :pictures do as_routes end
+
+  resources :immunizations do as_routes end
+
+  resources :drug_preps do as_routes end
+
   resources :drugs do as_routes end
 
   resources :diagnoses do as_routes end
@@ -8,7 +24,7 @@ Ptbase::Application.routes.draw do
 
   resources :patients do as_routes end
 
-  devise_for :users
+  devise_for :users, path_names: {sign_in: 'login', sign_out: 'logout'}
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

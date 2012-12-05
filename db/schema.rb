@@ -11,7 +11,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121204220422) do
+ActiveRecord::Schema.define(:version => 20121205093010) do
+
+  create_table "admissions", :force => true do |t|
+    t.integer  "patient_id"
+    t.string   "bed"
+    t.string   "ward"
+    t.string   "diagnosis_1"
+    t.string   "diagnosis_2"
+    t.string   "meds"
+    t.float    "weight_admission"
+    t.float    "weight_discharge"
+    t.datetime "admission_date"
+    t.datetime "discharge_date"
+    t.string   "discharge_status"
+    t.string   "comments"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
 
   create_table "diagnoses", :force => true do |t|
     t.string   "name"
@@ -24,11 +41,97 @@ ActiveRecord::Schema.define(:version => 20121204220422) do
     t.datetime "updated_at",  :null => false
   end
 
+  create_table "drug_preps", :force => true do |t|
+    t.integer  "drug_id"
+    t.string   "form"
+    t.string   "strength"
+    t.float    "mult"
+    t.string   "quantity"
+    t.float    "buy_price"
+    t.float    "stock"
+    t.string   "synonyms"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "drugs", :force => true do |t|
     t.string   "name"
     t.string   "drug_class"
     t.string   "drug_subclass"
     t.string   "synonyms"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "immunizations", :force => true do |t|
+    t.string   "bcg"
+    t.string   "opv1"
+    t.string   "opv2"
+    t.string   "opv3"
+    t.string   "opv4"
+    t.string   "dpt1"
+    t.string   "dpt2"
+    t.string   "dpt3"
+    t.string   "dpt4"
+    t.string   "tt1"
+    t.string   "tt2"
+    t.string   "tt3"
+    t.string   "tt4"
+    t.string   "hepb1"
+    t.string   "hepb2"
+    t.string   "hepb3"
+    t.string   "hepb4"
+    t.string   "measles1"
+    t.string   "measles2"
+    t.string   "mmr1"
+    t.string   "mmr2"
+    t.string   "hib1"
+    t.string   "hib2"
+    t.string   "hib3"
+    t.string   "hib4"
+    t.string   "mening"
+    t.string   "pneumo"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "labs", :force => true do |t|
+    t.integer  "patient_id"
+    t.string   "categories"
+    t.datetime "date"
+    t.integer  "wbc"
+    t.integer  "neut"
+    t.integer  "lymph"
+    t.integer  "bands"
+    t.integer  "eos"
+    t.integer  "hct"
+    t.float    "retic"
+    t.integer  "esr"
+    t.integer  "platelets"
+    t.string   "malaria_smear"
+    t.integer  "csf_rbc"
+    t.integer  "csf_wbc"
+    t.integer  "csf_lymph"
+    t.integer  "csf_neut"
+    t.integer  "csf_protein"
+    t.string   "csf_glucose"
+    t.string   "csf_culture"
+    t.integer  "blood_glucose"
+    t.string   "urinalysis"
+    t.float    "bili"
+    t.string   "hiv_screen"
+    t.string   "hiv_antigen"
+    t.string   "wb"
+    t.string   "mantoux"
+    t.string   "hb_elect"
+    t.string   "other"
+    t.float    "creat"
+    t.integer  "cd4"
+    t.integer  "cd4pct"
+    t.integer  "amylase"
+    t.integer  "sgpt"
+    t.integer  "sgot"
+    t.boolean  "hbsag"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
@@ -46,6 +149,56 @@ ActiveRecord::Schema.define(:version => 20121204220422) do
     t.datetime "updated_at",       :null => false
   end
 
+  create_table "photos", :force => true do |t|
+    t.integer  "patient_id"
+    t.datetime "date"
+    t.string   "comments"
+    t.string   "content_type"
+    t.string   "name_string"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "pictures", :force => true do |t|
+    t.integer  "patient_id"
+    t.string   "comment"
+    t.string   "name"
+    t.string   "content_type"
+    t.datetime "date"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "prescription_items", :force => true do |t|
+    t.string   "drug"
+    t.integer  "prescription_id"
+    t.float    "dose"
+    t.string   "units"
+    t.string   "route"
+    t.integer  "interval"
+    t.boolean  "use_liquid"
+    t.integer  "liquid"
+    t.integer  "duration"
+    t.string   "other_description"
+    t.string   "other_instructions"
+    t.boolean  "filled"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  create_table "prescriptions", :force => true do |t|
+    t.integer  "patient_id"
+    t.integer  "prescriber_id"
+    t.datetime "date"
+    t.boolean  "filled"
+    t.boolean  "confirmed"
+    t.boolean  "voided"
+    t.float    "weight"
+    t.float    "height"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
   create_table "users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
     t.string   "encrypted_password",     :default => "", :null => false
@@ -59,6 +212,9 @@ ActiveRecord::Schema.define(:version => 20121204220422) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
+    t.string   "username"
+    t.string   "name"
+    t.string   "full_name"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

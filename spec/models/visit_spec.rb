@@ -52,9 +52,9 @@
 require "spec_helper"
 
 describe Visit do
+  let(:visit) {FactoryGirl.build(:visit)}
 
   describe "Validates record" do
-    let(:visit) {FactoryGirl.build(:visit)}
 
     it "with all required data is valid" do
       visit.should be_valid
@@ -71,4 +71,11 @@ describe Visit do
     end
   end
 
+  describe 'weight' do
+    it 'rejects weight > 300 kg' do
+      visit.weight = 310
+      visit.should_not be_valid
+      visit.errors[:weight].should_not be_blank
+    end
+  end
 end

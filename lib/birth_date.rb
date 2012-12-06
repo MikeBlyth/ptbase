@@ -44,6 +44,21 @@ class DateTime
     DateTime.time_human self.age_seconds
   end
 
+  # Age in seconds
+  def age_on_date(datetime)
+    (datetime - self)*SECONDS_PER_DAY.to_i
+  end
+
+  def age_on_date_in_years(datetime)
+    age_on_date(datetime)/1.year
+  end
+
+  def age_on_date_human(datetime)
+    return DateTime.time_human(age_on_date(datetime))
+  end
+
+
+
   # return a string in days, weeks, months, or years, whatever makes sense for the age, from
   # time (t) in seconds. Sensible rounding is applied as we would normally describe someone's age.
   # Thus age_human(187000) = "2 days," age_human(34000000) = "12 months", age_human(120000000) = "3.8 years"

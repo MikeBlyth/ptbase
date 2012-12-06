@@ -40,6 +40,7 @@ class Immunization < ActiveRecord::Base
   include DateValidators
   attr_protected
   belongs_to :patient
+  belongs_to :provider
   validates_presence_of :date, :patient_id
   validate :not_future
 end

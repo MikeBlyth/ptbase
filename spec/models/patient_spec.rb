@@ -42,7 +42,7 @@ describe Patient do
   end
 
   describe 'compose name' do
-    let(:patient){Patient.new(last_name: 'Jones', first_name: 'Bernard')}
+    let(:patient){Patient.new(last_name: 'Jones', first_name: 'Bernard', ident: 'XYZ')}
 
     it 'uses first and last name' do
       patient.name.should eq 'Bernard Jones'
@@ -53,5 +53,24 @@ describe Patient do
       patient.name.should eq 'Bernard A. Jones'
     end
 
+    it 'name_id gives name + ident' do
+      name_id = patient.name_id
+      name_id.should match /Jones/
+      name_id.should match Regexp.new(patient.ident)
+    end
+
+    it 'name_last_first works' do
+      patient.name_last_first.should eq 'Jones, Bernard'
+    end
+
+    it 'name_last_first_id gives name + ident' do
+      name_id = patient.name_last_first_id
+      name_id.should match /Jones, Bernard/
+      name_id.should match Regexp.new(patient.ident)
+    end
+
+
+
   end
+
 end

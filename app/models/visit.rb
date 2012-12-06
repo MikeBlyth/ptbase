@@ -48,14 +48,47 @@
 #  scheduled               :boolean
 #
 
+# ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.
 class Visit < ActiveRecord::Base
   include DateValidators
 
   belongs_to :patient
+  belongs_to :provider
   attr_protected
   validates_presence_of :date, :patient_id
   validate :not_future
   validate :next_visit_future
+  validates :weight, numericality: {greater_than: 0}, allow_nil: true
+  validates :weight, numericality: {less_than: 300}, allow_nil: true
+  validates :ht, numericality: {greater_than: 0}, allow_nil: true
+  validates :ht, numericality: {less_than: 240}, allow_nil: true
+  validates :sbp, numericality: {less_than: 400}, allow_nil: true
+  validates :dbp, numericality: {less_than: 250}, allow_nil: true
+  validates :head_circ, numericality: {less_than: 140}, allow_nil: true
+  validates :head_circ, numericality: {greater_than: 14}, allow_nil: true
+
+  # Return formatted string listing ARVs being used at time of this visit
+  # ToDo - Refactor completely -- probably should have separate ARV model or at least record per visit of
+  #   pts use of ARV. I don't think this one will even work as it refers to what looks like
+  #   params returned from a form (reg_ ...)
+  #def arv_reg_str
+  #  arvs = [
+  #      ['zidovudine' ,  'ZDV'],
+  #      [ 'stavudine' ,  'd4T (stav)'],
+  #      [ 'lamivudine' ,  '3TC'],
+  #      [ 'didanosine' ,  'ddI'],
+  #      [ 'nevirapine' ,  'NVP'],
+  #      [ 'efavirenz' ,  'EFV'],
+  #      [ 'kaletra' ,  'kaletra']
+  #  ]
+  #  s = ''
+  #  arvs.each do | arv |
+  #    being_used = self.send('reg_'+arv[0])
+  #    s << ', ' + arv[1]  if being_used == 1     # add abbreviation of each arv being used e.g. "zdv, 3tc, nvp"
+  #  end
+  #  return s[2,100]    # trim off the first comma and space
+  #end
+
 
   private
   def next_visit_future

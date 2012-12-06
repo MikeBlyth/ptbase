@@ -47,6 +47,7 @@ class Lab < ActiveRecord::Base
   include DateValidators
   attr_protected :patient_id
   belongs_to :patient
+  belongs_to :provider
   validates_presence_of :date, :patient_id
   validate :not_future
 end

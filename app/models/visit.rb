@@ -46,6 +46,7 @@
 #  dx_parotitis            :boolean
 #  dx_dysentery            :boolean
 #  scheduled               :boolean
+#  provider_id             :integer
 #
 
 # ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.

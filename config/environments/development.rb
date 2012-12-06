@@ -36,3 +36,10 @@ Ptbase::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 end
+
+######### IF YOU WANT TO USE FACTORYGIRL IN DEVELOPMENT
+require 'factory_girl'
+include FactoryGirl
+require "#{Rails.root}/spec/factories/factories.rb"
+require 'anthropometrics'
+require 'birth_date'

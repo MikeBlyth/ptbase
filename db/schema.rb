@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121205182645) do
+ActiveRecord::Schema.define(:version => 20121206163057) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -62,6 +62,16 @@ ActiveRecord::Schema.define(:version => 20121205182645) do
     t.string   "synonyms"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+  end
+
+  create_table "health_data", :force => true do |t|
+    t.integer  "patient_id"
+    t.string   "hiv_status"
+    t.string   "maternal_hiv_status"
+    t.string   "allergies"
+    t.string   "comments"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
   end
 
   create_table "immunizations", :force => true do |t|
@@ -144,13 +154,17 @@ ActiveRecord::Schema.define(:version => 20121205182645) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "other_names"
-    t.date     "birth_date"
+    t.datetime "birth_date"
     t.date     "death_date"
     t.boolean  "birth_date_exact"
     t.string   "ident"
     t.string   "sex"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.string   "hiv_status"
+    t.string   "maternal_hiv_status"
+    t.string   "allergies"
+    t.text     "comments"
   end
 
   create_table "photos", :force => true do |t|

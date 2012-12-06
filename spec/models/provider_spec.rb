@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: providers
+#
+#  id          :integer          not null, primary key
+#  last_name   :string(255)
+#  first_name  :string(255)
+#  other_names :string(255)
+#  ident       :string(255)
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+
 require "spec_helper"
 
 describe Provider do

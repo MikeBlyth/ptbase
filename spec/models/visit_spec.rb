@@ -46,6 +46,7 @@
 #  dx_parotitis            :boolean
 #  dx_dysentery            :boolean
 #  scheduled               :boolean
+#  provider_id             :integer
 #
 
 

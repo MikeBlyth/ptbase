@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: prescriptions
+#
+#  id            :integer          not null, primary key
+#  patient_id    :integer
+#  prescriber_id :integer
+#  date          :datetime
+#  filled        :boolean
+#  confirmed     :boolean
+#  voided        :boolean
+#  weight        :float
+#  height        :float
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
 require "spec_helper"
 
 describe Prescription do

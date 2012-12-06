@@ -1,5 +1,3 @@
-# NB This model is not used yet and it's not clear how it should be organized!
-
 # == Schema Information
 #
 # Table name: immunizations
@@ -34,8 +32,11 @@
 #  pneumo     :string(255)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  patient_id :integer
+#  date       :date
 #
 
+# NB This model is not used yet and it's not clear how it should be organized!
 class Immunization < ActiveRecord::Base
   include DateValidators
   attr_protected

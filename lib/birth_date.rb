@@ -1,23 +1,7 @@
-#module BirthDate
-#  class BirthDate
-#    # To change this template use File | Settings | File Templates.
-#    attr_reader :datetime
-#    def initialize(*datetime)
-#      @datetime = DateTime.new(*datetime)
-#    end
-#
-#    def age
-#      (DateTime.now-@date).in_days
-#    end
-#  end
-#end
-
-class DateTime
-  SECONDS_PER_YEAR = 3600*24*365.25
-  SECONDS_PER_DAY = 3600*24
+class Time
 
   def age_seconds
-    (DateTime.now - self).to_f*SECONDS_PER_DAY
+    (Time.now - self)
   end
 
   def age_days
@@ -41,12 +25,12 @@ class DateTime
   end
 
   def age_human
-    DateTime.time_human self.age_seconds
+    Time.time_human self.age_seconds
   end
 
   # Age in seconds
   def age_on_date(datetime)
-    (datetime - self)*SECONDS_PER_DAY.to_i
+    (datetime - self)
   end
 
   def age_on_date_in_years(datetime)
@@ -54,7 +38,7 @@ class DateTime
   end
 
   def age_on_date_human(datetime)
-    return DateTime.time_human(age_on_date(datetime))
+    return Time.time_human(age_on_date(datetime))
   end
 
 
@@ -88,4 +72,35 @@ class DateTime
         "#{(seconds/1.year).to_i} years"
     end
   end
+end
+
+class Object
+  delegate :age_seconds, :age_hours, :age_days, :age_weeks, :age_years, :age_human,
+           :age_on_date_in_years, :age_on_date, :age_on_date_human, :to => :date
+end
+
+class Date
+# This lets Date use the same "age_xxx" methods as Time
+  mods = %w(seconds hours days weeks years human on_date on_date_in_years on_date_human)
+
+  mods.each do |mod|
+    define_method "age_#{mod}" do
+      self.to_time.send "age_#{mod}"
+    end
+  end
+
+end
+
+class DateTime
+# This lets DateTime use the same "age_xxx" methods as Time
+# One complication is that Ruby DateTime.to_time returns a DateTime rather than Time object,
+# which is why we resort to Time.parse(self.to_s) to get a Time object
+  mods = %w(seconds hours days weeks years human on_date on_date_in_years on_date_human)
+
+  mods.each do |mod|
+    define_method "age_#{mod}" do
+      Time.parse(self.to_s).send "age_#{mod}"
+    end
+  end
+
 end

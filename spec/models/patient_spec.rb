@@ -2,17 +2,21 @@
 #
 # Table name: patients
 #
-#  id               :integer          not null, primary key
-#  first_name       :string(255)
-#  last_name        :string(255)
-#  other_names      :string(255)
-#  birth_date       :date
-#  death_date       :date
-#  birth_date_exact :boolean
-#  ident            :string(255)
-#  sex              :string(255)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                  :integer          not null, primary key
+#  first_name          :string(255)
+#  last_name           :string(255)
+#  other_names         :string(255)
+#  birth_date          :datetime
+#  death_date          :date
+#  birth_date_exact    :boolean
+#  ident               :string(255)
+#  sex                 :string(255)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  hiv_status          :string(255)
+#  maternal_hiv_status :string(255)
+#  allergies           :string(255)
+#  comments            :text
 #
 
 require "spec_helper"

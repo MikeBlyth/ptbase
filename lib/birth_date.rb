@@ -75,32 +75,57 @@ class Time
 end
 
 class Object
-  delegate :age_seconds, :age_hours, :age_days, :age_weeks, :age_years, :age_human,
+  delegate :age_seconds, :age_hours, :age_days, :age_weeks, :age_months, :age_years, :age_human,
            :age_on_date_in_years, :age_on_date, :age_on_date_human, :to => :date
 end
 
 class Date
 # This lets Date use the same "age_xxx" methods as Time
-  mods = %w(seconds hours days weeks years human on_date on_date_in_years on_date_human)
-
-  mods.each do |mod|
-    define_method "age_#{mod}" do
-      self.to_time.send "age_#{mod}"
+  [:age_seconds, :age_hours, :age_days, :age_weeks, :age_months, :age_years, :age_human].each do |meth|
+    define_method meth do
+      self.to_time.send meth
     end
   end
 
+  [:age_on_date, :age_on_date_in_years, :age_on_date_human].each do |meth|
+    define_method meth do |time|
+      x = self.to_time
+      self.to_time.send meth, time
+    end
+  end
 end
 
 class DateTime
 # This lets DateTime use the same "age_xxx" methods as Time
 # One complication is that Ruby DateTime.to_time returns a DateTime rather than Time object,
 # which is why we resort to Time.parse(self.to_s) to get a Time object
-  mods = %w(seconds hours days weeks years human on_date on_date_in_years on_date_human)
-
-  mods.each do |mod|
-    define_method "age_#{mod}" do
-      Time.parse(self.to_s).send "age_#{mod}"
+  [:age_seconds, :age_hours, :age_days, :age_weeks, :age_months, :age_years, :age_human].each do |meth|
+    define_method meth do
+      Time.parse(self.to_s).send meth
     end
   end
 
+  [:age_on_date, :age_on_date_in_years, :age_on_date_human].each do |meth|
+    define_method meth do |time|
+      Time.parse(self.to_s).send meth, time
+    end
+  end
+end
+
+class ActiveSupport::TimeWithZone
+# This lets DateTime use the same "age_xxx" methods as Time
+# One complication is that Ruby DateTime.to_time returns a DateTime rather than Time object,
+# which is why we resort to Time.parse(self.to_s) to get a Time object
+  [:age_seconds, :age_hours, :age_days, :age_weeks, :age_months, :age_years, :age_human].each do |meth|
+    define_method meth do
+      Time.parse(self.to_s).send meth
+    end
+  end
+
+
+  [:age_on_date, :age_on_date_in_years, :age_on_date_human].each do |meth|
+    define_method meth do |time|
+      Time.parse(self.to_s).send meth, time
+    end
+  end
 end

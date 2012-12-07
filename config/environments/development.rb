@@ -42,4 +42,4 @@ require 'factory_girl'
 include FactoryGirl
 require "#{Rails.root}/spec/factories/factories.rb"
 require 'anthropometrics'
-require 'birth_date'
+#require 'birth_date'

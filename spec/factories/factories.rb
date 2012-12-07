@@ -49,12 +49,41 @@ FactoryGirl.define do
     patient
     date '2010-05-14'
     prescriber
+
+    trait :recent do
+      date {Date.yesterday}
+    end
+
+    trait :old do
+      date '2000-01-01'
+    end
+
+    trait :void do
+      void true
+    end
+
+    trait :confirmed do
+      confirmed true
+    end
+
+    trait :filled do
+      filled true
+    end
+
+    factory :prescription_with_item do
+      after(:build) {|p|
+        item = FactoryGirl.build(:prescription_item, prescription_id: 0)
+        puts "Item errors = #{item.errors.messages}" unless item.valid?
+        p.prescription_items << item
+      }
+    end
+
   end
 
 
   factory :prescription_item do
     prescription
-    drug 'ampicillin'
+    sequence(:drug) {|n| %w(ampicillin penicillin amoxycillin doxycycline)[(n-1).modulo(4)]}
     dose '250 mg'
     units 'tab'
     route 'po'

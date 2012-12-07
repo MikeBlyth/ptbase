@@ -14,4 +14,5 @@
 
 class HealthData < ActiveRecord::Base
   belongs_to :patient
+  attr_protected
 end

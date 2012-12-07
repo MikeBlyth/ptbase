@@ -14,6 +14,7 @@ Diagnosis.create(name: 'malaria')
 Drug.delete_all
 amox = Drug.create(name: 'amoxycillin', drug_class: 'antibiotic', drug_subclass: 'penicillin', synonyms: 'amoxacillin; amoxyl; amoxil')
 Drug.create(name: 'artemether', drug_class: 'antimalarial', synonyms: 'Larither')
+
 Patient.delete_all
 anderson = Patient.create(last_name: 'Anderson', first_name: 'Charity', sex: 'F', birth_date: '1989-05-15', ident: 'P001')
 audu = Patient.create(last_name: 'Audu', first_name: 'Mohammed', sex: 'M', birth_date: '2003-09-15', ident: 'P002')
@@ -21,6 +22,10 @@ audu = Patient.create(last_name: 'Audu', first_name: 'Mohammed', sex: 'M', birth
 DrugPrep.delete_all
 DrugPrep.create(drug_id: amox.id, form: 'tablet', strength: '250 mg')
 DrugPrep.create(drug_id: amox.id, form: 'suspension', strength: '250 mg/5 ml', synonyms: 'liquid')
+
+HealthData.delete_all
+HealthData.create(patient: audu, hiv_status: 'P', maternal_hiv_status: 'P' )
+HealthData.create(patient: anderson, hiv_status: '', maternal_hiv_status: '' )
 
 Immunization.delete_all
 Immunization.create(patient: audu, date: audu.birth_date+1.week, hepb1: 'given')
@@ -37,7 +42,8 @@ Provider.delete_all
 hertz = Provider.create(last_name: 'Hertz', first_name: 'Joshua', ident: 'Prov 001')
 
 Prescription.delete_all
-prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months, prescriber: hertz )
+prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months, prescriber: hertz,
+            confirmed: true)
 
 PrescriptionItem.delete_all
 PrescriptionItem.create(prescription: prescription, drug: 'ampicillin', dose: '250 mg', units: 'tab', route: 'po', interval: 6, duration: 6)

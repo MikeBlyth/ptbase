@@ -73,7 +73,16 @@ describe Patient do
       name_id.should match Regexp.new(patient.ident)
     end
 
+  end
 
+  # Belongs in Prescriptions?
+  describe 'Recent drugs' do
+    let(:patient) {FactoryGirl.create(:patient)}
+
+    it 'includes valid item' do
+      prescription = FactoryGirl.create(:prescription_with_item, :recent, :confirmed, patient: patient)
+      patient.recent_drugs.keys.should eq [prescription.items.first.drug]
+    end
 
   end
 

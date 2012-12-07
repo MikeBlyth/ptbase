@@ -46,6 +46,7 @@ class Patient < ActiveRecord::Base
   has_many :admissions, dependent: :delete_all
   has_many :immunizations, dependent: :delete_all
   has_many :prescriptions, dependent: :delete_all
+#  has_many :prescription_items, through: :prescriptions
   has_many :photos, dependent: :delete_all
   has_many :visits, dependent: :delete_all
   attr_accessible :birth_date, :birth_date_exact, :death_date, :first_name, :ident, :last_name, :other_names,
@@ -104,15 +105,12 @@ class Patient < ActiveRecord::Base
     drugs = {}
     today = DateTime.now
     since_date = today - 30.5*last_n_months       # date to start searching from
-    prescriptions = self.prescriptions.find( :all,
-                                             :conditions => ["date >= ? and confirmed = 1 and voided <> 1",since_date],
-                                             :order => "date DESC" )
+    prescriptions = self.prescriptions.valid.where("date >= ? AND confirmed",since_date).order("date DESC")
     prescriptions.each do | p |
-      next unless p.confirmed == 1      # only look at confirmed prescriptions
       p_date = p.date
       p_items = p.prescription_items
       p_items.each do | an_item |
-        if not drugs.include?(an_item.drug)           # don't add older prescriptions for same drugs
+        if not drugs.include?(an_item.drug)  # don't add older prescriptions for same drugs
           drugs[an_item.drug] = {
               :p_item => an_item.clone,
               :date => p.date,

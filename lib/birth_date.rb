@@ -30,7 +30,10 @@ class Time
 
   # Age in seconds
   def age_on_date(datetime)
-    (datetime - self)
+    time = datetime.to_time
+    time = Time.parse(datetime.to_s(:date_time)) unless time.class == Time
+    puts "Self.class=#{self.class}, d.class=#{datetime.class}"
+    (time - self)
   end
 
   def age_on_date_in_years(datetime)
@@ -101,13 +104,13 @@ class DateTime
 # which is why we resort to Time.parse(self.to_s) to get a Time object
   [:age_seconds, :age_hours, :age_days, :age_weeks, :age_months, :age_years, :age_human].each do |meth|
     define_method meth do
-      Time.parse(self.to_s).send meth
+      Time.parse(self.to_s(:date_time)).send meth
     end
   end
 
   [:age_on_date, :age_on_date_in_years, :age_on_date_human].each do |meth|
     define_method meth do |time|
-      Time.parse(self.to_s).send meth, time
+      Time.parse(self.to_s(:date_time)).send meth, time
     end
   end
 end
@@ -118,14 +121,14 @@ class ActiveSupport::TimeWithZone
 # which is why we resort to Time.parse(self.to_s) to get a Time object
   [:age_seconds, :age_hours, :age_days, :age_weeks, :age_months, :age_years, :age_human].each do |meth|
     define_method meth do
-      Time.parse(self.to_s).send meth
+      Time.parse(self.to_s(:date_time)).send meth
     end
   end
 
 
   [:age_on_date, :age_on_date_in_years, :age_on_date_human].each do |meth|
     define_method meth do |time|
-      Time.parse(self.to_s).send meth, time
+      Time.parse(self.to_s(:date_time)).send meth, time
     end
   end
 end

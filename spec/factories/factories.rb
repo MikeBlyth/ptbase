@@ -89,6 +89,10 @@ FactoryGirl.define do
     route 'po'
     interval 6
     duration 6
+
+      factory :prescription_item_without_prescription do
+        prescription nil
+      end
   end
 
   factory :photo do

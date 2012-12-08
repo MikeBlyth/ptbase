@@ -75,13 +75,28 @@ describe Patient do
 
   end
 
-  # Belongs in Prescriptions?
+  # ToDo: Belongs in Prescriptions?
   describe 'Recent drugs' do
     let(:patient) {FactoryGirl.create(:patient)}
 
     it 'includes valid item' do
       prescription = FactoryGirl.create(:prescription_with_item, :recent, :confirmed, patient: patient)
       patient.recent_drugs.keys.should eq [prescription.items.first.drug]
+    end
+
+    it 'does not include old item' do
+      prescription = FactoryGirl.create(:prescription_with_item, :old, :confirmed, patient: patient)
+      patient.recent_drugs.keys.should eq []
+    end
+
+    it 'does not include void item' do
+      prescription = FactoryGirl.create(:prescription_with_item, :void, :recent, :confirmed, patient: patient)
+      patient.recent_drugs.keys.should eq []
+    end
+
+    it 'does not include unconfirmed item' do
+      prescription = FactoryGirl.create(:prescription_with_item, :recent, patient: patient)
+      patient.recent_drugs.keys.should eq []
     end
 
   end

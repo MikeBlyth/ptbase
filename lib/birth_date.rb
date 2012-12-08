@@ -32,7 +32,6 @@ class Time
   def age_on_date(datetime)
     time = datetime.to_time
     time = Time.parse(datetime.to_s(:date_time)) unless time.class == Time
-    puts "Self.class=#{self.class}, d.class=#{datetime.class}"
     (time - self)
   end
 

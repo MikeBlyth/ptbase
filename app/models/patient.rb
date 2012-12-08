@@ -101,6 +101,8 @@ class Patient < ActiveRecord::Base
 
   # Collect list of drugs recently (in last_n_months) prescribed. Return as hash:
   # { drug1 => {:date => xxx, :current => true/false, :p_item => (prescription_item cloned from actual prescription) }
+  # *:current* reflects whether the drug is still being taken, based on the prescription date and the
+  # prescribed duration.
   def recent_drugs(last_n_months=2)
     drugs = {}
     today = DateTime.now

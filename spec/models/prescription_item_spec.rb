@@ -22,9 +22,9 @@
 require "spec_helper"
 
 describe PrescriptionItem do
+  let(:prescription_item) {FactoryGirl.build(:prescription_item)}
 
   describe "Validates record" do
-    let(:prescription_item) {FactoryGirl.build(:prescription_item)}
 
     it "with all required data is valid" do
       prescription_item.should be_valid
@@ -36,4 +36,19 @@ describe PrescriptionItem do
 
   end
 
+  describe 'current marks an item that should still be taken' do
+    before(:each) do
+      prescription_item.prescription.date = Date.today - 1.week
+    end
+    it 'marks as current when today is still within prescribed duration' do
+      prescription_item.duration = 10 # days
+      prescription_item.should be_current
+    end
+
+    it 'marks as non-current when today is beyond prescribed duration' do
+      prescription_item.duration = 5 # days
+      prescription_item.should_not be_current
+    end
+
+  end
 end

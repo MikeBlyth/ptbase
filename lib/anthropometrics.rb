@@ -57,5 +57,36 @@ module Anthropometrics
     end
   end
 
+  def pct_expected_height(params)
+    age = params[:age]
+    height= params[:height]
+    sex = params[:sex]
+    return nil unless age && height && sex
+    expected = ht_50(age, sex)
+    return to_pct(height, expected)
+  end
 
+  def pct_expected_weight(params)
+    age = params[:age]
+    weight= params[:weight]
+    sex = params[:sex]
+    return nil unless age && weight && sex
+    expected = wt_50(age, sex)
+    return to_pct(weight, expected)
+  end
+
+  def pct_expected_weight_for_height(params)
+    age = params[:age]
+    height= params[:height]
+    weight= params[:weight]
+    return nil unless height && sex && weight
+    expected = wt_ht_50(height, sex)
+    return to_pct(weight, expected)
+
+  end
+
+private
+  def to_pct(value, expected)
+    (value*100/expected).round
+  end
 end

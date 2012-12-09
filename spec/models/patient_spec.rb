@@ -16,6 +16,7 @@
 #
 
 require "spec_helper"
+require "latest_parameters"
 
 describe Patient do
 
@@ -102,25 +103,25 @@ describe Patient do
 
   end
 
-  # ToDo: Move elsewhere
-  describe 'get_last(table, column)' do
-    before(:each) do
-      @patient = FactoryGirl.create(:patient)
-      # Make an Immunization record for each of last three days
-      [1,2,3].each {|n| FactoryGirl.create(:immunization, patient: @patient, date: Date.today-n.days,
-        bcg: n)}
-    end
-
-    it 'gets value of column in most recent record of table' do
-      @patient.get_last(Immunization, :bcg)[:value].should eq '1'
-    end
-
-    it 'ignores records where column value is nil' do
-      Immunization.where("bcg = '1' ").first.update_attributes(bcg: nil)
-      @patient.get_last(Immunization, :bcg)[:value].should eq '2'
-    end
-  end
-
+  ## ToDo: Move elsewhere
+  #describe 'get_last(table, column)' do
+  #  before(:each) do
+  #    @patient = FactoryGirl.create(:patient)
+  #    # Make an Immunization record for each of last three days
+  #    [1,2,3].each {|n| FactoryGirl.create(:immunization, patient: @patient, date: Date.today-n.days,
+  #      bcg: n)}
+  #  end
+  #
+  #  it 'gets value of column in most recent record of table' do
+  #    @patient.get_last(Immunization, :bcg)[:value].should eq '1'
+  #  end
+  #
+  #  it 'ignores records where column value is nil' do
+  #    Immunization.where("bcg = '1' ").first.update_attributes(bcg: nil)
+  #    @patient.get_last(Immunization, :bcg)[:value].should eq '2'
+  #  end
+  #end
+  #
   # ToDo: Move elsewhere
   describe 'get_latest_parameters()' do
     before(:each) do

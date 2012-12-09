@@ -30,16 +30,19 @@ class Time
 
   # Age in seconds
   def age_on_date(datetime)
+    return nil unless datetime
     time = datetime.to_time
     time = Time.parse(datetime.to_s(:date_time)) unless time.class == Time
     (time - self)
   end
 
   def age_on_date_in_years(datetime)
+    return nil unless datetime
     age_on_date(datetime)/1.year
   end
 
   def age_on_date_human(datetime)
+    return nil unless datetime
     return Time.time_human(age_on_date(datetime))
   end
 

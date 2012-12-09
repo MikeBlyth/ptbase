@@ -12,6 +12,8 @@
 #  updated_at          :datetime         not null
 #
 
+require 'rx_drug_list'
+
 class HealthData < ActiveRecord::Base
   belongs_to :patient
   attr_protected
@@ -32,6 +34,21 @@ class HealthData < ActiveRecord::Base
 
   def hiv_status_word  # Obsolete
     hiv_status
+  end
+
+  def current_drugs
+    recent_drugs(6).current
+  end
+
+  def current_drugs_formatted
+    current_drugs.formatted
+  end
+
+private
+
+  def recent_drugs(since=3)
+    prescriptions = patient.prescriptions.confirmed.valid.where('date >= ?', Date.today-since.months)
+    RxDrugList.new.add_prescriptions(prescriptions)
   end
 
 end

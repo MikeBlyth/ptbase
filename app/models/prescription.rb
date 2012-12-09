@@ -31,6 +31,10 @@ class Prescription < ActiveRecord::Base
     self.where("void IS ? OR NOT void",nil)
   end
 
+  def self.confirmed
+    self.where(:confirmed=>true)
+  end
+
   def items
     self.prescription_items
   end

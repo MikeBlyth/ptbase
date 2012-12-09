@@ -72,27 +72,32 @@ describe Patient do
   end
 
   # ToDo: Belongs in Prescriptions?
-  describe 'Recent drugs' do
-    let(:patient) {FactoryGirl.create(:patient)}
+  describe 'Current drugs' do
+    let(:patient) {FactoryGirl.create(:patient_with_health_data)}
+    let(:prescription) {FactoryGirl.create(:prescription, :confirmed, patient: patient, date: Date.yesterday)}
+    let(:current_item) {FactoryGirl.create(:prescription_item, duration: 100, prescription: prescription)}
+    let(:non_current_item) {FactoryGirl.create(:prescription_item, duration: 0, prescription: prescription)}
 
     it 'includes valid item' do
-      prescription = FactoryGirl.create(:prescription_with_item, :recent, :confirmed, patient: patient)
-      patient.recent_drugs.keys.should eq [prescription.items.first.drug]
+      current_item
+      patient.current_drugs.keys.should eq [current_item.drug]
     end
 
-    it 'does not include old item' do
-      prescription = FactoryGirl.create(:prescription_with_item, :old, :confirmed, patient: patient)
-      patient.recent_drugs.keys.should eq []
+    it 'does not include item no longer being taken' do
+      non_current_item
+      patient.current_drugs.should be_empty
     end
 
     it 'does not include void item' do
-      prescription = FactoryGirl.create(:prescription_with_item, :void, :recent, :confirmed, patient: patient)
-      patient.recent_drugs.keys.should eq []
+      current_item
+      prescription.update_attributes(:void => true)
+      patient.current_drugs.should be_empty
     end
 
     it 'does not include unconfirmed item' do
-      prescription = FactoryGirl.create(:prescription_with_item, :recent, patient: patient)
-      patient.recent_drugs.keys.should eq []
+      current_item
+      prescription.update_attributes(:confirmed => false)
+      patient.current_drugs.should be_empty
     end
 
   end

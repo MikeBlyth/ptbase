@@ -39,7 +39,8 @@ class Patient < ActiveRecord::Base
   validate :valid_birth_date
 
   delegate "hiv_status", "maternal_hiv_status", "allergies", "comments",
-           'hiv?', 'hiv_status_word', 'hiv_pos_mother', to: :health_data
+           'hiv?', 'hiv_status_word', 'hiv_pos_mother', 'current_drugs', 'current_drugs_formatted',
+           to: :health_data
 
 ############ NAME METHODS
   def name

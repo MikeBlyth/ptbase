@@ -83,6 +83,11 @@ FactoryGirl.define do
     sequence(:ident) {|n| "P_#{n}" }
     sex 'M'
     birth_date '2000-1-1'
+
+    factory :patient_with_health_data do
+      health_data
+    end
+
   end
 
   factory :prescription do
@@ -130,7 +135,7 @@ FactoryGirl.define do
     interval 6
     duration 6
 
-      factory :prescription_item_without_prescription do
+    factory :prescription_item_without_prescription do
         prescription nil
       end
   end

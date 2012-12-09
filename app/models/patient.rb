@@ -137,54 +137,24 @@ class Patient < ActiveRecord::Base
 
   # THIS SECTION GETS THE MOST RECENT VALUES OF VARIOUS KINDS FOR A GIVEN PATIENT
 
-
-  # ToDo - Lots of refactoring of this monster method
-  # TODO: Not tested
   def get_latest_parameters()
-    # may want to change this to let desired parameters be passed rather than being specified here in the method
-    # This could probably be optimized, not having to do separate SQL query for each parameter
-    # Should look in the latest visit (see end of this procedure) for height, weight, etc. and
-    # only look at other visits (get_last) if they're not recorded in the latest visit.
-
     latest_parameters = LatestParameters.new(self).load_from_tables
 
-    # Calculate expected weight, ht, wt for height etc.
-    weight_date = latest_parameters[:weight][:date]
-    anthro_inputs = {
-      sex: self.sex,
-      height: latest_parameters[:height][:value],
-      weight: latest_parameters[:weight][:value],
-      age: age_on_date_in_years(weight_date)
-    }
-    latest_parameters[:pct_expected_ht] = {:value => pct_expected_height(anthro_inputs) || '?'}
-    latest_parameters[:pct_expected_wt] = {:value => pct_expected_weight(anthro_inputs) || '?'}
-    latest_parameters[:pct_expected_wt_for_ht] = {:value => pct_expected_weight_for_height(anthro_inputs) || '?'}
+    latest_parameters.add_anthropometrics
 
-      #   Reminders about needed labs
+    #   Reminders about needed labs
     if self.hiv?
-      today = DateTime.now
-      hct_date = latest_parameters[:hct][:date] || NILDATE
-      cd4_date = latest_parameters[:cd4][:date] || NILDATE
-      if today - hct_date > 150  # 5 months
-        latest_parameters[:comment_hct] = {:label => "Note", :value => "patient is due for hematocrit check"}
-      end
-      if today - cd4_date > 150  # 5 months
-        latest_parameters[:comment_cd4] = {:label => "Note", :value => "patient is due for CD4 check"}
-      end
+      latest_parameters.add_reminder(param: :hct)
+      latest_parameters.add_reminder(param: :cd4)
     end
-    latest_visit = 	self.visits.find(:first, :order => "date DESC")
-    latest_parameters[:latest_visit] = latest_visit
+
     return latest_parameters
   end
 
-  def last_visit
-    most_recent = self.visits.find(:first,
-                                     :order => "date DESC" )
-  end
-
   def next_appt
-    return nil if self.last_visit.nil?
-    return self.last_visit.next_visit
+    latest_visit = self.visits.latest
+    return nil if latest_visit.nil?
+    return latest_visit.next_visit
   end
 
   ############### OTHER METHODS

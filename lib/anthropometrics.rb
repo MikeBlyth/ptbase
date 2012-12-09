@@ -76,7 +76,7 @@ module Anthropometrics
   end
 
   def pct_expected_weight_for_height(params)
-    age = params[:age]
+    sex = params[:sex]
     height= params[:height]
     weight= params[:weight]
     return nil unless height && sex && weight

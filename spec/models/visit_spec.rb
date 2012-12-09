@@ -10,7 +10,7 @@
 #  dx2                     :string(255)
 #  comments                :string(255)
 #  weight                  :float
-#  ht                      :float
+#  height                  :float
 #  head_circ               :float
 #  meds                    :string(255)
 #  newdx                   :boolean
@@ -47,6 +47,9 @@
 #  dx_dysentery            :boolean
 #  scheduled               :boolean
 #  provider_id             :integer
+#  hiv_stage               :string(255)
+#  arv_status              :string(255)
+#  anti_tb_status          :string(255)
 #
 
 

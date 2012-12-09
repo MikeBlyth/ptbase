@@ -10,7 +10,7 @@
 #  dx2                     :string(255)
 #  comments                :string(255)
 #  weight                  :float
-#  ht                      :float
+#  height                  :float
 #  head_circ               :float
 #  meds                    :string(255)
 #  newdx                   :boolean
@@ -47,6 +47,9 @@
 #  dx_dysentery            :boolean
 #  scheduled               :boolean
 #  provider_id             :integer
+#  hiv_stage               :string(255)
+#  arv_status              :string(255)
+#  anti_tb_status          :string(255)
 #
 
 # ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.
@@ -61,8 +64,8 @@ class Visit < ActiveRecord::Base
   validate :next_visit_future
   validates :weight, numericality: {greater_than: 0}, allow_nil: true
   validates :weight, numericality: {less_than: 300}, allow_nil: true
-  validates :ht, numericality: {greater_than: 0}, allow_nil: true
-  validates :ht, numericality: {less_than: 240}, allow_nil: true
+  validates :height, numericality: {greater_than: 0}, allow_nil: true
+  validates :height, numericality: {less_than: 240}, allow_nil: true
   validates :sbp, numericality: {less_than: 400}, allow_nil: true
   validates :dbp, numericality: {less_than: 250}, allow_nil: true
   validates :head_circ, numericality: {less_than: 140}, allow_nil: true
@@ -90,6 +93,20 @@ class Visit < ActiveRecord::Base
   #  return s[2,100]    # trim off the first comma and space
   #end
 
+  ### IT APPEARS THAT THE WHOLE ARV_STATUS STUFF IS OUTDATED, SINCE THERE IS NO LONGER EVEN AN
+  ### ARV_STATUS OR ANTI_TB_STATUS FIELD IN VISITS.
+  #
+  #def self.starting_arv
+  #  self.where("arv_status =?", 'B')
+  #end
+  #
+  #def self.continuing_arv
+  #  self.where("arv_status =?", 'C')
+  #end
+  #
+  #def self.stopping_arv
+  #  self.where("arv_status =?", 'X')
+  #end
 
   private
   def next_visit_future

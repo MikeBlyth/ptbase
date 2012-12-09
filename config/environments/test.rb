@@ -35,3 +35,5 @@ Ptbase::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 end
+
+require 'birth_date'

@@ -8,7 +8,7 @@
 #  date          :datetime
 #  filled        :boolean
 #  confirmed     :boolean
-#  void        :boolean
+#  void          :boolean
 #  weight        :float
 #  height        :float
 #  created_at    :datetime         not null

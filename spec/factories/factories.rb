@@ -23,6 +23,23 @@ FactoryGirl.define do
     drug
   end
 
+  factory :health_data do
+    patient
+
+    trait :hiv_pos do
+      hiv_status 'positive'
+    end
+
+    trait :hiv_neg do
+      hiv_status 'negative'
+    end
+
+    trait :maternal_hiv do
+      maternal_hiv_status 'positive'
+    end
+
+  end
+
   factory :immunization do
     date '2009-04-15'
     patient
@@ -33,8 +50,31 @@ FactoryGirl.define do
   factory :lab do
     date '2009-04-15'
     patient
-    hct 47
+    hct 40
     wbc 5700
+
+    trait :hi_cd4 do
+      cd4 3000
+      cd4pct 25
+    end
+
+    trait :lo_cd4 do
+      cd4 100
+      cd4pct 8
+    end
+
+    trait :anemic do
+      hct 23
+    end
+
+    trait :hiv_pos do
+      hiv_screen 'positive'
+    end
+
+    trait :hiv_neg do
+      hiv_screen 'negative'
+    end
+
   end
 
   factory :patient do

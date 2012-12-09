@@ -2,32 +2,11 @@
 #
 # Table name: patients
 #
-#  id                  :integer          not null, primary key
-#  first_name          :string(255)
-#  last_name           :string(255)
-#  other_names         :string(255)
-#  birth_date          :datetime
-#  death_date          :date
-#  birth_date_exact    :boolean
-#  ident               :string(255)
-#  sex                 :string(255)
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  hiv_status          :string(255)
-#  maternal_hiv_status :string(255)
-#  allergies           :string(255)
-#  comments            :text
-#
-
-# == Schema Information
-#
-# Table name: patients
-#
 #  id               :integer          not null, primary key
 #  first_name       :string(255)
 #  last_name        :string(255)
 #  other_names      :string(255)
-#  birth_date       :date
+#  birth_date       :datetime
 #  death_date       :date
 #  birth_date_exact :boolean
 #  ident            :string(255)
@@ -35,7 +14,11 @@
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #
+
+
 require 'forwardable'
+require 'anthropometrics'
+include Anthropometrics
 
 class Patient < ActiveRecord::Base
   include DateValidators
@@ -55,7 +38,8 @@ class Patient < ActiveRecord::Base
   validates_uniqueness_of :ident
   validate :valid_birth_date
 
-  delegate "hiv_status", "maternal_hiv_status", "allergies", "comments", to: :health_data
+  delegate "hiv_status", "maternal_hiv_status", "allergies", "comments",
+           'hiv?', 'hiv_status_word', 'hiv_pos_mother', to: :health_data
 
 ############ NAME METHODS
   def name
@@ -82,67 +66,9 @@ class Patient < ActiveRecord::Base
     return self.rv == 'P'
   end
 
-  # Does this just mean HIV-related? If so, why not just 'hiv_pos || maternal_hiv == "P" '?
-  def hiv?
-    return self.rv == 'P' || (self.maternal_hiv == 'P' && self.rv != 'N')
-  end
-
-  def hiv_pos_mother # see hiv_pos;
-    return self.maternal_hiv == 'P'
-  end
-
-  def hiv_status_word
-    return {'P' => 'positive', 'N' => 'negative', 'Q' => 'unknown'}[self.rv]
-  end
-
-
-  ################################## MEDICATION METHODS
-  # ToDo: These should probably be moved to Prescription or PrescriptionItem model!
-
-  # Collect list of drugs recently (in last_n_months) prescribed. Return as hash:
-  # { drug1 => {:date => xxx, :current => true/false, :p_item => (prescription_item cloned from actual prescription) }
-  # *:current* reflects whether the drug is still being taken, based on the prescription date and the
-  # prescribed duration.
-  def recent_drugs(last_n_months=2)
-    drugs = {}
-    today = DateTime.now
-    since_date = today - 30.5*last_n_months       # date to start searching from
-    prescriptions = self.prescriptions.valid.where("date >= ? AND confirmed",since_date).order("date DESC")
-    prescriptions.each do | p |
-      p_date = p.date
-      p_items = p.prescription_items
-      p_items.each do | an_item |
-        if not drugs.include?(an_item.drug)  # don't add older prescriptions for same drugs
-          drugs[an_item.drug] = {
-              :p_item => an_item.clone,
-              :date => p.date,
-              :current => p.date && an_item.duration && p.date + an_item.duration >= today
-          }
-        end
-      end
-    end
-    return drugs
-  end
-
-  # Modify the recent_drugs list to show drugs that patient is supposedly taking at present
-  def current_drugs
-    recent = self.recent_drugs(6)                   # list of all drugs in past 6 months
-    recent.delete_if { | key, value | not value[:current] }      # delete non-current drugs
-    return recent
-  end
-
-  # Array of drugs patient is currently taking, each element a simple line of text.
-  # e.g. "Isoniazid (INH) 150 mg po q24 x 30 days."
-  def current_drugs_formatted
-    current = self.current_drugs
-    curr_f = []
-    current.each do | key, c |
-      p = c[:p_item]    # p is now the current prescription_item line for this drug
-      curr_f << "#{key} #{p[:dose].to_s_suppress} #{p[:units]} #{p[:route]} q#{p[:interval]}h x #{p[:duration]} days."
-    end
-    return curr_f
-  end
-
+  # TODO: IT APPEARS THAT THE WHOLE ARV_STATUS STUFF IS OUTDATED, SINCE THERE IS NO LONGER EVEN AN
+  # ARV_STATUS OR ANTI_TB_STATUS FIELD IN VISITS. DOES THE STATUS COME FROM SOMEWHERE ELSE?
+  #
   def arv_begin
     most_recent = self.ptvisits.find(:first,
                                      :conditions => "arv_status = 'B' ",
@@ -156,6 +82,7 @@ class Patient < ActiveRecord::Base
     most_recent = most_recent.date unless most_recent.nil?
   end
 
+  # TODO: Outdated? See above
   def arv_stop
     most_recent = self.ptvisits.find(:first,
                                      :conditions => "arv_status = 'X' ",
@@ -163,12 +90,14 @@ class Patient < ActiveRecord::Base
     most_recent = most_recent.date unless most_recent.nil?
   end
 
+  # TODO: Outdated? See above
   def current_arv_regimen
     last_vis = self.last_visit
     return '' if last_vis.nil?
     return last_vis.arv_reg_str
   end
 
+  # TODO: Outdated? See above
   def current_arv_regimen_began    # return date this regimen began, by whatever means we can find or guess
     visits = self.ptvisits.find(:all, :order => "date DESC") # if this gets to be too slow, could use SQL query to get only the needed columns
     return '' if visits.nil?
@@ -188,6 +117,7 @@ class Patient < ActiveRecord::Base
     return first_date.strftime('%d %b %Y')
   end
 
+  # TODO: Outdated? See above
   def anti_tb_begin
     most_recent = self.ptvisits.find(:first,
                                      :conditions => "anti_tb_status = 'B' ",
@@ -201,6 +131,7 @@ class Patient < ActiveRecord::Base
     most_recent = most_recent.date unless most_recent.nil?
   end
 
+  # TODO: Outdated? See above
   def anti_tb_stop
     most_recent = self.ptvisits.find(:first,
                                      :conditions => "anti_tb_status = 'X' ",
@@ -208,32 +139,39 @@ class Patient < ActiveRecord::Base
     most_recent = most_recent.date unless most_recent.nil?
   end
 
+  # THIS SECTION GETS THE MOST RECENT VALUES OF VARIOUS KINDS FOR A GIVEN PATIENT
+
   # Get that most recent *parameter* from *table*
   #   (*table* is expected to be already filtered for this patient, e.g.
   #    'get_last(self.visits, :weight)')
+  # TODO: make a method of ActiveRecord?
   def get_last(table,parameter)
-    most_recent=table.find(:first, :order => "date DESC",
-                           :conditions => "#{parameter} > ''")
+    condition = ["#{parameter} IS NOT ?", nil]
+    most_recent = table.where(condition).order('date DESC').first
     return nil if most_recent.nil?
     lastvalue = most_recent.send(parameter)
     lastdate = most_recent.date
+    #Todo: this method should not have responsibility of formatting the date
     return {:value => lastvalue, :date_string => lastdate.strftime("%d %b %Y"), :date => lastdate }
   end
 
   # ToDo - Lots of refactoring of this monster method
+  # TODO: Not tested
   def get_latest_parameters()
     # may want to change this to let desired parameters be passed rather than being specified here in the method
     # This could probably be optimized, not having to do separate SQL query for each parameter
     # Should look in the latest visit (see end of this procedure) for height, weight, etc. and
     # only look at other visits (get_last) if they're not recorded in the latest visit.
+
+    # Make hash of the parameters we *want* and where to find them
     latest_parameters = {
-        :cd4 => {:table => self.ptlabs, :label => "Latest CD4", :col => "cd4", :unit => ''},
-        :cd4pct => {:table => self.ptlabs, :label => "Latest CD4%", :col => "cd4pct", :unit => '%'},
-        :hct => {:table => self.ptlabs, :label => "Latest hct", :col => "hct", :unit => '%'},
-        :wt => {:table => self.ptvisits, :label => "Latest weight", :col => "weight", :unit => ' kg'},
-        :ht => {:table => self.ptvisits, :label => "Latest height", :col => "ht", :unit => ' cm'},
-        :meds => {:table => self.ptvisits, :label => "Latest meds", :col => "meds", :unit => ''},
-        :hiv_stage => {:table => self.ptvisits, :label => "HIV stage", :col => "hiv_stage", :unit => ''}
+        :cd4 => {:table => self.labs, :label => "Latest CD4", :col => "cd4", :unit => ''},
+        :cd4pct => {:table => self.labs, :label => "Latest CD4%", :col => "cd4pct", :unit => '%'},
+        :hct => {:table => self.labs, :label => "Latest hct", :col => "hct", :unit => '%'},
+        :weight => {:table => self.visits, :label => "Latest weight", :col => "weight", :unit => ' kg'},
+        :height => {:table => self.visits, :label => "Latest height", :col => "height", :unit => ' cm'},
+        :meds => {:table => self.visits, :label => "Latest meds", :col => "meds", :unit => ''},
+        :hiv_stage => {:table => self.visits, :label => "HIV stage", :col => "hiv_stage", :unit => ''}
     }
     latest_parameters.each_value do | param_hash|
       result = self.get_last(param_hash[:table], param_hash[:col])
@@ -245,9 +183,9 @@ class Patient < ActiveRecord::Base
 
     # Calculate expected weight, ht, wt for height etc.
     sex = self.sex
-    height = latest_parameters[:ht][:value]
-    weight = latest_parameters[:wt][:value]
-    weight_date = latest_parameters[:wt][:date]
+    height = latest_parameters[:height][:value]
+    weight = latest_parameters[:weight][:value]
+    weight_date = latest_parameters[:weight][:date]
     weight_age = self.age_on_date_in_years(weight_date)
     # Strictly speaking, we can't calculate wt_for_ht unless the wt and ht are from the same
     # date, but we'll assume that the latest values are not too far apart.
@@ -289,13 +227,13 @@ class Patient < ActiveRecord::Base
         latest_parameters[:comment_cd4] = {:label => "Note", :value => "patient is due for CD4 check"}
       end
     end
-    latest_visit = 	self.ptvisits.find(:first, :order => "date DESC")
+    latest_visit = 	self.visits.find(:first, :order => "date DESC")
     latest_parameters[:latest_visit] = latest_visit
     return latest_parameters
   end
 
   def last_visit
-    most_recent = self.ptvisits.find(:first,
+    most_recent = self.visits.find(:first,
                                      :order => "date DESC" )
   end
 

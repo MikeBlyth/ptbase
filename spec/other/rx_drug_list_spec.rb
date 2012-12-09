@@ -41,6 +41,20 @@ describe RxDrugList do
 
   end
 
+  describe 'adds array (relation) of prescriptions' do
+
+    it 'adds items in each prescription' do
+      @patient = FactoryGirl.create(:patient)
+      @prescriber = FactoryGirl.create(:prescriber)
+      p1 = FactoryGirl.create(:prescription, patient: @patient, prescriber: @prescriber)
+      2.times {FactoryGirl.create(:prescription_item, prescription: p1) }
+      p2 = FactoryGirl.create(:prescription)
+      2.times {FactoryGirl.create(:prescription_item, prescription: p2) }
+      list.add_prescriptions(Prescription.all)
+      list.count.should eq 4
+    end
+  end
+
   describe 'lists current drugs' do
     it 'includes only drugs when date+duration >= today' do
       old_item.drug = 'old drug'
@@ -61,7 +75,7 @@ describe RxDrugList do
       list.add_item(item)
       itemB = FactoryGirl.create(:prescription_item, drug: 'BBB', :prescription => new_prescription)
       list.add_item(itemB)
-      puts list.formatted
+# puts list.formatted
       list.formatted[0].should eq "#{item.drug} #{item[:dose]} #{item[:units]} #{item[:route]} q#{item[:interval]}h x #{item[:duration]} days."
       list.formatted[1].should eq "#{itemB.drug} #{itemB[:dose]} #{itemB[:units]} #{itemB[:route]} q#{itemB[:interval]}h x #{itemB[:duration]} days."
     end

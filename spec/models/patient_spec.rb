@@ -2,21 +2,17 @@
 #
 # Table name: patients
 #
-#  id                  :integer          not null, primary key
-#  first_name          :string(255)
-#  last_name           :string(255)
-#  other_names         :string(255)
-#  birth_date          :datetime
-#  death_date          :date
-#  birth_date_exact    :boolean
-#  ident               :string(255)
-#  sex                 :string(255)
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  hiv_status          :string(255)
-#  maternal_hiv_status :string(255)
-#  allergies           :string(255)
-#  comments            :text
+#  id               :integer          not null, primary key
+#  first_name       :string(255)
+#  last_name        :string(255)
+#  other_names      :string(255)
+#  birth_date       :datetime
+#  death_date       :date
+#  birth_date_exact :boolean
+#  ident            :string(255)
+#  sex              :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 
 require "spec_helper"
@@ -101,4 +97,48 @@ describe Patient do
 
   end
 
+  # ToDo: Move elsewhere
+  describe 'get_last(table, column)' do
+    before(:each) do
+      @patient = FactoryGirl.create(:patient)
+      # Make an Immunization record for each of last three days
+      [1,2,3].each {|n| FactoryGirl.create(:immunization, patient: @patient, date: Date.today-n.days,
+        bcg: n)}
+    end
+
+    it 'gets value of column in most recent record of table' do
+      @patient.get_last(Immunization, :bcg)[:value].should eq '1'
+    end
+
+    it 'ignores records where column value is nil' do
+      Immunization.where("bcg = '1' ").first.update_attributes(bcg: nil)
+      @patient.get_last(Immunization, :bcg)[:value].should eq '2'
+    end
+  end
+
+  # ToDo: Move elsewhere
+  describe 'get_latest_parameters()' do
+    before(:each) do
+      @recent = Date.today
+      @old = Date.today - 6.months
+      @patient = FactoryGirl.create(:patient)
+      FactoryGirl.create(:health_data, patient: @patient)
+      @recent_labs = FactoryGirl.create(:lab, :lo_cd4, :anemic, patient: @patient, date: @recent)
+      @old_labs = FactoryGirl.create(:lab, :hi_cd4, patient: @patient, date: @old)
+      @recent_visit = FactoryGirl.create(:visit, date: @old, patient: @patient,
+                                         height: 120, weight: 30, meds: "Meds recent", hiv_stage: 3)
+      @old_visit = FactoryGirl.create(:visit, date: @old, patient: @patient,
+                                      height: 119, weight: 35, meds: "Meds old", hiv_stage: 1 )
+    end
+
+    it 'finds new values when all are present' do
+      latest = @patient.get_latest_parameters
+      [:weight, :height, :meds,:hiv_stage].each do |param|
+        latest[param][:value].to_s.should eq @recent_visit.send(param).to_s
+      end
+      [:cd4, :cd4pct, :hct].each do |param|
+        latest[param][:value].to_s.should eq @recent_labs.send(param).to_s
+      end
+    end
+  end
 end

@@ -122,29 +122,5 @@ describe Patient do
   #  end
   #end
   #
-  # ToDo: Move elsewhere
-  describe 'get_latest_parameters()' do
-    before(:each) do
-      @recent = Date.today
-      @old = Date.today - 6.months
-      @patient = FactoryGirl.create(:patient)
-      FactoryGirl.create(:health_data, patient: @patient)
-      @recent_labs = FactoryGirl.create(:lab, :lo_cd4, :anemic, patient: @patient, date: @recent)
-      @old_labs = FactoryGirl.create(:lab, :hi_cd4, patient: @patient, date: @old)
-      @recent_visit = FactoryGirl.create(:visit, date: @old, patient: @patient,
-                                         height: 120, weight: 30, meds: "Meds recent", hiv_stage: 3)
-      @old_visit = FactoryGirl.create(:visit, date: @old, patient: @patient,
-                                      height: 119, weight: 35, meds: "Meds old", hiv_stage: 1 )
-    end
 
-    it 'finds new values when all are present' do
-      latest = @patient.get_latest_parameters
-      [:weight, :height, :meds,:hiv_stage].each do |param|
-        latest[param][:value].to_s.should eq @recent_visit.send(param).to_s
-      end
-      [:cd4, :cd4pct, :hct].each do |param|
-        latest[param][:value].to_s.should eq @recent_labs.send(param).to_s
-      end
-    end
-  end
 end

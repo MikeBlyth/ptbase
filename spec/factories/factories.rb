@@ -160,5 +160,14 @@ FactoryGirl.define do
   factory :visit do
     date '2008-01-01'
     patient
+
+    trait :recent do
+      date {Date.yesterday}
+    end
+
+    trait :old do
+      date '2000-01-01'
+    end
+
   end
 end

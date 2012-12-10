@@ -42,30 +42,34 @@ class LatestParameters < Hash
 
   def add_anthropometrics
     # Calculate expected weight, ht, wt for height etc.
-    weight_date = self[:weight][:date]
+    # Note that expected height will not be accurate unless height date ~ weight date
+    weight_date = self[:weight][:date] || self[:height][:date]
     anthro_inputs = {
         sex: self[:sex],
         height: self[:height][:value],
         weight: self[:weight][:value],
         age: self[:patient].age_on_date_in_years(weight_date)
     }
+
     self[:pct_expected_ht] = {:value => pct_expected_height(anthro_inputs) || '?'}
     self[:pct_expected_wt] = {:value => pct_expected_weight(anthro_inputs) || '?'}
     self[:pct_expected_wt_for_ht] = {:value => pct_expected_weight_for_height(anthro_inputs) || '?'}
+    return self
   end
 
 
     #   Reminders about needed labs
   def add_reminder(params)
-    item = params[:param]
-    return false if item.nil?
-    message = params[:message] || "patient is due for #{item} check"
+    item = params[:item]
+    return self unless item
+    message = set_message(params)
     interval_days = params[:interval_days] || 150
     target = self[item] # The hash, e.g. self[:cd4] -> {:value=> 300, :date => '2009-04-04',... }
     date = target[:date]
-    return false if date.nil? || (DateTime.now - date) > interval_days
-    self["comment_#{item}".to_sym] = {:label => "Note", :value => message}
-    return true
+    unless date.nil? || (DateTime.now - date.to_datetime) < interval_days
+      self["comment_#{item}".to_sym] = {:label => "Note", :value => message}
+    end
+    return self
   end
 
 private
@@ -75,11 +79,23 @@ private
   # TODO: make a method of ActiveRecord?
   def get_last(table,parameter)
     condition = ["#{parameter} IS NOT ?", nil]
+#binding.pry if parameter == 'hct'
     most_recent = table.where('patient_id = ?', self[:patient_id]).where(condition).order('date DESC').first
     return nil if most_recent.nil?
     lastvalue = most_recent.send(parameter)
     lastdate = most_recent.date
     return {:value => lastvalue, :date => lastdate }
+  end
+
+  #
+  def set_message(params)
+    message = params[:message]
+    item = params[:item]
+    if message.nil?
+      return "patient is due for #{item} check"
+    else
+      return message.gsub('$', item.to_s)
+    end
   end
 
 end

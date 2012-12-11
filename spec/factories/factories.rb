@@ -41,10 +41,11 @@ FactoryGirl.define do
   end
 
   factory :immunization do
-    date '2009-04-15'
     patient
-    bcg 'given'
-    opv1 'given'
+    bcg {patient.birth_date.to_date + 2.weeks}
+    opv1 {patient.birth_date.to_date + 2.weeks }
+    dpt1 {patient.birth_date.to_date + 2.weeks  }
+    dpt2 {patient.birth_date.to_date + 6.weeks  }
   end
 
   factory :lab do

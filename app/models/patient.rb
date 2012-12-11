@@ -30,7 +30,7 @@ class Patient < ActiveRecord::Base
   has_many :visits, dependent: :delete_all
   has_many :labs, dependent: :delete_all
   has_many :admissions, dependent: :delete_all
-  has_many :immunizations, dependent: :delete_all
+  has_one :immunization, dependent: :delete
   has_many :prescriptions, dependent: :delete_all
 #  has_many :prescription_items, through: :prescriptions
   has_many :photos, dependent: :delete_all

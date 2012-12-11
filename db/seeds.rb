@@ -31,9 +31,8 @@ HealthData.create(patient: audu, hiv_status: 'P', maternal_hiv_status: 'P' )
 HealthData.create(patient: anderson, hiv_status: '', maternal_hiv_status: '' )
 
 Immunization.delete_all
-Immunization.create(patient: audu, date: audu.birth_date+1.week, hepb1: 'given')
-Immunization.create(patient: audu, date: audu.birth_date+3.months, bcg: 'given', opv1: 'given', dpt2: 'given')
-Immunization.create(patient: audu, date: audu.birth_date+5.months, opv2: 'given', dpt2: 'given')
+birth = audu.birth_date
+Immunization.create(patient: audu, bcg: birth+2.weeks, opv1: birth+6.weeks, opv2: birth+10.weeks, dpt1: birth+6.weeks, dpt2: birth+10.weeks)
 
 Lab.delete_all
 Lab.create(patient: audu, date: audu.birth_date+5.months, hct: 34)
@@ -45,7 +44,7 @@ Provider.delete_all
 hertz = Provider.create(last_name: 'Hertz', first_name: 'Joshua', ident: 'Prov 001')
 
 Prescription.delete_all
-prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months, prescriber: hertz,
+prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months, provider: hertz,
             confirmed: true)
 
 PrescriptionItem.delete_all

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121211132334) do
+ActiveRecord::Schema.define(:version => 20121211152638) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -75,38 +75,36 @@ ActiveRecord::Schema.define(:version => 20121211132334) do
   end
 
   create_table "immunizations", :force => true do |t|
-    t.string   "bcg"
-    t.string   "opv1"
-    t.string   "opv2"
-    t.string   "opv3"
-    t.string   "opv4"
-    t.string   "dpt1"
-    t.string   "dpt2"
-    t.string   "dpt3"
-    t.string   "dpt4"
-    t.string   "tt1"
-    t.string   "tt2"
-    t.string   "tt3"
-    t.string   "tt4"
-    t.string   "hepb1"
-    t.string   "hepb2"
-    t.string   "hepb3"
-    t.string   "hepb4"
-    t.string   "measles1"
-    t.string   "measles2"
-    t.string   "mmr1"
-    t.string   "mmr2"
-    t.string   "hib1"
-    t.string   "hib2"
-    t.string   "hib3"
-    t.string   "hib4"
-    t.string   "mening"
-    t.string   "pneumo"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
     t.integer  "patient_id"
-    t.date     "date"
-    t.integer  "provider_id"
+    t.date     "bcg"
+    t.date     "opv1"
+    t.date     "opv2"
+    t.date     "opv3"
+    t.date     "opv4"
+    t.date     "dpt1"
+    t.date     "dpt2"
+    t.date     "dpt3"
+    t.date     "dpt4"
+    t.date     "tt1"
+    t.date     "tt2"
+    t.date     "tt3"
+    t.date     "tt4"
+    t.date     "hepb1"
+    t.date     "hepb2"
+    t.date     "hepb3"
+    t.date     "hepb4"
+    t.date     "measles1"
+    t.date     "measles2"
+    t.date     "mmr1"
+    t.date     "mmr2"
+    t.date     "hib1"
+    t.date     "hib2"
+    t.date     "hib3"
+    t.date     "hib4"
+    t.date     "mening"
+    t.date     "pneumo"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "labs", :force => true do |t|

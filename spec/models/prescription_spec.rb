@@ -2,17 +2,17 @@
 #
 # Table name: prescriptions
 #
-#  id            :integer          not null, primary key
-#  patient_id    :integer
-#  prescriber_id :integer
-#  date          :datetime
-#  filled        :boolean
-#  confirmed     :boolean
-#  void          :boolean
-#  weight        :float
-#  height        :float
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id          :integer          not null, primary key
+#  patient_id  :integer
+#  provider_id :integer
+#  date        :datetime
+#  filled      :boolean
+#  confirmed   :boolean
+#  void        :boolean
+#  weight      :float
+#  height      :float
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
 #
 
 require "spec_helper"

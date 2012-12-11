@@ -12,11 +12,18 @@
 #
 
 class Provider < ActiveRecord::Base
+  include NamesHelper
   attr_accessible :first_name, :ident, :last_name, :other_names
+
   validates_presence_of :first_name, :last_name
   has_many :visits
   has_many :labs
   has_many :admissions
   has_many :immunizations
   has_many :prescriptions
+
+  def to_s
+    name_id
+  end
+
 end

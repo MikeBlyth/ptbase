@@ -22,9 +22,15 @@
 
 class Admission < ActiveRecord::Base
   include DateValidators
-  attr_accessible :date, :bed, :comments, :diagnosis_1, :diagnosis_2, :discharge_date, :discharge_status, :meds, :ward, :weight_admission, :weight_discharge
+  attr_accessible :patient, :date, :bed, :comments, :diagnosis_1, :diagnosis_2,
+                  :discharge_date, :discharge_status, :meds, :ward, :weight_admission, :weight_discharge
   belongs_to :patient
   belongs_to :provider
   validates_presence_of :date, :diagnosis_1, :patient_id
   validate :not_future
+
+  def to_label
+    date
+  end
+
 end

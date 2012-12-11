@@ -108,6 +108,10 @@ class Visit < ActiveRecord::Base
   #  self.where("arv_status =?", 'X')
   #end
 
+  def to_label
+    date
+  end
+
   private
   def next_visit_future
     errors.add(:next_visit, 'date cannot be in the past') if next_visit && (next_visit < DateTime.now)

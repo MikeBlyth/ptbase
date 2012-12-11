@@ -51,4 +51,9 @@ class Lab < ActiveRecord::Base
   belongs_to :provider
   validates_presence_of :date, :patient_id
   validate :not_future
+
+  def to_label
+    date
+  end
+
 end

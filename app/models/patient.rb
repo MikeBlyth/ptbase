@@ -23,6 +23,8 @@ include Anthropometrics
 
 class Patient < ActiveRecord::Base
   include DateValidators
+  include NamesHelper
+  attr_accessible :first_name, :ident, :last_name, :other_names
 
   has_one  :health_data
   has_many :visits, dependent: :delete_all
@@ -44,27 +46,21 @@ class Patient < ActiveRecord::Base
            to: :health_data
 
 ############ NAME METHODS
-  def name
-    initial = other_names.blank? ? '' : " #{other_names[0]}."
-    return first_name+initial+ ' ' + last_name
+  def to_s
+    name_id
   end
 
-  def name_id
-    return self.name + " [#{self.ident}]"
+  def to_label
+    name_id
   end
 
-  def name_last_first
-    "#{last_name}, #{first_name}"
-  end
-
-  def name_last_first_id
-    return self.name_last_first + " [#{self.ident}]"
-  end
 
   ############### HIV STATUS METHODS
   # ToDo - Clean up this use of single character codes. Should be elsewhere in a constant or something.
 
   # ToDo - move to health_data
+
+
   def arv_begin
     most_recent = self.visits.find(:first,
                                      :conditions => "arv_status = 'B' ",

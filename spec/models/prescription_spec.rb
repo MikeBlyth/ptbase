@@ -29,7 +29,7 @@ describe Prescription do
     it { should validate_presence_of(:date)}
 
     it { should validate_presence_of(:patient_id)}
-    it { should validate_presence_of(:prescriber_id)}
+    it { should validate_presence_of(:provider_id)}
 
     it 'marks future date invalid' do
       prescription.date = Date.tomorrow.to_datetime

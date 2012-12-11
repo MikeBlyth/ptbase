@@ -45,8 +45,8 @@ describe RxDrugList do
 
     it 'adds items in each prescription' do
       @patient = FactoryGirl.create(:patient)
-      @prescriber = FactoryGirl.create(:prescriber)
-      p1 = FactoryGirl.create(:prescription, patient: @patient, prescriber: @prescriber)
+      @provider = FactoryGirl.create(:provider)
+      p1 = FactoryGirl.create(:prescription, patient: @patient, provider: @provider)
       2.times {FactoryGirl.create(:prescription_item, prescription: p1) }
       p2 = FactoryGirl.create(:prescription)
       2.times {FactoryGirl.create(:prescription_item, prescription: p2) }

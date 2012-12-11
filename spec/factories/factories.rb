@@ -94,7 +94,7 @@ FactoryGirl.define do
   factory :prescription do
     patient
     date '2010-05-14'
-    prescriber
+    provider
 
     trait :recent do
       date {Date.yesterday}

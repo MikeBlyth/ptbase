@@ -90,7 +90,7 @@ protected
     valid_range(:eos, eos, 0, 100)
     valid_range(:hct, hct, 0, 80)
     valid_range(:retic, retic, 0, 70)
-    valid_range(:platelets, plts, 0, 1000000)
+    valid_range(:platelets, platelets, 0, 1000000)
     valid_range(:esr, esr, 0, 250)
     valid_range(:blood_glucose, blood_glucose, 0, 1000)
     valid_range(:bili, bili, 0, 100)

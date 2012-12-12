@@ -75,38 +75,36 @@ class Visit < ActiveRecord::Base
   # ToDo - Refactor completely -- probably should have separate ARV model or at least record per visit of
   #   pts use of ARV. I don't think this one will even work as it refers to what looks like
   #   params returned from a form (reg_ ...)
-  #def arv_reg_str
-  #  arvs = [
-  #      ['zidovudine' ,  'ZDV'],
-  #      [ 'stavudine' ,  'd4T (stav)'],
-  #      [ 'lamivudine' ,  '3TC'],
-  #      [ 'didanosine' ,  'ddI'],
-  #      [ 'nevirapine' ,  'NVP'],
-  #      [ 'efavirenz' ,  'EFV'],
-  #      [ 'kaletra' ,  'kaletra']
-  #  ]
-  #  s = ''
-  #  arvs.each do | arv |
-  #    being_used = self.send('reg_'+arv[0])
-  #    s << ', ' + arv[1]  if being_used == 1     # add abbreviation of each arv being used e.g. "zdv, 3tc, nvp"
-  #  end
-  #  return s[2,100]    # trim off the first comma and space
-  #end
+  def arv_reg_str
+    arvs = [
+        ['zidovudine' ,  'ZDV'],
+        [ 'stavudine' ,  'd4T (stav)'],
+        [ 'lamivudine' ,  '3TC'],
+        [ 'didanosine' ,  'ddI'],
+        [ 'nevirapine' ,  'NVP'],
+        [ 'efavirenz' ,  'EFV'],
+        [ 'kaletra' ,  'kaletra']
+    ]
+    s = ''
+    arvs.each do | arv |
+      being_used = self.send('reg_'+arv[0])
+      s << ', ' + arv[1]  if being_used  # add abbreviation of each arv being used e.g. "zdv, 3tc, nvp"
+    end
+    return s[2,100]    # trim off the first comma and space   NB: Gives nil if s was ''
+  end
 
-  ### IT APPEARS THAT THE WHOLE ARV_STATUS STUFF IS OUTDATED, SINCE THERE IS NO LONGER EVEN AN
-  ### ARV_STATUS OR ANTI_TB_STATUS FIELD IN VISITS.
-  #
-  #def self.starting_arv
-  #  self.where("arv_status =?", 'B')
-  #end
-  #
-  #def self.continuing_arv
-  #  self.where("arv_status =?", 'C')
-  #end
-  #
-  #def self.stopping_arv
-  #  self.where("arv_status =?", 'X')
-  #end
+  # ToDo Refactor these, probably don't want to use single character codes, ...
+  def self.starting_arv
+    self.where("arv_status =?", 'B')
+  end
+
+  def self.continuing_arv
+    self.where("arv_status =?", 'C')
+  end
+
+  def self.stopping_arv
+    self.where("arv_status =?", 'X')
+  end
 
   def to_label
     date

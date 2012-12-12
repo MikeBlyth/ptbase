@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121212051045) do
+ActiveRecord::Schema.define(:version => 20121212071856) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -299,6 +299,13 @@ ActiveRecord::Schema.define(:version => 20121212051045) do
     t.string   "hiv_stage"
     t.string   "arv_status"
     t.string   "anti_tb_status"
+    t.boolean  "reg_zidovudine"
+    t.boolean  "reg_stavudine"
+    t.boolean  "reg_lamivudine"
+    t.boolean  "reg_didanosine"
+    t.boolean  "reg_nevirapine"
+    t.boolean  "reg_efavirenz"
+    t.boolean  "reg_kaletra"
   end
 
 end

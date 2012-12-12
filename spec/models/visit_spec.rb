@@ -51,8 +51,6 @@
 #  arv_status              :string(255)
 #  anti_tb_status          :string(255)
 #
-
-
 require "spec_helper"
 
 describe Visit do
@@ -80,6 +78,40 @@ describe Visit do
       visit.weight = 310
       visit.should_not be_valid
       visit.errors[:weight].should_not be_blank
+    end
+  end
+
+  describe 'ARV regimen (arv_reg_str)' do
+
+    it 'generates abbreviated string from checked ARV columns' do
+      visit.reg_zidovudine = true
+      visit.reg_lamivudine = true
+      visit.reg_kaletra = true
+      visit.arv_reg_str.should eq 'ZDV, 3TC, kaletra'
+    end
+
+    it 'returns nil if no ARV columns checked' do
+      visit.arv_reg_str.should be_nil
+    end
+  end
+
+  describe 'Filtering table by status' do
+    before(:each) do
+      @patient = FactoryGirl.create(:patient)
+      @starting = FactoryGirl.create(:visit, arv_status: 'B', patient: @patient)
+      @continuing = FactoryGirl.create(:visit, arv_status: 'C', patient: @patient)
+      @stopping = FactoryGirl.create(:visit, arv_status: 'X', patient: @patient)
+    end
+
+    it 'finds patients who are starting ARVs' do
+      Visit.starting_arv.should eq [@starting]
+    end
+
+    it 'finds patients who are continuing ARVs' do
+      Visit.continuing_arv.should eq [@continuing]
+    end
+    it 'finds patients who are starting ARVs' do
+      Visit.stopping_arv.should eq [@stopping]
     end
   end
 end

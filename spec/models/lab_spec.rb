@@ -47,9 +47,9 @@
 require "spec_helper"
 
 describe Lab do
+  let(:lab) {FactoryGirl.build(:lab)}
 
   describe "Validates record" do
-    let(:lab) {FactoryGirl.build(:lab)}
 
     it "with all required data is valid" do
       lab.should be_valid
@@ -64,6 +64,49 @@ describe Lab do
       lab.should_not be_valid
       lab.errors[:date].should include "cannot be in the future"
     end
+
+    describe 'Checks labs for result in valid range' do
+
+      it 'validates when result is in range' do
+        lab.hct = 30
+        lab.should be_valid
+      end
+
+      it 'adds error when result is out range' do
+        lab.hct = 110
+        lab.should_not be_valid
+        lab.errors.messages[:hct][0].should match 'invalid'
+      end
+
+      it 'does not add error when result is not present' do
+        lab.hct = nil
+        lab.should be_valid
+      end
+
+    end
+
+  end
+
+  describe 'calculated values' do
+    it 'calculates absolute neutrophil count' do
+      lab.wbc = 10000
+      lab.neut = 25 # percent
+      lab.anc.should eq 2500
+    end
+
+    it 'calculates total lymphocyte count' do
+      lab.wbc = 10000
+      lab.lymph = 25 # percent
+      lab.tlc.should eq 2500
+    end
+
+    it 'calculates absolute eosinophil count' do
+      lab.wbc = 10000
+      lab.eos = 25 # percent
+      lab.aec.should eq 2500
+    end
+
+
   end
 
 end

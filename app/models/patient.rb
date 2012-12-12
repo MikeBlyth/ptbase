@@ -58,6 +58,17 @@ class Patient < ActiveRecord::Base
     name_id
   end
 
+  %w(pepfar residence phone caregiver).each do |attr|
+    define_method attr do
+      "*#{attr}*"
+    end
+
+  end
+
+  ## Demographics
+  def died
+    not death_date.nil?
+  end
 
   ############### HIV STATUS METHODS
   # ToDo - Clean up this use of single character codes. Should be elsewhere in a constant or something.

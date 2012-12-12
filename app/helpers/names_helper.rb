@@ -2,7 +2,7 @@ module NamesHelper
 
   def name
     initial = other_names.blank? ? '' : " #{other_names[0]}."
-    return first_name+initial+ ' ' + last_name
+    return (first_name || '') + initial + ' ' + (last_name || '')
   end
 
   def name_id

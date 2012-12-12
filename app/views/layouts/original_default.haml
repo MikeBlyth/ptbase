@@ -1,0 +1,72 @@
+%html
+  %head
+    %title
+      = controller.action_name
+    %link{:href => "/stylesheets/print.css", :media => "print", :rel => "Stylesheet", :type => "text/css"}/
+    %link{:href => "/stylesheets/scaffold.css", :media => "screen", :rel => "Stylesheet", :type => "text/css"}/
+    /
+      <link href="/stylesheets/print.css"  rel="Stylesheet" type="text/css" />
+      <link href="/stylesheets/print.css" media="print" rel="Stylesheet" type="text/css" />
+      <link href="/stylesheets/scaffold.css" media="screen" rel="Stylesheet" type="text/css" />
+      <haml:loud> stylesheet_link_tag 'print' </haml:loud>
+      <haml:loud> stylesheet_link_tag 'scaffold' </haml:loud>
+    = javascript_include_tag "prototype", "effects"
+    %meta{:content => "text/html; charset=iso-8859-1", "http-equiv" => "Content-Type"}
+      %script{:src => "/javascripts/accesskey.js", :type => "text/javascript"}
+      %script{:src => "/javascripts/deathdate.js", :type => "text/javascript"}
+      %script{:src => "/javascripts/myscript.js", :type => "text/javascript"}
+      %script{:src => "/javascripts/formatDateSimple.js", :type => "text/javascript"}
+      :javascript
+          %body
+    #bkgd
+    #Layer5
+      = @content_for_layout
+      %br
+        %hr.footer
+          %p.footer{:align => "center"} All patient information is strictly confidential and for use only by authorised personnel of ECWA Evangel Hospital.
+    #Layer2
+      %h2.banner{:align => "center"}
+        Evangel Hospital Patient Information System &mdash; #{@page_title} Logged in as #{session[:name]}
+    - if flash[:notice]
+      #Layer1
+        %p.flash_notice= flash[:notice]
+    #Layer4
+      - if (not @editing)
+        %form{:action => "/admin/list/", :method => "post"}
+          %p.side_form
+            %label{:accesskey => "F", :for => "findname"} Find name, hospital or pepfar number:
+            %br/
+            %input#findname{:name => "name", :size => "13", :type => "text", :value => ""}/
+          %input.side_form{:name => "commit", :type => "submit", :value => "Find matching"}/
+        %hr/
+        %form{:action => "/admin/show/", :method => "post"}
+          %p.side_form
+            %label{:for => "name"} Hospital ID:
+            %br/
+            %input#x-name{:name => "id", :size => "13", :type => "text", :value => ""}/
+          %input.side_form{:name => "commit", :type => "submit", :value => "Find"}/
+        = render(:partial => "admin/ptlinks", :object => @patient) unless (@patient.nil? || (@patient.last_name || '') == '')
+        %hr
+      - else
+        %p.notice Be sure to press the "Save" button when you have finished entering data.
+      %p= link_to 'List all visits', {:controller => 'visit', :action => "listall"}, :class => "side_form"
+      %p= link_to 'Now on admission', {:controller => 'admission', :action => "list_on_adm"}, :class => "side_form"
+      %p= link_to 'Edit on admission', {:controller => 'admission', :action => "edit_on_adm"}, :class => "side_form"
+      %p= link_to 'List all admissions', {:controller => 'admission', :action => "listall"}, :class => "side_form"
+      %p
+        = link_to 'Add New PATIENT', {:controller => "admin", :action => 'new'}, :class => "side_form"
+      %p= link_to 'Drug list', {:controller => 'pharm', :action => :list}, :class => "side_form"
+      %p= link_to 'Reports', {:controller => 'admin', :action => :report}, :class => "side_form"
+      - if logged_user
+        %p
+          = link_to 'Logout', {:controller => 'login', :action => 'logout'}, :class => "side_form"
+          %br/
+          = link_to 'Change password', {:controller => 'login', :action => :new_password},         |
+            {:class => "side_form", :onmouseover => "return escape('Change your own password')"  } |
+      - if authorized_as_admin
+        %p>
+          = link_to 'Users', {:controller => 'login', :action => 'list_users'}, {:class => "side_form", :onmouseover => "return escape('Manage users, privileges, etc.')"  }
+        \&nbsp;
+    #top_nav
+      = button_to 'New lab request', {:controller => 'lab_request', :action => 'new', :id => @patient.id}, :style => 'font-size: 9px;'  unless @patient.nil?
+    %script{:language => "JavaScript", :src => "/javascripts/wz_tooltip.js", :type => "text/javascript"}

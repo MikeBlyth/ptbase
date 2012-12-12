@@ -1,0 +1,52 @@
+- @patient = @record
+- id = @patient.id
+- died = (@patient.died == true) || (@patient.died == 1)
+%h2
+  Main Info Page for #{@patient.name_id} {#{@patient.send("pepfar")}}
+%fieldset.fs
+  %legend Demographics
+  %table
+    %tr{:valign => "top"}
+      %td{:style => "padding-right: 12px"}
+        %table{:align => "left"}
+          %tr
+            %td.item_h Birthdate:
+            %td= @patient.birth_date
+          %tr
+            %td.item_h Sex:
+            %td= @patient.sex
+      %td
+        %table{:align => "left"}
+          %tr
+            %td.item_h{:cellpadding => "2"} Residence:
+            %td= @patient.residence
+          %tr
+            %td.item_h Phone2:
+            %td= @patient.phone
+          %tr
+            %td.item_h Caregiver:
+            %td= @patient.caregiver
+          %tr
+            %td.item_h{:valign => "top"} Status:
+            %td
+              - if not died
+                alive (or no information on death)
+              - else
+                died on #{date_f @patient.death_date}
+            %tr
+        %td
+        - if @photo
+          %td
+            %img{:hspace => "10", :src => url_for(:action => "picture", :id => @photo), :width => "150"}/
+            %br
+              %p.photo_caption= @photo.date.strftime('%d %B %Y')
+  %br{:clear => "all"}/
+-#= render(:partial => 'shared/medinfo', :object => @patient )
+-#= render(:partial => 'shared/contact_list', :object => @patient )
+-#= render(:partial => 'shared/problem_list', :object => @patient )
+%br
+  \&nbsp;
+= link_to 'Edit', {:action => 'edit', :id => @patient}
+-#= link_to 'Next PEPFAR', {:action => 'show_next', :id => @patient}
+- if true || authorized_as_admin
+  = link_to "Delete this patient from database", { :action => "destroy", :id => id} , :confirm => 'Are you sure?'

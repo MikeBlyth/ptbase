@@ -41,6 +41,8 @@ GEM
       rake
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
+    bootstrap-sass (2.2.1.1)
+      sass (~> 3.2)
     bourne (1.1.2)
       mocha (= 0.10.5)
     builder (3.0.4)
@@ -62,7 +64,6 @@ GEM
       execjs
     coffee-script-source (1.4.0)
     columnize (0.3.6)
-    commonjs (0.2.6)
     daemons (1.1.9)
     database_cleaner (0.9.1)
     debugger (1.1.4)
@@ -117,13 +118,6 @@ GEM
     json (1.7.5)
     launchy (2.1.2)
       addressable (~> 2.3)
-    less (2.2.2)
-      commonjs (~> 0.2.6)
-    less-rails (2.2.6)
-      actionpack (>= 3.1)
-      less (~> 2.2.0)
-    less-rails-bootstrap (2.2.0)
-      less-rails (~> 2.2.0)
     libnotify (0.8.0)
       ffi (>= 1.0.11)
     libv8 (3.3.10.4)
@@ -257,6 +251,7 @@ PLATFORMS
 DEPENDENCIES
   active_scaffold!
   annotate
+  bootstrap-sass
   capybara
   coffee-rails (~> 3.2.1)
   database_cleaner
@@ -273,7 +268,6 @@ DEPENDENCIES
   hpricot
   jquery-rails
   launchy
-  less-rails-bootstrap
   libnotify
   multi_json
   pg

@@ -147,6 +147,21 @@ FactoryGirl.define do
     comments 'Comment on photo'
   end
 
+  factory :problem do
+    patient
+    date '2010-1-1'
+    description 'malaria'
+
+    trait :resolved do
+      resolved '2010-1-4'
+    end
+
+    trait :chronic do
+      resolved nil
+      description 'juvenile rheumatoid arthritis'
+    end
+  end
+
   factory :provider, aliases: [:prescriber] do
     last_name 'Hertz'
     first_name 'Joshua'

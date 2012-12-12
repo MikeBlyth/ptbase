@@ -2,39 +2,37 @@
 #
 # Table name: immunizations
 #
-#  id          :integer          not null, primary key
-#  bcg         :string(255)
-#  opv1        :string(255)
-#  opv2        :string(255)
-#  opv3        :string(255)
-#  opv4        :string(255)
-#  dpt1        :string(255)
-#  dpt2        :string(255)
-#  dpt3        :string(255)
-#  dpt4        :string(255)
-#  tt1         :string(255)
-#  tt2         :string(255)
-#  tt3         :string(255)
-#  tt4         :string(255)
-#  hepb1       :string(255)
-#  hepb2       :string(255)
-#  hepb3       :string(255)
-#  hepb4       :string(255)
-#  measles1    :string(255)
-#  measles2    :string(255)
-#  mmr1        :string(255)
-#  mmr2        :string(255)
-#  hib1        :string(255)
-#  hib2        :string(255)
-#  hib3        :string(255)
-#  hib4        :string(255)
-#  mening      :string(255)
-#  pneumo      :string(255)
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  patient_id  :integer
-#  date        :date
-#  provider_id :integer
+#  id         :integer          not null, primary key
+#  patient_id :integer
+#  bcg        :date
+#  opv1       :date
+#  opv2       :date
+#  opv3       :date
+#  opv4       :date
+#  dpt1       :date
+#  dpt2       :date
+#  dpt3       :date
+#  dpt4       :date
+#  tt1        :date
+#  tt2        :date
+#  tt3        :date
+#  tt4        :date
+#  hepb1      :date
+#  hepb2      :date
+#  hepb3      :date
+#  hepb4      :date
+#  measles1   :date
+#  measles2   :date
+#  mmr1       :date
+#  mmr2       :date
+#  hib1       :date
+#  hib2       :date
+#  hib3       :date
+#  hib4       :date
+#  mening     :date
+#  pneumo     :date
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 
 # NB This model is not used yet and it's not clear how it should be organized!

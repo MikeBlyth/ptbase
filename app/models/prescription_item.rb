@@ -45,10 +45,18 @@ class PrescriptionItem < ActiveRecord::Base
   attr_accessible :dose, :drug, :duration, :filled, :interval, :liquid, :prescription, :prescription_id,
                   :other_description, :other_instructions, :route, :units, :use_liquid
   belongs_to :prescription
-  validates_presence_of :drug, :prescription_id
+  validates_presence_of :drug, :prescription_id, :interval, :duration
+  validate :valid_interval
   delegate :date, :patient, :confirmed, :void, :filled, to: :prescription
 
   def current?
     date + duration.days >= Date.today
   end
+
+  def valid_interval
+    unless [0,1,2,3,4,6,8,12,18,24,36,48].include?(interval)
+      errors.add(:interval,"Dosing interval of #{interval} hours is not allowed")
+    end
+  end
+
 end

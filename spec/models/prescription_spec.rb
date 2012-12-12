@@ -57,12 +57,14 @@ describe Prescription do
     before(:each) do
     @prescription = FactoryGirl.create(:prescription)
     @item_1 = FactoryGirl.create(:prescription_item, prescription: @prescription, drug: 'phenobarbitone')
+    irrelevant = FactoryGirl.create(:prescription_item, prescription: @prescription, drug: 'ice cream')
     @item_2 = FactoryGirl.create(:prescription_item, prescription: @prescription, drug: 'kaletra')
     end
 
     context 'when interacting drugs are both present' do
       before(:each) do
-        @matching = @prescription.interaction_warning([@item_1.drug], [@item_2.drug])
+        @matching = @prescription.interaction_warning(['something', @item_1.drug,'other'],
+                                                      ['aspirin', @item_2.drug, 'honey'])
         @nominal_warning = "Potential drug interaction: #{@item_1.drug}, #{@item_2.drug}."
       end
 

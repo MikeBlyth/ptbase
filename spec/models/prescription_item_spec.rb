@@ -34,6 +34,24 @@ describe PrescriptionItem do
 
     it { should validate_presence_of(:prescription_id)}
 
+    it { should validate_presence_of(:interval)}
+
+    it { should validate_presence_of(:duration)}
+
+    it 'accepts valid dosing interval' do
+      [0,1,2,3,4,6,8,12,18,24,36,48].each do |interval|
+        prescription_item.interval = interval
+        prescription_item.should be_valid
+      end
+    end
+
+    it 'rejects invalid dosing interval' do
+      [5,7,9].each do |interval|
+        prescription_item.interval = interval
+        prescription_item.should_not be_valid
+      end
+    end
+
   end
 
   describe 'current marks an item that should still be taken' do

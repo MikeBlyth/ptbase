@@ -41,6 +41,19 @@ describe Admission do
       admission.errors[:date].should include "cannot be in the future"
     end
 
+    it 'marks future discharge date invalid' do
+      admission.discharge_date = Date.tomorrow.to_datetime
+      admission.should_not be_valid
+      admission.errors[:discharge_date].should include "cannot be in the future"
+    end
+
+    it 'marks invalid if discharge date is before admission date' do
+      admission.date = '2000-01-02'
+      admission.discharge_date = '2000-01-01'
+      admission.should_not be_valid
+      admission.errors[:discharge_date].should include "cannot be earlier than admission date"
+    end
+
   end
 
 end

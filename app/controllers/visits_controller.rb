@@ -4,4 +4,5 @@ class VisitsController < ApplicationController
   active_scaffold :visit do |config|
     config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm
   end
+
 end

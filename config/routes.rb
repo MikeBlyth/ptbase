@@ -1,5 +1,7 @@
 Ptbase::Application.routes.draw do
 
+  resources :icd9s do as_routes end
+
   resources :problems do as_routes end
 
   resources :health_data do as_routes end

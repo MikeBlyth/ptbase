@@ -30,6 +30,11 @@ HealthData.delete_all
 HealthData.create(patient: audu, hiv_status: 'P', maternal_hiv_status: 'P' )
 HealthData.create(patient: anderson, hiv_status: '', maternal_hiv_status: '' )
 
+Icd9.delete_all
+Icd9.create(icd9: '011', description: 'pulmonary tuberculosis')
+Icd9.create(icd9: '084', description: 'malaria')
+Icd9.create(icd9: '042', description: 'HIV')
+
 Immunization.delete_all
 birth = audu.birth_date
 Immunization.create(patient: audu, bcg: birth+2.weeks, opv1: birth+6.weeks, opv2: birth+10.weeks, dpt1: birth+6.weeks, dpt2: birth+10.weeks)
@@ -49,6 +54,9 @@ prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months
 
 PrescriptionItem.delete_all
 PrescriptionItem.create(prescription: prescription, drug: 'ampicillin', dose: '250 mg', units: 'tab', route: 'po', interval: 6, duration: 6)
+
+Problem.delete_all
+Problem.create(patient: audu, date: '2010-01-01', description: 'malaria', resolved: '2010-01-05')
 
 User.delete_all
 User.create(email: 'admin@example.com', password: 'appendix', username: 'admin', name: 'Administrator')

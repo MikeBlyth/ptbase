@@ -40,6 +40,11 @@ FactoryGirl.define do
 
   end
 
+  factory :icd9 do
+    sequence(:icd9) {|n| n.to_s}
+    sequence(:description) {|n| "disease #{n}"}
+  end
+
   factory :immunization do
     patient
     bcg {patient.birth_date.to_date + 2.weeks}

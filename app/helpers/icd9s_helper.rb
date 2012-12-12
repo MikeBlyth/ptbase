@@ -1,0 +1,2 @@
+module Icd9sHelper
+end

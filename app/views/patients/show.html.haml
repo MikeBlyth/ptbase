@@ -41,7 +41,7 @@
             %br
               %p.photo_caption= @photo.date.strftime('%d %B %Y')
   %br{:clear => "all"}/
--#= render(:partial => 'shared/medinfo', :object => @patient )
+= render(:partial => 'shared/medinfo', :object => @patient )
 -#= render(:partial => 'shared/contact_list', :object => @patient )
 -#= render(:partial => 'shared/problem_list', :object => @patient )
 %br

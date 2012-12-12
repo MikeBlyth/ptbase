@@ -1,0 +1,75 @@
+%fieldset{:onclick => "return true; Element.toggle('med_info_table', 'hide_msg','show_msg')"}
+  %legend
+    Medical info (click to
+    %span#hide_msg hide
+    = succeed ")" do
+      %span#show_msg{:style => "display: none"} show
+  #med_info_table
+    = start_form_tag (:action => :edit_attn )
+    = end_form_tag
+    = form_remote_tag (:update => "attn", :url => { :action => :edit_attn } )
+    = text_field('patient', 'comments')
+    = hidden_field(:patient, :id)
+    = submit_tag "Change w Ajax"
+    = end_form_tag
+    %table
+      %tr{:onclick => "alert('note'); event.cancelBubble=true"}
+        %td.med_info_label Attention:
+        <td id='attn' #{"class='attention'" if ! @patient.comments.blank?} > #{@patient.comments}
+      - if medinfo.allergies?
+        %tr
+          %td.med_info_label Allergies:
+          %td.attention= medinfo.send("allergies")
+      - if medinfo.hb != '?'
+        %tr
+          %td.med_info_label Hb type:
+          %td= medinfo.send("hb")
+      - if medinfo.rv != 'Q' && medinfo.maternal_hiv != 'Q'
+        %tr
+          %td.med_info_label HIV status:
+          %td.med_info_text
+            = medinfo.hiv_status_word
+            - if medinfo.hiv_pos_mother
+              (Mother HIV positive)
+      - if not medinfo.died == 1
+        - latest_parameters = medinfo.get_latest_parameters()
+        - # report the latest values of each of the parameters listed in the following array:
+        - for param in [:wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4] do
+        - next unless latest_parameters.has_key?(param)    # don't try looking for non-existant lines or you'll crash
+        - if latest_parameters[param][:value].to_s != ''
+        %tr
+          %td.med_info_label
+            = latest_parameters[param][:label]
+            \:
+          <td
+          - if latest_parameters[param][:label] == 'Note'
+            "class='attention'" >
+          - else
+            "class='med_info_text'" >
+          = latest_parameters[param][:value]
+          = latest_parameters[param][:unit]
+          - if  latest_parameters[param].has_key?(:date)
+            on #{latest_parameters[param][:date_string]}
+          = latest_parameters[param][:comments]
+        - end
+        - end  # if not patient died
+        - end
+    = render(:partial => '/current_drugs')
+    - arv_b = medinfo.arv_begin
+    - arv_e = medinfo.arv_stop
+    %p.med_info_text
+      - if arv_b
+        Began ARV #{arv_b.strftime('%d %b %Y')}
+        - if arv_e
+          , stopped #{arv_e.strftime('%d %b %Y')}
+        \.
+      - anti_tb_b = medinfo.anti_tb_begin
+      - anti_tb_e = medinfo.anti_tb_stop
+      - if anti_tb_b
+        Began anti-TB #{anti_tb_b.strftime('%d %b %Y')}
+        - if anti_tb_e
+          , stopped #{anti_tb_e.strftime('%d %b %Y')}
+        \.
+= form_remote_tag (:update => "attn", :url => { :action => :edit_attn } )
+:javascript
+  //:onclick => " event.cancelBubble=true" 

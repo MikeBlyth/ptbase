@@ -1,0 +1,2 @@
+module LabRequestsHelper
+end

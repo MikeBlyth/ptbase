@@ -26,18 +26,21 @@ class Patient < ActiveRecord::Base
   include NamesHelper
   attr_accessible :first_name, :ident, :last_name, :other_names
 
-  has_one  :health_data
-  has_many :visits, dependent: :delete_all
+  has_one  :health_data, dependent: :delete
+  has_many :visits
   has_many :labs, dependent: :delete_all
+  has_many :lab_requests
   has_many :problems, dependent: :delete_all
-  has_many :admissions, dependent: :delete_all
+  has_many :admissions
   has_one :immunization, dependent: :delete
-  has_many :prescriptions, dependent: :delete_all
+  has_many :prescriptions
 #  has_many :prescription_items, through: :prescriptions
   has_many :photos, dependent: :delete_all
-  has_many :visits, dependent: :delete_all
+  has_many :visits
+
   attr_accessible :birth_date, :birth_date_exact, :death_date, :first_name, :ident, :last_name, :other_names,
                   :sex
+
   validates_presence_of :last_name, :ident, :birth_date
   validates_uniqueness_of :ident
   validate :valid_birth_date

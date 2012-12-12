@@ -50,6 +50,13 @@
 #  hiv_stage               :string(255)
 #  arv_status              :string(255)
 #  anti_tb_status          :string(255)
+#  reg_zidovudine          :boolean
+#  reg_stavudine           :boolean
+#  reg_lamivudine          :boolean
+#  reg_didanosine          :boolean
+#  reg_nevirapine          :boolean
+#  reg_efavirenz           :boolean
+#  reg_kaletra             :boolean
 #
 
 # ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.
@@ -94,6 +101,15 @@ class Visit < ActiveRecord::Base
   end
 
   # ToDo Refactor these, probably don't want to use single character codes, ...
+  # ARV and Anti-TB Status Codes
+  # 0 (zero) = not on
+  # P = preparing, planning
+  # B = begin
+  # C = continue
+  # X = Stop
+  # V = change
+
+
   def self.starting_arv
     self.where("arv_status =?", 'B')
   end

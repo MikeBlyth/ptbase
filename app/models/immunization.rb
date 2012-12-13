@@ -73,7 +73,16 @@ class Immunization < ActiveRecord::Base
     return assess_status(imm_summary)
   end
 
-protected
+  def self.hib_needed(patient)
+    # Using class method because the patient may not have an immunization record
+    max_age = 5
+    return false if patient.age_years > max_age
+    hib_summary = Immunization.find_or_create_by_patient_id(patient.id).summary['hib']
+    date_for_next = hib_summary[:next]
+    return date_for_next.any? && date_for_next <= Date.today
+  end
+
+  protected
   def validate
     birth = self.patient.birth
     columns = []

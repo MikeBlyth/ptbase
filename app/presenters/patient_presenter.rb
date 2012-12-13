@@ -59,5 +59,63 @@ class PatientPresenter
       result.html_safe!
     end
   end
+
+  def show_latest_parameters(items=nil)
+    latest = @patient.get_latest_parameters(items)
+    result = ''
+    # report the latest values of each of the parameters listed in the following array:
+    items.each do |item|
+      item_hash = latest[item]
+      unless item_hash.nil? || item_hash[value].to_s.blank?
+        %tr
+        %td.med_info_label
+        label = item_hash[:label]
+        value = item_hash[:value]
+        css_class = (label == 'Note') ? 'attention' : 'med_info_text'
+        date = item_hash[:date]
+        date_string = date.blank? ? '' : " on #{item_hash[:date]}"
+        result << <<-ITEM_ROW
+        <tr>
+          <td class='med_info_label'>#{label}:</td>
+          <td class='#{css_class}'>#{value}#{date_string} #{latest[:comments]}</td>
+        </tr>
+        ITEM_ROW
+        result.html_safe!
+      end
+    end
+  end
+
+  def immunization_alerts
+    # Flag as Hib needed in children under 5 years old with NO immunization record yet or if the record says the imm is needed
+    if Immunization.hib_needed(@patient)
+        "<tr><td class='med_info_label'>Note:</td><td class='attention'>Hib immunization needed</td></tr>".html_safe
+    end
+  end
+
+  def anthropometric_summary
+    latest = @patient.latest_parameters
+    height, wt_pct, ht_pct, wt_for_ht_pct =
+       [:height, :pct_expected_wt, :pct_expected_ht, :pct_expected_wt_for_ht].map {|item| latest[item][:value] }
+    <<-ANTHRO
+      <p class='anthro_summ'>Weight is #{wt_pct}% of expected for age.
+      Height (#{height} cm) is #{ht_pct}% of expected for age.
+      Weight is #{wt_for_ht_pct}% of expected for height.
+      </p>
+  ANTHRO
+  end
+
+  def begin_stop_course(params)
+    course = params[:course]
+    label = params[:label]
+    began = @patient.send "#{course}_begin"
+    ended = @patient.send "#{course}_stop"
+    return nil unless began || ended
+    began_str = began ? "Began #{label} #{began}" : "Began #{label} -- when?"
+    end_str = ended ? ", stopped #{ended}." : '.'
+    "#{began_str}#{end_str}".html_safe
+  end
+
+private
+
 end
 

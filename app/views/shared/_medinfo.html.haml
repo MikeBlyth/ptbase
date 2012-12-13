@@ -1,77 +1,33 @@
 
 - present @patient do |pt_presenter|
 
-%fieldset
-  %legend Current medical info (click to hide/show)
-  #med_info_table
-    #growth_chart.span4
+%legend Current medical info (click to hide/show)
+#med_info_table
+  #med_info_1.row-fluid
+    #growth_chart.span3
       pt_presenter.growth_chart
-    %table
-      %tr
-        %td.med_info_label Age today:
-        %td
-          = @patient.age_human
-        %tr
-          %td.med_info_label Attention:
-          %td= pt_presenter.comments
-        = pt_presenter.allergies
-        = pt_presenter.hemoglobin_type
-        = pt_presenter.hiv_status
-        - latest_parameters = medinfo.get_latest_parameters()
-        - if medinfo.alive
-          - # report the latest values of each of the parameters listed in the following array:
-          - for param in [:hiv_stage, :wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4] do
-          - next unless latest_parameters.has_key?(param)    # don't try looking for non-existant lines or you'll crash
-          - if latest_parameters[param][:value].to_s != ''
-          %tr
-            %td.med_info_label
-              = latest_parameters[param][:label]
-              \:
-            <td
-            - if latest_parameters[param][:label] == 'Note'
-              "class='attention'" >
-            - else
-              "class='med_info_text'" >
-            = latest_parameters[param][:value]
-            = latest_parameters[param][:unit]
-            - if  latest_parameters[param].has_key?(:date)
-              on #{date_f(latest_parameters[param][:date])}
-            = latest_parameters[param][:comments]
-          - end
-          - end  # if not patient died
-          - end
-          - # Flag as Hib needed in children under 5 years old with NO immunization record yet or if the record says the imm is needed
-          - if  @patient.age_in_years < 5 && (@patient.immunization.nil?  ||
-          - (@patient.immunization.summary['hib'][:next] != '' && (@patient.immunization.summary['hib'][:next]).to_date <= DateTime.now))
-            %tr
-              %td.med_info_label Note:
-              %td.attention Hib immunization needed
-    Weight is #{latest_parameters[:pct_expected_wt][:value]}% of expected for age.
-    Height (#{latest_parameters[:ht][:value]} cm) is #{latest_parameters[:pct_expected_ht][:value]}% of expected for age.
-    Weight is #{latest_parameters[:pct_expected_wt_for_ht][:value]}% of expected for height.
-    %br{:clear => "all"}
+    #info_table.span4
       %table
-        %tr{:valign => "top"}
+        %tr
+          %td.med_info_label Age today:
           %td
-            = render(:partial => '/current_drugs')
-            - arv_b = medinfo.arv_begin
-            - arv_e = medinfo.arv_stop
-            %p.med_info_text
-              - if arv_b
-                Began ARV #{arv_b.strftime('%d %b %Y')}
-                - if arv_e
-                  , stopped #{arv_e.strftime('%d %b %Y')}
-                \.
-                %br
-                  \&nbsp;Current regimen: #{medinfo.current_arv_regimen}.
-              - anti_tb_b = medinfo.anti_tb_begin
-              - anti_tb_e = medinfo.anti_tb_stop
-              - if anti_tb_b
-                Began anti-TB #{anti_tb_b.strftime('%d %b %Y')}
-                - if anti_tb_e
-                  , stopped #{anti_tb_e.strftime('%d %b %Y')}
-                \.
-          %td{:style => "padding-left: 12px", :width => "50%"}
-            %span.med_info_label Latest visit:
-            - @visit_summary = latest_parameters[:latest_visit]
-            = render(:partial => '/visit/visit_summary', :object => @visit_summary)
+            = @patient.age_human
+          %tr
+            %td.med_info_label Attention:
+            %td= pt_presenter.comments
+          = pt_presenter.allergies
+          = pt_presenter.hemoglobin_type
+          = pt_presenter.hiv_status
+          = pt_presenter.show_latest_parameters([:hiv_stage, :wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4])
+          = pt_presenter.immunization_alerts
+      = pt_presenter.anthropometric_summary
+  #med_info_2.row-fluid
+    #current_meds.span3
+      = render(:partial => '/prescriptions/current_drugs', :object => @patient.current_drugs)
+      %p.med_info_text
+        = pt_presenter.begin_stop_course(course: :arv, label: 'ARVs')
+        = pt_presenter.begin_stop_course(course: :anti_tb, label: 'anti-TB regimen')
+    #last_visit.span4
+      %span.med_info_label Latest visit:
+      - @visit_summary = latest_parameters[:latest_visit]
+      = render(:partial => '/visits/visit_summary', :object => @visit_summary)

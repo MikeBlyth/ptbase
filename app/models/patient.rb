@@ -148,18 +148,22 @@ class Patient < ActiveRecord::Base
 
   # THIS SECTION GETS THE MOST RECENT VALUES OF VARIOUS KINDS FOR A GIVEN PATIENT
 
-  def get_latest_parameters()
-    latest_parameters = LatestParameters.new(self).load_from_tables
+  def latest_parameters
+    @latest_parameters || update_latest_parameters
+  end
 
-    latest_parameters.add_anthropometrics
+  def update_latest_parameters(selected=nil)
+    @latest_parameters = LatestParameters.new(self).load_from_tables
+
+    @latest_parameters.add_anthropometrics
 
     #   Reminders about needed labs
     if self.hiv?
-      latest_parameters.add_reminder(param: :hct)
-      latest_parameters.add_reminder(param: :cd4)
+      @latest_parameters.add_reminder(param: :hct)
+      @latest_parameters.add_reminder(param: :cd4)
     end
 
-    return latest_parameters
+    return @latest_parameters
   end
 
   def next_appt

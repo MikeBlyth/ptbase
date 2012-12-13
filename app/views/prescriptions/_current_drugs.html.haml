@@ -1,0 +1,8 @@
+- if not current_drugs.empty?
+  .current_drug
+    %h4
+      Currently (#{today}) taking these drugs (as known to this system)
+    %p
+      - current_drugs.each do | drg |
+        = drg
+        %br

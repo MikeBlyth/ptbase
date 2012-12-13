@@ -4,13 +4,15 @@ class LatestParameters < Hash
   attr_accessor :from_tables
 
   DEFAULT_PARAMS =  {
-      :cd4 => {:table => Lab, :label => "Latest CD4", :col => "cd4", :unit => ''},
+      :cd4 => {:table => Lab, :label => "Latest CD4", :col => "cd4"},
       :cd4pct => {:table => Lab, :label => "Latest CD4%", :col => "cd4pct", :unit => '%'},
+      :comment_cd4 => {:table => Lab, :label => "CD4 comment", :col => "comment_cd4"},
+      :comment_hct => {:table => Lab, :label => "Hct comment", :col => "comment_hct"},
       :hct => {:table => Lab, :label => "Latest hct", :col => "hct", :unit => '%'},
       :weight => {:table => Visit, :label => "Latest weight", :col => "weight", :unit => ' kg'},
       :height => {:table => Visit, :label => "Latest height", :col => "height", :unit => ' cm'},
-      :meds => {:table => Visit, :label => "Latest meds", :col => "meds", :unit => ''},
-      :hiv_stage => {:table => Visit, :label => "HIV stage", :col => "hiv_stage", :unit => ''}
+      :meds => {:table => Visit, :label => "Latest meds", :col => "meds"},
+      :hiv_stage => {:table => Visit, :label => "HIV stage", :col => "hiv_stage"}
   }
 
   def initialize(patient)
@@ -26,7 +28,8 @@ class LatestParameters < Hash
   # Should look in the latest visit (see end of this procedure) for height, weight, etc. and
   # only look at other visits (get_last) if they're not recorded in the latest visit.
 
-  def load_from_tables
+  def load_from_tables(items=nil)
+    items ||= DEFAULT_PARAMS[keys] # use just a subset of possible items, or all if no subset (items) given
     # Make hash of the parameters we *want* and where to find them
     @from_tables.each do |param, param_hash|
       self[param] = {label: param_hash[:label], col: param_hash[:col], unit: param_hash[:unit]}

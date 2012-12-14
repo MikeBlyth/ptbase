@@ -141,8 +141,8 @@ describe LatestParameters do
       latest[:hct][:value].should_not be_nil
       latest.add_reminder(item: :hct)
       latest.add_reminder(item: :cd4)
-      latest[:comment_hct].should be_nil
-      latest[:comment_cd4].should be_nil
+      latest[:comment_hct][:value].should be_nil
+      latest[:comment_cd4][:value].should be_nil
     end
 
     it 'uses custom message when given' do

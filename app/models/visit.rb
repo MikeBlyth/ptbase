@@ -57,6 +57,11 @@
 #  reg_nevirapine          :boolean
 #  reg_efavirenz           :boolean
 #  reg_kaletra             :boolean
+#  hpi                     :text
+#  temperature             :float
+#  development             :text
+#  assessment              :text
+#  plan                    :text
 #
 
 # ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.

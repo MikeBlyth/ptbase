@@ -57,6 +57,11 @@
 #  reg_nevirapine          :boolean
 #  reg_efavirenz           :boolean
 #  reg_kaletra             :boolean
+#  hpi                     :text
+#  temperature             :float
+#  development             :text
+#  assessment              :text
+#  plan                    :text
 #
 
 # == Schema Information

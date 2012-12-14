@@ -12,14 +12,14 @@
           %td.med_info_label Age today:
           %td
             = @patient.age_human
-          %tr
-            %td.med_info_label Attention:
-            %td= pt_presenter.comments
-          = pt_presenter.allergies
-          = pt_presenter.hemoglobin_type
-          = pt_presenter.hiv_status
-          = pt_presenter.show_latest_parameters([:hiv_stage, :wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4])
-          = pt_presenter.immunization_alerts
+        %tr
+          %td.med_info_label Attention:
+          %td= pt_presenter.comments
+        = pt_presenter.allergies
+        = pt_presenter.hemoglobin_type
+        = pt_presenter.hiv_status
+        = pt_presenter.show_latest_parameters([:hiv_stage, :wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4])
+        = pt_presenter.immunization_alerts
       = pt_presenter.anthropometric_summary
   #med_info_2.row-fluid
     #current_meds.span3

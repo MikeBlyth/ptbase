@@ -42,6 +42,8 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  provider_id   :integer
+#  comment_hct   :string(255)
+#  comment_cd4   :string(255)
 #
 
 class Lab < ActiveRecord::Base

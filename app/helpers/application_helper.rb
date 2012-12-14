@@ -35,10 +35,13 @@ module ApplicationHelper
   # shown in other views such as the patient summary view. I don't see another way to refer to them
   # yet other than putting them here in the application helper.
   # Constants used in show_pe_findings -- eventually move the column list to a constant, too
-  VARBASE = 'pe_'
-  VSIZE = VARBASE.size
-  SUFFIX = '_ok'
-  SSIZE = SUFFIX.size
+  suppress_warnings do
+    VARBASE = 'pe_'
+    VSIZE = VARBASE.size
+    SUFFIX = '_ok'
+    SSIZE = SUFFIX.size
+  end
+
 
   def show_pe_findings(model)
     columns = Ptvisit.content_columns

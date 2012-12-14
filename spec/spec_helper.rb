@@ -41,6 +41,9 @@ puts "PREFORK"
     config.after(:each) do
       DatabaseCleaner.clean
     end
+
+    # Following line doesn't seem to work. See comments in Railscast 287.
+    # config.include ActionView::TestCase::Behavior, example: {file_path: %r{spec/presenters}}  # See RailsCast 287. This makes view available as local variable
   end
 
 end

@@ -47,6 +47,7 @@ class Patient < ActiveRecord::Base
 
   delegate "hiv_status", "maternal_hiv_status", "allergies", "comments",
            'hiv?', 'hiv_status_word', 'hiv_pos_mother', 'current_drugs', 'current_drugs_formatted',
+           'hemoglobin_type',
            to: :health_data
 
 ############ NAME METHODS
@@ -148,7 +149,7 @@ class Patient < ActiveRecord::Base
 
   # THIS SECTION GETS THE MOST RECENT VALUES OF VARIOUS KINDS FOR A GIVEN PATIENT
 
-  def latest_parameters
+  def latest_parameters(items=nil)
     @latest_parameters || update_latest_parameters
   end
 

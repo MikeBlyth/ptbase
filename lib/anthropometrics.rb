@@ -87,6 +87,7 @@ module Anthropometrics
 
 private
   def to_pct(value, expected)
+    return nil unless value && expected && expected > 0
     (value*100/expected).round
   end
 end

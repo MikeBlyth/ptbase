@@ -143,8 +143,15 @@ describe PatientPresenter do
   end
 
   describe 'Anthropometric summary' do
+    before(:each) do
+      @latest = LatestParametersFactory.new(patient: patient, hct: 25, cd4: 500)
+      patient.stub(:latest_parameters => @latest)
+    end
 
     it 'describes % expected height, %expected weight, and % expected weight for height' do
+      @latest.change(:weight, 16)
+      @latest.change(:height, 100)
+      patient.birth_date = Date.today - 5.years
       results = presenter.anthropometric_summary
       puts "Anthro = #{results}"
     end

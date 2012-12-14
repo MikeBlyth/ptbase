@@ -135,4 +135,18 @@ describe PatientPresenter do
     end
   end
 
+  describe 'Immunization alerts' do
+    it 'adds notice when Hib immunization is needed' do
+      Immunization.stub(:hib_needed => true)
+      presenter.immunization_alerts.should match "Hib .*needed"
+    end
+  end
+
+  describe 'Anthropometric summary' do
+
+    it 'describes % expected height, %expected weight, and % expected weight for height' do
+      results = presenter.anthropometric_summary
+      puts "Anthro = #{results}"
+    end
+  end
 end

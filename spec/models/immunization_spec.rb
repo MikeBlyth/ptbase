@@ -91,4 +91,35 @@ describe Immunization do
       summary['dpt'][:next_s].should eq "*TODAY*"
     end
   end
+
+  # This is just to test the hib_needed method, not the more general immunization summary.
+  # ToDo Need to develop tests for each of the immunization guidelines
+  describe 'Hib needed' do
+    let(:birth_date) {Date.today - 2.years}
+    let(:patient) {FactoryGirl.create(:patient, birth_date: birth_date)}
+
+    before(:each) do
+      @immunization = FactoryGirl.create(:immunization, patient: patient,
+                                         hib1: nil, hib2: nil, hib3: nil)
+      Immunization.stub(:find_or_create_by_patient_id => @immunization)
+    end
+
+    it 'is true for 2 year old with no previous Hib immunizations' do
+      Immunization.hib_needed(patient).should be_true
+    end
+
+    it 'is false for 6 year old with no previous Hib immunizations' do
+      patient.birth_date = Date.today - 6.years
+      Immunization.hib_needed(patient).should be_false
+    end
+
+    it 'is false for 1 year old with recent Hib immunization' do
+      patient.birth_date = Date.today - 1.years
+      @immunization.hib1 = Date.yesterday
+      Immunization.hib_needed(patient).should be_false
+    end
+
+
+  end
 end
+

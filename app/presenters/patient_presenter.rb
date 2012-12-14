@@ -5,6 +5,7 @@ class PatientPresenter
     @template = template
   end
   attr_accessor :patient
+  delegate :content_tag, :to => :@template
 
   def alive_or_dead
     @patient.alive ? "alive (or no information on death)" :  "died on #{@patient.death_date}"
@@ -70,13 +71,13 @@ class PatientPresenter
       item_hash = latest[item]
       unless item_hash.nil? || item_hash[:value].to_s.blank?
         label = item_hash[:label]
-        value_span = @template.content_tag(:span, item_hash[:value], class: 'item_value').html_safe
+        value_span = content_tag(:span, item_hash[:value], class: 'item_value').html_safe
 
         comments = item_hash[:comment]
         if comments.blank?
           comments_span = ''
         else
-          comments_span = @template.content_tag(:span, item_hash[:comment], class: 'item_comment')
+          comments_span = content_tag(:span, item_hash[:comment], class: 'item_comment')
         end
 
         css_class = (label == 'Note') ? 'attention' : 'med_info_text'
@@ -85,12 +86,12 @@ class PatientPresenter
         if date.blank?
           date_span = ''
         else
-          date_span = ' on '.html_safe + @template.content_tag(:span,date, class: 'item_date')
+          date_span = ' on '.html_safe + content_tag(:span,date, class: 'item_date')
         end
 
-        label_cell = @template.content_tag('td', label + ":", class: 'med_info_label')
-        value_cell = @template.content_tag('td', value_span+date_span+comments_span, class: css_class)
-        row_cell = @template.content_tag('tr', label_cell+value_cell)
+        label_cell = content_tag('td', label + ":", class: 'med_info_label')
+        value_cell = content_tag('td', value_span+date_span+comments_span, class: css_class)
+        row_cell = content_tag('tr', label_cell+value_cell)
         result << row_cell + "\n"  # The \n is just for readability in HTML output
       end
     end
@@ -111,13 +112,12 @@ class PatientPresenter
     latest = @patient.latest_parameters
     height, wt_pct, ht_pct, wt_for_ht_pct =
        [:height, :pct_expected_wt, :pct_expected_ht, :pct_expected_wt_for_ht].map {|item| latest[item][:value] }
-    result = <<-ANTHRO
-      <p class='anthro_summ'>Weight is #{wt_pct}% of expected for age.
+    results = <<-ANTHRO
+      Weight is #{wt_pct}% of expected for age.
       Height (#{height} cm) is #{ht_pct}% of expected for age.
       Weight is #{wt_for_ht_pct}% of expected for height.
-      </p>
   ANTHRO
-    result.html_safe
+    return content_tag(:p, results, class: 'anthro_summ')
   end
 
   def begin_stop_course(params)

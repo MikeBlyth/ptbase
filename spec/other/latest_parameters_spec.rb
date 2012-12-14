@@ -153,7 +153,6 @@ describe LatestParameters do
       latest[:comment_hct][:label].should eq "Note"
     end
 
-
   end
 
 end

@@ -79,7 +79,8 @@ class Immunization < ActiveRecord::Base
     return false if patient.age_years > max_age
     hib_summary = Immunization.find_or_create_by_patient_id(patient.id).summary['hib']
     date_for_next = hib_summary[:next]
-    return date_for_next.any? && date_for_next <= Date.today
+    puts "hib_summary = #{hib_summary}"
+    return date_for_next && date_for_next <= Date.today
   end
 
   protected
@@ -115,7 +116,7 @@ class Immunization < ActiveRecord::Base
     summary[:age] = age
 
     # HIB
-    next_dose = ''
+    next_dose = nil
     count = summary['hib'][:count]
     since = summary['hib'][:since]
     last = summary['hib'][:last]
@@ -144,7 +145,7 @@ class Immunization < ActiveRecord::Base
         next_dose = birth +  455 # 15 months of age
         next_dose = last + 56 if ( age.between?(1.25, 5) && age_at_last < 1 )
     end
-    if next_dose != ''
+    if next_dose
       next_dose = today.to_date if next_dose < today
       date_s = next_dose.to_s
       date_s = 'today' if next_dose == today
@@ -217,7 +218,7 @@ class Immunization < ActiveRecord::Base
   end
 
   def update_next_dose(summary, imm_type, next_dose)
-    if next_dose != ''
+    if next_dose
       next_dose = today if next_dose < today
       date_s = next_dose.to_s
       date_s = '*TODAY*' if next_dose == today

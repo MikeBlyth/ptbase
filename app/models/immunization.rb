@@ -79,7 +79,6 @@ class Immunization < ActiveRecord::Base
     return false if patient.age_years > max_age
     hib_summary = Immunization.find_or_create_by_patient_id(patient.id).summary['hib']
     date_for_next = hib_summary[:next]
-    puts "hib_summary = #{hib_summary}"
     return date_for_next && date_for_next <= Date.today
   end
 

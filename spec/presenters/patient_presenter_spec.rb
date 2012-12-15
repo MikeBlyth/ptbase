@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'patient_presenter'
 require 'latest_parameters'
+require 'anthropometrics'
 
 describe PatientPresenter do
   include ActionView::TestCase::Behavior    # See RailsCast 287. This makes view available as local variable
@@ -144,16 +145,26 @@ describe PatientPresenter do
 
   describe 'Anthropometric summary' do
     before(:each) do
+      patient.birth_date = Date.today - 5.years
       @latest = LatestParametersFactory.new(patient: patient, hct: 25, cd4: 500)
       patient.stub(:latest_parameters => @latest)
     end
 
     it 'describes % expected height, %expected weight, and % expected weight for height' do
-      @latest.change(:weight, 16)
-      @latest.change(:height, 100)
-      patient.birth_date = Date.today - 5.years
+      weight = 18
+      height = 115
+      @latest.change(:weight, weight, Date.today)
+      @latest.change(:height, height, Date.today)
+      params = {weight: weight, height: height, sex: patient.sex, age: patient.age_years}
+puts "specd params = #{params}"
+      pct_expected_height = pct_expected_height(params)
+      pct_expected_weight = pct_expected_weight(params)
+      pct_expected_weight_for_height = pct_expected_weight_for_height(params)
       results = presenter.anthropometric_summary
       puts "Anthro = #{results}"
+      results.should match "Weight is #{pct_expected_weight}% of expected for age"
+      results.should match regexcape "Height (#{height} cm) is #{pct_expected_height}% of expected for age"
+      results.should match "Weight is #{pct_expected_weight_for_height}% of expected for height"
     end
   end
 end

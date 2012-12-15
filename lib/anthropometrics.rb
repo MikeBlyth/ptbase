@@ -57,7 +57,7 @@ module Anthropometrics
     end
   end
 
-  def pct_expected_height(params)
+    def pct_expected_height(params)
     age = params[:age]
     height= params[:height]
     sex = params[:sex]

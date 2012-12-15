@@ -110,6 +110,7 @@ class PatientPresenter
 
   def anthropometric_summary
     latest = @patient.latest_parameters.add_anthropometrics
+ #binding.pry
     height, wt_pct, ht_pct, wt_for_ht_pct =
        [:height, :pct_expected_wt, :pct_expected_ht, :pct_expected_wt_for_ht].map {|item| latest[item][:value] }
     results = <<-ANTHRO

@@ -3,7 +3,7 @@ class LatestParametersFactory < LatestParameters
   silence_warnings do
     DATE_1 = '28 Nov 2010'
     DATE_2 = '6 Jun 2011'
-    DATE_3 = '14 Sep 2011'
+    DATE_3 = Date.today - 1.month
   end
 
   def initialize(options={})

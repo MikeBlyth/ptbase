@@ -1,6 +1,7 @@
 - visit = visit_summary
 - return if visit_summary.nil?
-= link_to visit_path(visit)
+= link_to "Latest visit:", visit_path(visit)
+= "#{visit.date}. "
 = show_val(show_vars(visit,'sx_'), 'suppress', 'visit_detail', 'Sx/prob: ', '.', 'v_det_lbl')
 = show_val(visit.hpi,'suppress','visit_detail','HPI: ','.', 'v_det_lbl')
 = show_val(visit.weight, 'suppress', 'visit_detail', 'Wt: ', ' kg.', 'v_det_lbl')

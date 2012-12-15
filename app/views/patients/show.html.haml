@@ -33,11 +33,10 @@
   .row-fluid
     = render(:partial => 'shared/medinfo', :object => @patient )
   .row-fluid
-    -#= render(:partial => 'shared/contact_list', :object => @patient )
+    = render(:partial => 'shared/problem_list', :object => @patient )
   .row-fluid
-    -#= render(:partial => 'shared/problem_list', :object => @patient )
-  .row-fluid
-    = link_to 'Edit', {:action => 'edit', :id => @patient}
+    = link_to 'Edit patient', {:action => 'edit', :id => @patient}, :class => 'btn'
   -#= link_to 'Next PEPFAR', {:action => 'show_next', :id => @patient}
   - if true || authorized_as_admin
-    = link_to "Delete this patient from database", { :action => "destroy", :id => @patient.id} , :confirm => 'Are you sure?'
+    = link_to "Delete this patient", { :action => "destroy", :id => @patient.id} ,
+      :confirm => 'Are you sure?', :class => 'btn btn-danger'

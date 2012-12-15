@@ -2,9 +2,9 @@
   %legend Current medical info
   #med_info_table
     #med_info_1.row-fluid
-      #growth_chart.span2
+      #growth_chart.span3
         pt_presenter.growth_chart
-      #info_table.span6
+      #info_table.span7
         %table
           %tr
             %td.med_info_label Age today:
@@ -25,7 +25,6 @@
         %p.med_info_text
           = pt_presenter.begin_stop_course(course: :arv, label: 'ARVs')
           = pt_presenter.begin_stop_course(course: :anti_tb, label: 'anti-TB regimen')
-      #last_visit.span4
-        %span.med_info_label Latest visit:
+      #last_visit.span7
         - @visit_summary = @patient.latest_parameters[:latest_visit]
         = render(:partial => '/visits/visit_summary', :object => @visit_summary)

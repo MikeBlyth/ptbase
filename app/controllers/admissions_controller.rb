@@ -4,6 +4,38 @@ class AdmissionsController < ApplicationController
 
   end
 
+  def new
+    @patient = Patient.find params[:patient_id]
+    @admission = @patient.admissions.new
+  end
+
+  def edit
+    @admission = Admission.find params[:id]
+    @patient = Patient.find @admission.patient_id
+  end
+
+  def create
+    @admission = Admission.new(params[:admission])
+    if @admission.save
+      flash[:notice] = 'admission was successfully created.'
+      redirect_to :action => 'show', :id => @admission
+    else
+      @patient = Patient.find @admission.patient_id
+      render :action => 'edit'
+    end
+  end
+
+  def update
+    @admission = admission.find(params[:id])
+    if @admission.update_attributes(params[:admission])
+      flash[:notice] = 'admission was successfully updated.'
+      redirect_to :action => 'show', :id => @admission
+    else
+      render :action => 'edit'
+    end
+  end
+
+
   ############## FROM ORIGINAL APP #########################
   #  def list
   #    @edting = false

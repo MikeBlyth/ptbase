@@ -27,8 +27,8 @@ module ApplicationHelper
   end
 
   def patient_name_link(patient)
-    "<a href='/admin/show/#{patient.id}'> #{patient.name} [#{patient.hosp_ident}]</a>"
-  end
+    link_to "#{patient.name} [#{patient.ident}]", patient_path(patient)
+ end
 
   # ToDo These should probably go into a presenter
   # The following methods logically should be in ptvisit_helper, but they're needed when the visit is
@@ -114,6 +114,22 @@ module ApplicationHelper
     return s
   end
 
+  def table_field(params)
+    item = params[:item]
+    label = params[:label] || params[:item]
+    html_options = params[:html_options]
+    options = params[:options]
+    label_tag item, label
+    field = text_field(params[:record], item, html_options)
+    content_tag(:td, cell_contents, class: 'field_label')
+    -#      %td.field_label
+    -#        %label{:for => "ptvisit_date"} Date
+    -#        %br/
+    -#        %input{:name => "ptvisit[date]", :size => "10", :type => "text", :value => @ptvisit.date.strftime("%d-%b-%Y") if not @ptvisit.date.nil?}
+    -#          %small
+    -#            %a{:href => "javascript:showCal('Calendar1')"} Calendar
+
+  end
 
 =begin      ################### From Original Application
     def authorized_as_admin

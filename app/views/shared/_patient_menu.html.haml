@@ -1,0 +1,36 @@
+- patient = patient_menu
+- if ! patient.nil?
+  - new_visit = link_to "New Visit", new_visit_path(:patient => patient)
+  = new_visit
+  -#%div
+  -#  %p.actionshead
+  -#    Actions for #{@patient.name}
+  -#  %p     %p
+  -#    = link_to "Visits", {:controller => "visit", :action => "list", :id => patient, :detailed=>'y'}, :class => "side_form"
+  -#    = my_button('+', "visit", patient)
+  -#    = link_to "Latest", {:controller => "visit", :action => "show_last", :id => patient}, :class => "side_form"
+  -#  %p
+  -#    = link_to "Labs", {:controller => "lab", :action => "list", :id => patient}, :class => "side_form"
+  -#    = my_button('+', "lab", patient)
+  -#    %p
+  -#      = link_to "Prescriptions", {:controller => "prescription", :action => "list", :id => patient}, :class => "side_form"
+  -#      = my_button('+', "prescription", patient, 'select')
+  -#      %p
+  -#        = link_to "Admissions", {:controller => "admission", :action => "list", :id => patient}, :class => "side_form"
+  -#        = my_button('+', "admission", patient)
+  -#        %p
+  -#          = link_to "Problems", {:controller => "problem", :action => "list", :id => patient}, :class => "side_form"
+  -#          = my_button('+', "problem", patient)
+  -#          %p
+  -#            = link_to "Contacts", {:controller => "contact", :action => "list", :id => patient}, :class => "side_form"
+  -#            = my_button('+', "contact", patient)
+  -#            %p
+  -#              = link_to "Immunizations", {:controller => "immunization", :action => "show", :id => patient}, :class => "side_form"
+  -#            %p= link_to "Growth chart", {:controller => "admin", :action => "show_growthchart", :id => patient}, :class => "side_form"
+  -#            %p= link_to "Upload photo", {:controller => "upload", :action => "get", :id => patient}, :class => "side_form"
+  -#            %p
+  -#              = link_to 'Pt Info Page', {:controller => "admin", :action => 'show', :id => patient}, :class => "side_form"
+  -#            - if authorized_as_admin
+  -#              %p
+  -#                = link_to "Delete this patient from database", { :action => "destroy", :id => patient} , |
+  -#                  :confirm => 'Are you sure?', :class => "side_form"                                     |

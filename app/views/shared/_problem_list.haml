@@ -1,15 +1,10 @@
-%fieldset{:onclick => "Element.toggle('problem_table', 'problem_hide_msg','problem_show_msg')"}
-  %legend
-    Problem list (click to
-    %span#problem_hide_msg hide
-    = succeed ")" do
-      %span#problem_show_msg{:style => "display: none"} show
-  #problem_table
-    %table{:cellpadding => "3"}
-      - for aproblem in problem_list.problems
-        - if true || aproblem.resolved != 1
-          %tr{:valign => "top"}
-            %td= aproblem.date.strftime('%d-%b-%y')
-            %td
-              = aproblem.desc
-              = '(resolved)' if aproblem.resolved == 1
+- patient = problem_list
+%h4 Problem list
+#problem_table
+  %table
+    - patient.problems.each do |problem|
+      %tr{:valign => "top"}
+        %td= problem.date.strftime('%d-%b-%y')
+        %td
+          = problem.description
+          = '(resolved)' if problem.resolved == 1

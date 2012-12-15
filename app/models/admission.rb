@@ -22,7 +22,7 @@
 
 class Admission < ActiveRecord::Base
   include DateValidators
-  attr_accessible :patient, :date, :bed, :comments, :diagnosis_1, :diagnosis_2,
+  attr_accessible :patient, :patient_id, :date, :bed, :comments, :diagnosis_1, :diagnosis_2, :provider, :provider_id,
                   :discharge_date, :discharge_status, :meds, :ward, :weight_admission, :weight_discharge
   belongs_to :patient
   belongs_to :provider

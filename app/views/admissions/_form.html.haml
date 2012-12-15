@@ -1,0 +1,17 @@
+= simple_form_for(@admission, :html => {:class => 'form-vertical' }) do |form|
+  = form.input :patient_id
+  #adm-data
+  = form.input :date, as: :date
+  = form.input :ward
+  = form.input :bed
+  = form.association :provider
+  = form.input :weight_admission
+  = form.input :diagnosis_1
+  = form.input :diagnosis_2
+  = form.input :meds
+  = form.input :comments
+  #disch-data
+    = form.input :discharge_date, as: :date
+    = form.input :weight_discharge
+    = form.input :discharge_status, collection: %w(recovered improved AMA still_ill transferred died unknown)
+  = form.button :submit

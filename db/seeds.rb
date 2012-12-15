@@ -50,10 +50,15 @@ hertz = Provider.create(last_name: 'Hertz', first_name: 'Joshua', ident: 'Prov 0
 
 Prescription.delete_all
 prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months, provider: hertz,
-            confirmed: true)
+                                   confirmed: true)
+recent_prescription = Prescription.create(patient: audu, date: Date.yesterday, provider: hertz,
+                                   confirmed: true)
 
 PrescriptionItem.delete_all
-PrescriptionItem.create(prescription: prescription, drug: 'ampicillin', dose: '250 mg', units: 'tab', route: 'po', interval: 6, duration: 6)
+PrescriptionItem.create(prescription: prescription, drug: 'ampicillin', dose: '250 mg', units: 'tab',
+                        route: 'po', interval: 6, duration: 6)
+PrescriptionItem.create(prescription: recent_prescription, drug: 'amoxacillin', dose: '500 mg', units: 'tab',
+                        route: 'po', interval: 8, duration: 6)
 
 Problem.delete_all
 Problem.create(patient: audu, date: '2010-01-01', description: 'malaria', resolved: '2010-01-05')
@@ -62,5 +67,6 @@ User.delete_all
 User.create(email: 'admin@example.com', password: 'appendix', username: 'admin', name: 'Administrator')
 
 Visit.delete_all
-audu.visits.create(patient_id: audu.id, date: '2011-07-30')
-audu.visits.create(patient_id: audu.id, date: '2012-04-12')
+audu.visits.create(patient_id: audu.id, date: '2011-07-30', dx: 'pneumonia')
+audu.visits.create(patient_id: audu.id, date: '2012-04-12', dx: 'malaria', dx2: 'gastroenteritis',
+    weight: 30, meds: 'artequine')

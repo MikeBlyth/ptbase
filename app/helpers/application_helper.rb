@@ -44,11 +44,11 @@ module ApplicationHelper
 
 
   def show_pe_findings(model)
-    columns = Ptvisit.content_columns
+    columns = Visit.content_columns
     pe_columns = []
     # Get list of all the columns (variables) with form like 'pe_mouth', excluding the matching
     # items, 'pe_mouth_ok' etc. This gives a list of the elements in the physical exam
-    for column in Ptvisit.content_columns
+    for column in Visit.content_columns
       if (column.name.slice(0,VSIZE) == VARBASE) && (column.name.slice(-3,3) != SUFFIX)
         pe_columns << column.name.slice(VSIZE,column.name.size-VSIZE)
       end
@@ -79,6 +79,7 @@ module ApplicationHelper
     return s_findings + ' ' + s_normal.capitalize
   end
 
+  # ToDo - Needs work (and tests)
   def show_val(value,
       str_if_empty='____',
       value_style='form_data',
@@ -97,14 +98,14 @@ module ApplicationHelper
     if (!isblank) && (!suffix.blank?) && (suffix != value.to_s[-1,1])
       s << suffix	#	Append suffix if it not already the last character in the string (e.g., avoids double periods)
     end
-    return s
+    return s.html_safe
   end
 
   def show_vars(model,varbase)
 # Return a string listing all the columns in this set that are "true" e.g. checkboxes.
     s = ''
     delimiter = '; '
-    for column in Ptvisit.content_columns
+    for column in Visit.content_columns
       if column.name.slice(0,varbase.size) == varbase  && model.send(column.name) == 1
         s << delimiter if s > ''
         s << column.human_name.slice(varbase.size,99)
@@ -229,11 +230,11 @@ module ApplicationHelper
   SSIZE = SUFFIX.size
 
   def show_pe_findings(model)
-    columns = Ptvisit.content_columns
+    columns = Visit.content_columns
     pe_columns = []
     # Get list of all the columns (variables) with form like 'pe_mouth', excluding the matching
     # items, 'pe_mouth_ok' etc. This gives a list of the elements in the physical exam
-    for column in Ptvisit.content_columns
+    for column in Visit.content_columns
       if (column.name.slice(0,VSIZE) == VARBASE) && (column.name.slice(-3,3) != SUFFIX)
         pe_columns << column.name.slice(VSIZE,column.name.size-VSIZE)
       end
@@ -290,7 +291,7 @@ module ApplicationHelper
 # Return a string listing all the columns in this set that are "true" e.g. checkboxes.
     s = ''
     delimiter = '; '
-    for column in Ptvisit.content_columns
+    for column in Visit.content_columns
       if column.name.slice(0,varbase.size) == varbase  && model.send(column.name) == 1
         s << delimiter if s > ''
         s << column.human_name.slice(varbase.size,99)

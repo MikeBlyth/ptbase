@@ -26,5 +26,7 @@ module PrescriptionItemsHelper
     end
   end
 
-
+  def formatted_prescription_item(item)
+    item.drug
+  end
 end

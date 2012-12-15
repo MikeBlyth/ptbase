@@ -1,8 +1,9 @@
+%h4 Current Drugs
 - if not current_drugs.empty?
   .current_drug
-    %h4
-      Currently (#{today}) taking these drugs (as known to this system)
     %p
-      - current_drugs.each do | drg |
+      Currently (#{Date.today}) taking these drugs (as known to this system)
+    %p
+      - current_drugs.formatted.each do |drg|
         = drg
         %br

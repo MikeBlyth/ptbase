@@ -1,3 +1,4 @@
+require 'latest_parameters'
 class PatientPresenter
 
   def initialize(patient, template)

@@ -31,7 +31,7 @@
       = pt_presenter.photo_display(@photo)
     %br{:clear => "all"}/
   .row-fluid
-    -#= render(:partial => 'shared/medinfo', :object => @patient )
+    = render(:partial => 'shared/medinfo', :object => @patient )
   .row-fluid
     -#= render(:partial => 'shared/contact_list', :object => @patient )
   .row-fluid

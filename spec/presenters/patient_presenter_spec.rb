@@ -156,7 +156,6 @@ describe PatientPresenter do
       @latest.change(:weight, weight, Date.today)
       @latest.change(:height, height, Date.today)
       params = {weight: weight, height: height, sex: patient.sex, age: patient.age_years}
-puts "specd params = #{params}"
       pct_expected_height = pct_expected_height(params)
       pct_expected_weight = pct_expected_weight(params)
       pct_expected_weight_for_height = pct_expected_weight_for_height(params)
@@ -166,5 +165,27 @@ puts "specd params = #{params}"
       results.should match regexcape "Height (#{height} cm) is #{pct_expected_height}% of expected for age"
       results.should match "Weight is #{pct_expected_weight_for_height}% of expected for height"
     end
+  end
+
+  describe 'Shows beginning/ending of drug courses' do
+    before(:each) do
+      patient.stub(:arv_begin => Date.new(2010,1,1))
+      patient.stub(:arv_stop => Date.new(2012,1,1))
+      patient.stub(:anti_tb_begin => Date.new(2011,1,1))
+      patient.stub(:anti_tb_stop => Date.new(2011,6,1))
+    end
+
+    it 'shows beginning and end of ARV course' do
+      presenter.begin_stop_course(course: :arv, label: 'ARV').
+          should match "Began ARV 1 Jan (20)?10, stopped 1 Jan (20)?12"
+    end
+
+    it 'shows beginning when course is not finished' do
+      patient.stub(:arv_stop => nil)
+      results = presenter.begin_stop_course(course: :arv, label: 'ARV')
+      results.should match "Began ARV 1 Jan (20)?10"
+      results.should_not match "stopped"
+    end
+
   end
 end

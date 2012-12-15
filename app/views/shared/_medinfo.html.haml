@@ -1,33 +1,31 @@
-
 - present @patient do |pt_presenter|
-
-%legend Current medical info (click to hide/show)
-#med_info_table
-  #med_info_1.row-fluid
-    #growth_chart.span3
-      pt_presenter.growth_chart
-    #info_table.span4
-      %table
-        %tr
-          %td.med_info_label Age today:
-          %td
-            = @patient.age_human
-        %tr
-          %td.med_info_label Attention:
-          %td= pt_presenter.comments
-        = pt_presenter.allergies
-        = pt_presenter.hemoglobin_type
-        = pt_presenter.hiv_status
-        = pt_presenter.show_latest_parameters([:hiv_stage, :wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4])
-        = pt_presenter.immunization_alerts
-      = pt_presenter.anthropometric_summary
-  #med_info_2.row-fluid
-    #current_meds.span3
-      = render(:partial => '/prescriptions/current_drugs', :object => @patient.current_drugs)
-      %p.med_info_text
-        = pt_presenter.begin_stop_course(course: :arv, label: 'ARVs')
-        = pt_presenter.begin_stop_course(course: :anti_tb, label: 'anti-TB regimen')
-    #last_visit.span4
-      %span.med_info_label Latest visit:
-      - @visit_summary = latest_parameters[:latest_visit]
-      = render(:partial => '/visits/visit_summary', :object => @visit_summary)
+  %legend Current medical info
+  #med_info_table
+    #med_info_1.row-fluid
+      #growth_chart.span2
+        pt_presenter.growth_chart
+      #info_table.span6
+        %table
+          %tr
+            %td.med_info_label Age today:
+            %td
+              = @patient.age_human
+          %tr
+            %td.med_info_label Attention:
+            %td= pt_presenter.comments
+          = pt_presenter.allergies
+          = pt_presenter.hemoglobin_type
+          = pt_presenter.hiv_status
+          = pt_presenter.show_latest_parameters([:hiv_stage, :wt,  :hct, :comment_hct, :cd4, :cd4pct, :comment_cd4])
+          = pt_presenter.immunization_alerts
+        = pt_presenter.anthropometric_summary
+    #med_info_2.row-fluid
+      #current_meds.span3
+        = render(:partial => '/prescriptions/current_drugs', :object => @patient.current_drugs)
+        %p.med_info_text
+          = pt_presenter.begin_stop_course(course: :arv, label: 'ARVs')
+          = pt_presenter.begin_stop_course(course: :anti_tb, label: 'anti-TB regimen')
+      #last_visit.span4
+        %span.med_info_label Latest visit:
+        - @visit_summary = @patient.latest_parameters[:latest_visit]
+        = render(:partial => '/visits/visit_summary', :object => @visit_summary)

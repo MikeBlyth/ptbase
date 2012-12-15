@@ -1,6 +1,6 @@
 - visit = visit_summary
 - return if visit_summary.nil?
-= link_to visit.send("date").strftime("%d-%b-%y"), :controller => 'visit', :action => 'show', :id => visit
+= link_to visit_path(visit)
 = show_val(show_vars(visit,'sx_'), 'suppress', 'visit_detail', 'Sx/prob: ', '.', 'v_det_lbl')
 = show_val(visit.hpi,'suppress','visit_detail','HPI: ','.', 'v_det_lbl')
 = show_val(visit.weight, 'suppress', 'visit_detail', 'Wt: ', ' kg.', 'v_det_lbl')

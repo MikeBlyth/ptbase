@@ -1,322 +1,103 @@
+- visit = @record
 - patient = @record.patient
 - @patient = patient
-= patient_name_link(patient)
-= render(:partial => '/shared/medinfo', :object => patient)
-= render(:partial => 'shared/problem_list', :object => patient )
+  -#= render(:partial => '/shared/medinfo', :object => patient)
+  -#= render(:partial => 'shared/problem_list', :object => patient )
+= simple_fields_for visit do |form|
+  = patient_name_link(patient)
+  %fieldset
+    %legend Visit info
+    = form.input :date
+    = form.input :next_visit, label: 'Next visit (add js buttons to give choices)'
+    = form.input :weight
+    = form.input :provider
+    = form.input :newpt, label: 'New patient?'
+    = form.input :adm, label: 'Admitted?'
 
--#- if @patient.hiv?
--#  - onsubmit = "if ($('ptvisit_arv_status').value=='') {alert('Please enter ARV status'); return false};
--#  - if ($('ptvisit_hiv_stage').value=='') {alert('Please enter HIV Stage (or ?)'); return false}; "
-%fieldset
-  %legend Visit info
 
--#  %table{:cellpadding => "8"}
--#    %tr
--#      %td.field_label
--#        %label{:for => "ptvisit_date"} Date
--#        %br/
--#        %input{:name => "ptvisit[date]", :size => "10", :type => "text", :value => @ptvisit.date.strftime("%d-%b-%Y") if not @ptvisit.date.nil?}
--#          %small
--#            %a{:href => "javascript:showCal('Calendar1')"} Calendar
--#      %td &nbsp;
--#      %td.field_label
--#        %label{:for => "ptvisit_next_visit"} Next Appt
--#        %br/
--#        %input#next_visit{:name => "ptvisit[next_visit]", :size => "10", :type => "text", :value => @ptvisit.next_visit.strftime("%d-%b-%Y") if not @ptvisit.next_visit.nil?}
--#          %small
--#            %a{:href => "javascript:showCal('Calendar2')"} Calendar
--#      %td.field_label
--#        %p.field_label
--#          %label{:accesskey => "t", :for => "ptvisit_provider"}
--#            Doc
--#            %u> t
--#            or or provider
--#          %br/
--#          = text_field 'ptvisit', 'provider', {:size => 10 }
--#      %td.field_label
--#        %label{:for => "ptvisit_newpt"} New pt?
--#        %br/
--#        = check_box 'ptvisit', 'newpt'
--#      %td.field_label
--#        \&nbsp;&nbsp;
--#        %label{:for => "ptvisit_adm"} Admitted?
--#        %br/
--#        = check_box 'ptvisit', 'adm'
--#    %tr
--#      %td{:colspan => "6"}
--#        Weeks to next visit:
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+7); $(next_visit).value=formatDateSimple(next)", :type => "button"} 1
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+14); $(next_visit).value=formatDateSimple(next)", :type => "button"} 2
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+28); $(next_visit).value=formatDateSimple(next)", :type => "button"} 4
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+56); $(next_visit).value=formatDateSimple(next)", :type => "button"} 2 mo
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+91); $(next_visit).value=formatDateSimple(next)", :type => "button"} 3 mo
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+119); $(next_visit).value=formatDateSimple(next)", :type => "button"} 4 mo
--#        %button.smallbutton{:onclick => "var next=new Date(); next.setDate(next.getDate()+182); $(next_visit).value=formatDateSimple(next)", :type => "button"} 6 mo
--#%fieldset
--#  %legend Vital signs
--#  %table
--#    %tr{:valign => "bottom"}
--#      %td.field_label{:style => "margin: 10px; padding-top: 10px", :width => "75"}
--#        %p.field_label
--#          %label{:accesskey => "k", :for => "ptvisit_weight"}
--#            Weight (
--#            %u> k
--#            g)
--#          %br/
--#          = text_field 'ptvisit', 'weight', {:size => 4 }
--#      %td.field_label{:width => "75"}
--#        %p.field_label
--#          %label{:for => "ptvisit_ht"} Height (cm)
--#          %br/
--#          = text_field 'ptvisit', 'ht', {:size => 4}
--#      %td.field_label{:width => "95"}
--#        %p.field_label
--#          %label{:for => "ptvisit_head_circ"} Head circ (cm)
--#          %br/
--#          = text_field 'ptvisit', 'head_circ', {:size => 4  }
--#      %td.field_label{:width => "95"}
--#        %p.field_label
--#          %label{:for => "ptvisit_mid_arm_circ"} Midarm circ (cm)
--#          %br/
--#          = text_field 'ptvisit', 'mid_arm_circ', {:size => 4  }
--#      %td.field_label{:width => "75"}
--#        %label{:for => "ptvisit_temp"} Temp C
--#        %br/
--#        = text_field 'ptvisit', 'temp', {:size => 4}
--#      %td.field_label{:width => "75"}
--#        %label{:for => "ptvisit_resp_rate"} Resp/min
--#        %br/
--#        = text_field 'ptvisit', 'resp_rate', {:size => 4}
--#      %td.field_label
--#        %label{:for => "ptvisit_sbp"} BP Systolic
--#        %br/
--#        = text_field 'ptvisit', 'sbp', {:size => 4}
--#      %td.field_label
--#        %label{:for => "ptvisit_dbp"} / Diastolic
--#        %br/
--#        \/&nbsp;#{text_field 'ptvisit', 'dbp', {:size => 4}}
--#%fieldset
--#  %legend Signs and Symptoms
--#  %table{:valign => "top"}
--#    %tr
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_wt_loss', :accesskey => 'w'
--#        %label{:for => "ptvisit_sx_wt_loss"}
--#          %span.accesskey> w
--#          t loss
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_diarrhea', :accesskey => 'D'
--#        %label{:for => "ptvisit_sx_diarrhea"}
--#          %span.accesskey> d
--#          iarhhea
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_headache', :accesskey => 'H'
--#        %label{:for => "ptvisit_sx_headache"}
--#          %span.accesskey> h
--#          eadache
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_cough' , :accesskey => 'C'
--#        %label{:for => "ptvisit_sx_cough"}
--#          %span.accesskey> c
--#          ough
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_none', :accesskey => 'N'
--#        %label{:for => "ptvisit_sx_none"}
--#          %strong
--#            %span.accesskey> N
--#            one
--#    %tr
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_fever', :accesskey => 'F'
--#        %label{:for => "ptvisit_sx_fever"}
--#          %span.accesskey> f
--#          ever
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_nausea', :accesskey => 'U'
--#        %label{:for => "ptvisit_sx_nausea"}
--#          na
--#          %span.accesskey> u
--#          sea
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_rash', :accesskey => 'R'
--#        %label{:for => "ptvisit_sx_rash"}
--#          %span.accesskey> r
--#          ash
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_short_breath', :accesskey => 'P'
--#        %label{:for => "ptvisit_sx_short_breath"}
--#          res
--#          %span.accesskey p
--#          difficulty
--#    %tr
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_pain_swallowing', :accesskey => 'O'
--#        %label{:for => "ptvisit_sx_pain_swallowing"}
--#          %span.accesskey> o
--#          ropharyn. pain
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_vomiting', :accesskey => 'V'
--#        %label{:for => "ptvisit_sx_vomiting"}
--#          %span.accesskey> v
--#          omiting
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_numbness', :accesskey => 'B'
--#        %label{:for => "ptvisit_sx_numbness"}
--#          num
--#          %span.accesskey> b
--#          ness
--#      %td.form_box
--#        = check_box 'ptvisit', 'sx_ear_pain_disch', :accesskey => 'E'
--#        %label{:for => "ptvisit_sx_ear_pain_disch"}
--#          %span.accesskey> e
--#          ar pain/disch
--#  %p
--#    %label{:for => "ptvisit_sx_other"} Other symptoms & description:
--#    = text_field 'ptvisit', 'sx_other', {:size => 40}
--#%fieldset
--#  %legend
--#    Histor
--#    %span.accesskey y
--#    of present illness
--#  = text_area 'ptvisit', 'hpi', {:rows => '1', :cols => '70', :accesskey=>'Y' }
--#%fieldset
--#  %legend Physical Exam
--#  %p.form_instruction Tick box if this part of exam is normal.
--#  %table
--#    %tr{:valign => "top"}
--#      = phys_findings_column(%w(scalp conjunct eyes ears mouth nose))
--#      = phys_findings_column(%w(chest heart abd liver spleen))
--#      = phys_findings_column(%w(skin lymph extr neuro genitalia tanner))
--#  %label{:for => "ptvisit_phys_exam"} Other physical findings
--#  %br
--#    = text_area 'ptvisit', 'phys_exam', {:rows => '1', :cols => '70' }
--#%fieldset
--#  %legend Findings/Diagnoses
--#  - dx_columns = 4
--#  - dx_rows = ((@dx_fields.size + dx_columns -1) / dx_columns).to_i   # how many rows
--#  %table
--#    - 0.upto(dx_rows-1) do |row|
--#      %tr
--#        - 0.upto(dx_columns-1) do |column|
--#        - dx_i = column*dx_rows + row # which diagnosis to put here
--#        - dx_field = @dx_fields[dx_i]
--#          - unless dx_i >= @dx_fields.size
--#            - hotkey = dx_field.hotkey || ''
--#            %td.form_box
--#              = check_box 'ptvisit', dx_field.name, :accesskey => "#{hotkey}"
--#              \&nbsp;
--#              %label{:for => "ptvisit_#{dx_field.name}"}
--#                = dx_field.label
--#                - if dx_field.hotkey || '' > ''
--#                  (
--#                  %span.accesskey>= dx_field.hotkey
--#                  )
--#            - end
--#            - end
--#  %table
--#    %tr
--#      %td.field_label
--#        %label{:for => "ptvisit_dx"} Other findings/diagnoses
--#        %br/
--#        = text_field 'ptvisit', 'dx'
--#      %td.field_label
--#        %label{:for => "ptvisit_development"} Development
--#        %br/
--#        = text_field 'ptvisit', 'development', {:size => 60}
--#%table
--#  %tr
--#    %td{:style => "width: 100px"}
--#      Diet:
--#      %em (Tick all that apply)
--#    %td.field_label
--#      %label{:for => "ptvisit_diet_breast"} Breastmilk
--#      %br/
--#      = check_box 'ptvisit', 'diet_breast'
--#    %td.field_label{:colspan => "2"}
--#      %label{:for => "ptvisit_diet_breastmilk_substitute"} Breastmilk substitute
--#      %br/
--#      = check_box 'ptvisit', 'diet_breastmilk_substitute'
--#    %td.field_label
--#      %label{:for => "ptvisit_diet_pap"} Pap
--#      %br/
--#      = check_box 'ptvisit', 'diet_pap'
--#    %td.field_label
--#      %label{:for => "ptvisit_diet_solids"} Solids
--#      %br/
--#      = check_box 'ptvisit', 'diet_solids'
--#  %tr
--#    %td{:style => "width: 100px"} Assessment:
--#    %td.field_label{:style => "width: 60px"}
--#      %label{:for => "ptvisit_assessment_stable"}
--#        %span.accesskey> S
--#        table
--#      %br/
--#      = check_box 'ptvisit', 'assessment_stable', :accesskey=>'S'
--#    %td.field_label{:style => "width: 70px"}
--#      %label{:for => "ptvisit_assessment_oi"} Active OI
--#      %br/
--#      = check_box 'ptvisit', 'assessment_oi'
--#    %td.field_label{:style => "width: 85px"}
--#      %label{:for => "ptvisit_assessment_toxicity"} Drug Toxicity
--#      %br/
--#      = check_box 'ptvisit', 'assessment_toxicity'
--#    %td.field_label{:style => "width: 85px"}
--#      %label{:for => "ptvisit_assessment_nonadherence"} Non-adherence
--#      %br/
--#      = check_box 'ptvisit', 'assessment_nonadherence'
--#    %td.field_label
--#      %label{:for => "ptvisit_assessment"} Assessment comments
--#      %br/
--#      = text_field 'ptvisit', 'assessment'
--#    %tr/
--#%table{:cellpadding => "7"}
--#  %tr{:valign => "top"}
--#    %td.field_label
--#      %label{:for => "ptvisit_meds"} Medication not entered on Rx form
--#      %br/
--#      = text_field 'ptvisit', 'meds'
--#    %td.field_label
--#      %label{:for => "ptvisit_comments"} Comments
--#      %br/
--#      = text_area 'ptvisit', 'comments', :cols => 45, :rows => 1
--#  %tr
--#    %td.field_label{:colspan => "2"}
--#      %label{:for => "ptvisit_plan"} Plan
--#      %br/
--#      = text_area 'ptvisit', 'plan', :cols => 65, :rows => 1
--#%table{:cellpadding => "7"}
--#  %tr{:valign => "bottom"}
--#    <td #{"style='visibility: hidden'" unless @patient.hiv?}>
--#    %label{:for => "ptvisit_hiv_stage"} HIV Stage
--#    %br/
--#    = text_field 'ptvisit', 'hiv_stage', {:size => 3}
--#    <td #{"style='visibility: hidden'" unless @patient.hiv?}>
--#    %label{:accesskey => "A", :for => "ptvisit_arv_status"} ARV status
--#    %br/
--#    = select 'ptvisit', 'arv_status', [ ['',''], |
--#      ['not on ART','0'],                        |
--#      ['preparing','P'],                         |
--#      ['begin today','B'],                       |
--#      ['continue', 'C'],                         |
--#      ['stop today', 'X'],                       |
--#      ['change today', 'V'] ],                   |
--#      {:a => 2}                                  |
--#    %td
--#      - if @patient.hiv?
--#        %label{:for => "ptvisit_arv_missed"} Missed ARV doses
--#        %br/
--#        mo: #{text_field 'ptvisit', 'arv_missed', {:size => 2}}&nbsp;
--#        wk: #{text_field 'ptvisit', 'arv_missed_week', {:size => 2}}
--#      - else
--#        \&nbsp;
--#    %td
--#      %label{:for => "ptvisit_anti_tb_status"} Anti-TB status
--#      %br/
--#      = select 'ptvisit', 'anti_tb_status', [ ['',''], ['not on TB rx','0'], ['begin today','B'], ['continue', 'C'], |
--#        ['stop today', 'X'], ['change today', 'V'] ],                                                                |
--#        {:a => '2'}                                                                                                  |
--#- if @patient.hiv?
--#  %p
--#    Existing ARV regimen at time of visit was #{@ptvisit.arv_regimen}
--#  = render(:partial => 'arv_regimen' )
--#/ [eoform:ptvisit]
+  %fieldset
+    %legend Vital Signs
+    = form.input :weight
+    = form.input :height
+    = form.input :head_circ
+    = form.input :mid_arm_circ
+    = form.input :temperature
+    = form.input :resp_rate
+    = form.input :heart_rate
+    = form.input :sbp
+    = form.input :dbp
+
+  %fieldset
+    %legend Signs and Symptoms
+    = form.input :sx_wt_loss, label: "weight loss"
+    = form.input :sx_diarrhea, label: "diarrhea"
+    = form.input :sx_headache, label: "headache"
+    = form.input :sx_fever, label: "fever"
+    = form.input :sx_numbness, label: "numbness"
+    = form.input :sx_ear_pain_disch, label: "ear pain, disch"
+    = form.input :sx_nausea, label: "nausea"
+    = form.input :sx_rash, label: "rash"
+    = form.input :sx_vomiting, label: "vomiting"
+    = form.input :sx_cough, label: "cough"
+    = form.input :sx_night_sweats, label: "night sweats"
+    = form.input :sx_visual_prob_new, label: "new visual prob"
+    = form.input :sx_pain_swallowing, label: "pain swallowing"
+    = form.input :sx_short_breath, label: "dyspnea"
+    = form.input :sx_other, label: "Other"
+  %fieldset
+    %legend History
+    = form.input :hpi, label: "History of present illness"
+  %fieldset
+    %legend Physical Exam
+    %p.form_instruction Tick box if this part of exam is normal.
+    %table
+      %tr{:valign => "top"}
+        = phys_findings_column(%w(scalp conjunct eyes ears mouth nose))
+        = phys_findings_column(%w(chest heart abd liver spleen))
+        = phys_findings_column(%w(skin lymph extr neuro genitalia tanner))
+    = form.input :phys_exam
+    %br
+    = text_area 'ptvisit', 'phys_exam', {:rows => '1', :cols => '70' }
+  %fieldset
+    %legend Assessment and Diagnosis
+    = form.input :dx_hiv, label: "HIV"
+    = form.input :dx_tb_pulm, label: "pulmonary TB"
+    = form.input :dx_malaria, label: "malaria"
+    = form.input :dx_uri, label: "uri"
+    = form.input :dx_acute_ge, label: "acute_ge"
+    = form.input :dx_otitis_media_acute, label: "otitis_media_acute"
+    = form.input :dx_otitis_media_chronic, label: "otitis_media_chronic"
+    = form.input :dx_thrush, label: "thrush"
+    = form.input :dx_tinea_capitis, label: "tinea_capitis"
+    = form.input :dx_scabies, label: "scabies"
+    = form.input :dx_parotitis, label: "parotitis"
+    = form.input :dx_dysentery, label: "dysentery"
+    = form.input :dx, label: 'Other diagnoses'
+    %br
+    = form_input :assessment_stable, label: "Stable"
+    = form_input :assessment_oi, label: "Active OI"
+    = form_input :assessment_drug_toxicity, label: "Drug toxicity"
+    = form_input :assessment_nonadherence, label: "Nonadherence"
+
+  %fieldset
+    %legend Other
+    = form.input :development
+    = form.input :diet_breastmilk
+    = form.input :diet_breastmilk_substitute
+    = form.input :diet_pap
+    = form.input :diet_solids
+
+    = form.input :meds
+    = form.input :plan
+    = form.input :comments
+
+    = form.input :anti_tb_status
+  %fieldset
+    %legend HIV related
+    = form.input :hiv_stage
+    = form.input :arv_status 
+    = form.input :arv_missed
+    = form.input :arv_missed_week  
+    = render(:partial => 'arv_regimen' )
+
+%p Add JS validation for HIV pts

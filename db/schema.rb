@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121213110012) do
+ActiveRecord::Schema.define(:version => 20121216130832) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -337,6 +337,21 @@ ActiveRecord::Schema.define(:version => 20121213110012) do
     t.text     "development"
     t.text     "assessment"
     t.text     "plan"
+    t.float    "mid_arm_circ"
+    t.integer  "resp_rate"
+    t.integer  "heart_rate"
+    t.boolean  "sx_ear_pain_disch"
+    t.text     "phys_exam"
+    t.boolean  "diet_breast"
+    t.boolean  "diet_breastmilk_substitute"
+    t.boolean  "diet_pap"
+    t.boolean  "diet_solids"
+    t.boolean  "assessment_stable"
+    t.boolean  "assessment_oi"
+    t.boolean  "assessment_drug_toxicity"
+    t.boolean  "assessment_nonadherence"
+    t.integer  "arv_missed"
+    t.integer  "arv_missed_week"
   end
 
 end

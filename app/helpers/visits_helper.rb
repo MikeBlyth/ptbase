@@ -1,4 +1,26 @@
 module VisitsHelper
+
+  def diagnosis_check_boxes(dx_fields, dx_columns=4)
+    dx_columns = 4
+    dx_rows = ((dx_fields.size + dx_columns -1) / dx_columns).to_i   # how many rows
+      table_contents = ''
+      0.upto(dx_rows-1) do |row|
+          row_contents = ''
+          0.upto(dx_columns-1) do |column|
+            dx_i = column*dx_rows + row # which diagnosis to put here
+            dx_field = dx_fields[dx_i]
+            unless dx_i >= dx_fields.size
+                box = form.check_box dx_field.name
+                label = form.label_tag(dx_field.name)
+                row_contents << content_tag(:td, box+label)
+            end
+          end
+        table_contents << content_tag(:tr, row_contents)
+      end
+    return table_contents
+  end
+
+
 ### FROM ORIGINAL APP
 #  def bubble_show(label, value, style)
 #    if value == true || value == 1

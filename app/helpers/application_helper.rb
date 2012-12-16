@@ -122,12 +122,12 @@ module ApplicationHelper
     label_tag item, label
     field = text_field(params[:record], item, html_options)
     content_tag(:td, cell_contents, class: 'field_label')
-    -#      %td.field_label
-    -#        %label{:for => "ptvisit_date"} Date
-    -#        %br/
-    -#        %input{:name => "ptvisit[date]", :size => "10", :type => "text", :value => @ptvisit.date.strftime("%d-%b-%Y") if not @ptvisit.date.nil?}
-    -#          %small
-    -#            %a{:href => "javascript:showCal('Calendar1')"} Calendar
+    #-#      %td.field_label
+    #-#        %label{:for => "ptvisit_date"} Date
+    #-#        %br/
+    #-#        %input{:name => "ptvisit[date]", :size => "10", :type => "text", :value => @ptvisit.date.strftime("%d-%b-%Y") if not @ptvisit.date.nil?}
+    #-#          %small
+    #-#            %a{:href => "javascript:showCal('Calendar1')"} Calendar
 
   end
 

@@ -21,7 +21,7 @@
         = pt_presenter.anthropometric_summary
     #med_info_2.row-fluid
       #current_meds.span3
-        = render(:partial => '/prescriptions/current_drugs', :object => @patient.current_drugs)
+        = render(:partial => '/prescriptions/current_drugs', :object => @current_drugs)
         %p.med_info_text
           = pt_presenter.begin_stop_course(course: :arv, label: 'ARVs')
           = pt_presenter.begin_stop_course(course: :anti_tb, label: 'anti-TB regimen')

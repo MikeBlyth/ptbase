@@ -4,6 +4,6 @@
     %p
       Currently (#{Date.today}) taking these drugs (as known to this system)
     %p
-      - current_drugs.formatted.each do |drg|
+      - current_drugs.each do |drg|
         = drg
         %br

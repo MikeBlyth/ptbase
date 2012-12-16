@@ -1,8 +1,8 @@
 - visit = @record
 - patient = @record.patient
 - @patient = patient
-  -#= render(:partial => '/shared/medinfo', :object => patient)
-  -#= render(:partial => 'shared/problem_list', :object => patient )
+= render(:partial => '/shared/medinfo', :object => patient)
+= render(:partial => 'shared/problem_list', :object => patient )
 = simple_fields_for visit do |form|
   = patient_name_link(patient)
   %fieldset
@@ -74,15 +74,18 @@
     = form.input :dx_dysentery, label: "dysentery"
     = form.input :dx, label: 'Other diagnoses'
     %br
-    = form_input :assessment_stable, label: "Stable"
-    = form_input :assessment_oi, label: "Active OI"
-    = form_input :assessment_drug_toxicity, label: "Drug toxicity"
-    = form_input :assessment_nonadherence, label: "Nonadherence"
+    = form.input :assessment_stable, label: "Stable"
+    = form.input :assessment_oi, label: "Active OI"
+    = form.input :assessment_drug_toxicity, label: "Drug toxicity"
+    = form.input :assessment_nonadherence, label: "Nonadherence"
 
+  %fieldset
+    %legend Dx2
+    = diagnosis_check_boxes(@dx_fields)
   %fieldset
     %legend Other
     = form.input :development
-    = form.input :diet_breastmilk
+    = form.input :diet_breast
     = form.input :diet_breastmilk_substitute
     = form.input :diet_pap
     = form.input :diet_solids
@@ -95,9 +98,10 @@
   %fieldset
     %legend HIV related
     = form.input :hiv_stage
-    = form.input :arv_status 
+    = form.input :arv_status
     = form.input :arv_missed
-    = form.input :arv_missed_week  
-    = render(:partial => 'arv_regimen' )
+    = form.input :arv_missed_week
+    -#= render(:partial => 'arv_regimen' )
+    %p Display ARV Regimen here-------
 
 %p Add JS validation for HIV pts

@@ -24,9 +24,9 @@ puts "diagnosis_check_boxes"
 
   def phys_finding(afield, alabel=afield.capitalize)
 
-    s = "<td><label for='ptvisit_pe_#{afield}'>#{alabel}</label></td><td>" +
-        check_box('ptvisit', "pe_"+afield+"_ok") +
-        text_field('ptvisit', 'pe_'+afield, :size => 14) + "</td>"
+    s = "<td><label for='visit_pe_#{afield}'>#{alabel}</label></td><td>" +
+        check_box('visit', "pe_"+afield+"_ok") +
+        text_field('visit', 'pe_'+afield, :size => 14) + "</td>"
     return s.html_safe
   end
 
@@ -43,7 +43,7 @@ puts "diagnosis_check_boxes"
   def  arv_check_box (arv_name, options={})
   	fieldname = "reg_" + arv_name
   	val = @visit.send(fieldname).to_i
-  	s = check_box('ptvisit',fieldname, options) + "<label for='#{fieldname}'>#{arv_name}</label>"
+  	s = check_box('visit',fieldname, options) + "<label for='#{fieldname}'>#{arv_name}</label>"
   	return s
   end
 
@@ -64,9 +64,9 @@ puts "diagnosis_check_boxes"
 
 #  def phys_finding(afield, alabel=afield.capitalize)
 #
-#    s = "<td><label for='ptvisit_pe_#{afield}'>#{alabel}</label></td><td>" +
-#        check_box('ptvisit', "pe_"+afield+"_ok") +
-#        text_field('ptvisit', 'pe_'+afield, :size => 14) + "</td>"
+#    s = "<td><label for='visit_pe_#{afield}'>#{alabel}</label></td><td>" +
+#        check_box('visit', "pe_"+afield+"_ok") +
+#        text_field('visit', 'pe_'+afield, :size => 14) + "</td>"
 #  end
 
 #  def phys_findings_column(items)
@@ -81,8 +81,8 @@ puts "diagnosis_check_boxes"
 
 #  def  arv_check_box (arv_name, options={})
 #	fieldname = "reg_" + arv_name
-#	val = @ptvisit.send(fieldname).to_i
-#	s = check_box('ptvisit',fieldname, options) + "<label for='#{fieldname}'>#{arv_name}</label>"
+#	val = @visit.send(fieldname).to_i
+#	s = check_box('visit',fieldname, options) + "<label for='#{fieldname}'>#{arv_name}</label>"
 #	return s
 #  end
 end

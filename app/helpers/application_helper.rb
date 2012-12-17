@@ -31,7 +31,7 @@ module ApplicationHelper
  end
 
   # ToDo These should probably go into a presenter
-  # The following methods logically should be in ptvisit_helper, but they're needed when the visit is
+  # The following methods logically should be in visit_helper, but they're needed when the visit is
   # shown in other views such as the patient summary view. I don't see another way to refer to them
   # yet other than putting them here in the application helper.
   # Constants used in show_pe_findings -- eventually move the column list to a constant, too
@@ -123,9 +123,9 @@ module ApplicationHelper
     field = text_field(params[:record], item, html_options)
     content_tag(:td, cell_contents, class: 'field_label')
     #-#      %td.field_label
-    #-#        %label{:for => "ptvisit_date"} Date
+    #-#        %label{:for => "visit_date"} Date
     #-#        %br/
-    #-#        %input{:name => "ptvisit[date]", :size => "10", :type => "text", :value => @ptvisit.date.strftime("%d-%b-%Y") if not @ptvisit.date.nil?}
+    #-#        %input{:name => "visit[date]", :size => "10", :type => "text", :value => @visit.date.strftime("%d-%b-%Y") if not @visit.date.nil?}
     #-#          %small
     #-#            %a{:href => "javascript:showCal('Calendar1')"} Calendar
 
@@ -236,7 +236,7 @@ module ApplicationHelper
 
   end
 
-  # The following methods logically should be in ptvisit_helper, but they're needed when the visit is
+  # The following methods logically should be in visit_helper, but they're needed when the visit is
   # shown in other views such as the patient summary view. I don't see another way to refer to them
   # yet other than putting them here in the application helper.
   # Constants used in show_pe_findings -- eventually move the column list to a constant, too

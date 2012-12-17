@@ -3,14 +3,27 @@ class VisitsController < ApplicationController
   before_filter :authenticate_user!
 
   active_scaffold :visit do |config|
-    config.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm
     config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm
   end
 
   def do_edit
-    patient = Patient.find params[:patient_id]
+    visit = Visit.find params[:id]
+    patient = Patient.find visit.patient_id
     set_diagnosis_fields
     @current_drugs = patient.current_drugs_formatted
+    super
+  end
+
+  def do_update
+    params[:record] = params[:visit]
+    params.delete :visit
+puts "Params[:record] = #{params[:record]}"
+    super
+  end
+
+  def do_create
+    params[:record] = params[:visit]
+    params.delete :visit
     super
   end
 
@@ -67,7 +80,7 @@ class VisitsController < ApplicationController
 ##            @patient = Patient.find(:reckey)
 ##            render(:inline => 'here') and return
 ##            render(:inline => debug(@patient)) and return
-#        @ptvisit_pages, @ptvisits = paginate(:ptvisits, :per_page => 20, :order_by => 'date DESC',
+#        @visit_pages, @visits = paginate(:visits, :per_page => 20, :order_by => 'date DESC',
 #                                             :conditions => ["reckey = ?", reckey])
 #      rescue
 #        flash[:notice] = "Patient #{reckey} not found"
@@ -81,15 +94,15 @@ class VisitsController < ApplicationController
 #
 #  def listall
 #    @editing = false
-#    @ptvisit_pages, @ptvisits = paginate(:ptvisits, :per_page => 20, :order => 'date DESC')
+#    @visit_pages, @visits = paginate(:visits, :per_page => 20, :order => 'date DESC')
 #  end
 #
 #  def show_last  # show most recent visit of patient :id
 #    @editing = false
 #    @patient = Patient.find(params[:id])
-#    @ptvisit = @patient.ptvisits.find(:first, :order => 'date DESC')
-#    if @ptvisit
-#      redirect_to :action => 'show', :id => @ptvisit
+#    @visit = @patient.visits.find(:first, :order => 'date DESC')
+#    if @visit
+#      redirect_to :action => 'show', :id => @visit
 #    else
 #      flash[:notice] = 'No visits yet for this patient'
 #      redirect_to :action => :list, :id => @patient
@@ -98,64 +111,64 @@ class VisitsController < ApplicationController
 #
 #  def show
 #    @editing = false
-#    @ptvisit = Ptvisit.find(params[:id])
-#    @current_drugs = @ptvisit.patient.current_drugs_formatted
-#    @patient = @ptvisit.patient
-##    render(:inline => "<%= debug(@ptvisit) %>") and return
+#    @visit = Visit.find(params[:id])
+#    @current_drugs = @visit.patient.current_drugs_formatted
+#    @patient = @visit.patient
+##    render(:inline => "<%= debug(@visit) %>") and return
 #
 #  end
 #
 #  def pepfar_fu
-#    @ptvisit = Ptvisit.find(params[:id])
-#    if @ptvisit.next_visit.nil?		# get rounded estimate of weeks to next visit
+#    @visit = Visit.find(params[:id])
+#    if @visit.next_visit.nil?		# get rounded estimate of weeks to next visit
 #      @weeks_to_next = -1
 #    else
-#      @weeks_to_next = ((@ptvisit.next_visit - @ptvisit.date)/7.to_f).round
+#      @weeks_to_next = ((@visit.next_visit - @visit.date)/7.to_f).round
 #    end
 #    render(:layout => 'layouts/pepfar_form')
 #  end
 #
 #  def new
 #    set_diagnosis_fields()     # set up which diagnoses fields (checkboxes) will be shown on visit form
-#    @ptvisit = Ptvisit.new
-#    @ptvisit.reckey = params[:id].to_i
-#    @ptvisit.date = Time.now.strftime("%d-%b-%Y")
-#    @ptvisit.next_visit = "0000-00-00"
-#    @patient = @ptvisit.patient
-#    @ptvisit.arv_regimen = @ptvisit.arv_regimen_new = @patient.current_arv_regimen
-#    @ptvisit.next_visit = 4.weeks.from_now if @ptvisit.patient.hiv_pos # default next appoint in 4 weeks
-#    @ptvisit.arv_status = ''
-#    @ptvisit.arv_status = 'O' unless @patient.hiv?
-#    @ptvisit.anti_tb_status = ''
-#    @current_drugs = @ptvisit.patient.current_drugs_formatted
+#    @visit = Visit.new
+#    @visit.reckey = params[:id].to_i
+#    @visit.date = Time.now.strftime("%d-%b-%Y")
+#    @visit.next_visit = "0000-00-00"
+#    @patient = @visit.patient
+#    @visit.arv_regimen = @visit.arv_regimen_new = @patient.current_arv_regimen
+#    @visit.next_visit = 4.weeks.from_now if @visit.patient.hiv_pos # default next appoint in 4 weeks
+#    @visit.arv_status = ''
+#    @visit.arv_status = 'O' unless @patient.hiv?
+#    @visit.anti_tb_status = ''
+#    @current_drugs = @visit.patient.current_drugs_formatted
 #    @editing = true
 #  end
 #
 #  def create
 #    @editing = false
-#    date = my_date_parse(params[:ptvisit][:date])  #*
+#    date = my_date_parse(params[:visit][:date])  #*
 #                                                   # Change 26-Jan-07: Check for existing visit for this date. If it exists, edit it instead of creating a new one.
 #                                                   # If we ever need to allow multiple visits for a given date (e.g., in different clinics), then we'll
 #                                                   # have to have a way around this, probably by searching for same "clinic" as well as same date.
-#    @patient = Patient.find(params[:ptvisit][:reckey])
-#    @ptvisit = @patient.ptvisits.find(:first,
+#    @patient = Patient.find(params[:visit][:reckey])
+#    @visit = @patient.visits.find(:first,
 #                                      :conditions => ['date = ?', date],
 #                                      :order => 'id DESC')  #*
-#    if ! @ptvisit.nil?
+#    if ! @visit.nil?
 #      flash[:notice] = "There is an existing visit record (now shown): please edit it instead of creating new one."
-#      redirect_to (:action => 'edit', :id => @ptvisit) and return
+#      redirect_to (:action => 'edit', :id => @visit) and return
 #    end
-#    @ptvisit = Ptvisit.new(params[:ptvisit])
-#    @ptvisit.date = date
-#    @ptvisit.next_visit = my_date_parse(params[:ptvisit][:next_visit])  #*
-#                                                   #    render (:inline, @ptvisit.next_visit.to_s) and return
-#    if @ptvisit.save
-#      flash[:notice] = 'Ptvisit was successfully created.'
-#      redirect_to :action => 'show', :id => @ptvisit
+#    @visit = Visit.new(params[:visit])
+#    @visit.date = date
+#    @visit.next_visit = my_date_parse(params[:visit][:next_visit])  #*
+#                                                   #    render (:inline, @visit.next_visit.to_s) and return
+#    if @visit.save
+#      flash[:notice] = 'Visit was successfully created.'
+#      redirect_to :action => 'show', :id => @visit
 #    else
-##      render(:inline => "<%= @ptvisit.date %><br><%= DateTime.new %>") and return
-#      @current_drugs = @ptvisit.patient.current_drugs_formatted
-#      @patient = @ptvisit.patient
+##      render(:inline => "<%= @visit.date %><br><%= DateTime.new %>") and return
+#      @current_drugs = @visit.patient.current_drugs_formatted
+#      @patient = @visit.patient
 #      set_diagnosis_fields()
 #      render :action => 'new'
 #    end
@@ -163,43 +176,43 @@ class VisitsController < ApplicationController
 #
 #  def edit
 #    set_diagnosis_fields()     # set up which diagnoses fields (checkboxes) will be shown on visit form
-#    @ptvisit = Ptvisit.find(params[:id])
-#    @patient = @ptvisit.patient
+#    @visit = Visit.find(params[:id])
+#    @patient = @visit.patient
 #    @editing = true
-#    @current_drugs = @ptvisit.patient.current_drugs_formatted
+#    @current_drugs = @visit.patient.current_drugs_formatted
 #  end
 #
 #  def edit_test
 #    set_diagnosis_fields()     # set up which diagnoses fields (checkboxes) will be shown on visit form
-#    @ptvisit = Ptvisit.find(params[:id])
+#    @visit = Visit.find(params[:id])
 #    @editing = true
 #  end
 #
 #  def update
 #    @editing = false
-#    @ptvisit = Ptvisit.find(params[:id])
-#    ## The calendar program doesn't support a nested name like ptvisit[date], so trap unnested ones returned by form.
-#    params[:ptvisit][:date] = my_date_parse(params[:ptvisit][:date]).to_s
-#    params[:ptvisit][:next_visit] = my_date_parse(params[:ptvisit][:next_visit]).to_s
-#    #    render(:inline => "<%= debug(params[:ptvisit][:date].class)%> ") and return false
-#    if @ptvisit.update_attributes(params[:ptvisit])
-#      flash[:notice] = 'Ptvisit was successfully updated.'
-#      redirect_to :action => 'show', :id => @ptvisit
+#    @visit = Visit.find(params[:id])
+#    ## The calendar program doesn't support a nested name like visit[date], so trap unnested ones returned by form.
+#    params[:visit][:date] = my_date_parse(params[:visit][:date]).to_s
+#    params[:visit][:next_visit] = my_date_parse(params[:visit][:next_visit]).to_s
+#    #    render(:inline => "<%= debug(params[:visit][:date].class)%> ") and return false
+#    if @visit.update_attributes(params[:visit])
+#      flash[:notice] = 'Visit was successfully updated.'
+#      redirect_to :action => 'show', :id => @visit
 #    else
-##      render(:inline => "<%= debug(@ptvisit) %>") and return false
+##      render(:inline => "<%= debug(@visit) %>") and return false
 #      set_diagnosis_fields()     # set up which diagnoses fields (checkboxes) will be shown on visit form
-#      @patient = @ptvisit.patient
-#      @current_drugs = @ptvisit.patient.current_drugs_formatted
+#      @patient = @visit.patient
+#      @current_drugs = @visit.patient.current_drugs_formatted
 #                                 # Kludge to get around issue of difficulty validating dates. Not good to have to do this for
 #                                 # every date field, so it's something to work on.
-#      @ptvisit.date = '' if @ptvisit.date == UNKNOWNDATE
-#      @ptvisit.next_visit = '' if @ptvisit.next_visit == UNKNOWNDATE
-#      render :action => 'edit', :id => @ptvisit
+#      @visit.date = '' if @visit.date == UNKNOWNDATE
+#      @visit.next_visit = '' if @visit.next_visit == UNKNOWNDATE
+#      render :action => 'edit', :id => @visit
 #    end
 #  end
 #
 #  def destroy
-#    Ptvisit.find(params[:id]).destroy
+#    Visit.find(params[:id]).destroy
 #    redirect_to :action => 'list'
 #  end
 #
@@ -209,8 +222,8 @@ class VisitsController < ApplicationController
 #  end
 #
 #  def destroy
-#    reckey = Ptvisit.find(params[:id]).reckey
-#    Ptvisit.find(params[:id]).destroy
+#    reckey = Visit.find(params[:id]).reckey
+#    Visit.find(params[:id]).destroy
 #    redirect_to :action => 'list', :id => reckey
 #  end
 #
@@ -222,7 +235,7 @@ class VisitsController < ApplicationController
 #  def set_first_visit
 #    # Set/clear the "firstvisit" flag in each visit record.
 #    #   (Set if it's the first visit in the database for that patient.)
-#    @visits = Ptvisit.find(:all, :conditions => '1 = 1', :order => 'reckey, date')
+#    @visits = Visit.find(:all, :conditions => '1 = 1', :order => 'reckey, date')
 #    prev_reckey = nil    # hold the id field (reckey) for previous visit in list to compare with current visit.
 #                         # If different, then the current visit must be the first one for this patient
 #
@@ -277,7 +290,7 @@ class VisitsController < ApplicationController
 #    conditions = 'next_visit >= ? AND next_visit <= ? ' +
 #        ' AND NOT pt.died ' +
 #        '  AND (ISNULL(pt.pepfar_status) OR pt.pepfar_status = "a") '
-#    @appointments = Ptvisit.find(:all,
+#    @appointments = Visit.find(:all,
 #                                 :joins => 'as visit inner join patients as pt on visit.reckey = pt.id',
 #                                 :conditions => [conditions, @start_date, @end_date],
 #                                 :order => 'next_visit')
@@ -300,8 +313,8 @@ class VisitsController < ApplicationController
 #    filters.push("date <= '#{end_date_str}'")
 #    filters.push('patients.pepfar > 0')
 #    @editing = false
-#    @ptvisits = Ptvisit.find_by_sql("select ptvisits.*, pepfar, hosp_ident, CONCAT(last_name, ', ', other_names) as name FROM ptvisits " +
-#                                        "LEFT JOIN patients ON ptvisits.reckey = patients.id " +
+#    @visits = Visit.find_by_sql("select visits.*, pepfar, hosp_ident, CONCAT(last_name, ', ', other_names) as name FROM visits " +
+#                                        "LEFT JOIN patients ON visits.reckey = patients.id " +
 #                                        'WHERE ' + filters.join(' and ') +
 #                                        ' ORDER BY last_name, other_names')
 #    @arv_status = Bincounter.new;
@@ -309,8 +322,8 @@ class VisitsController < ApplicationController
 #    @patient_list = {}
 #    @on_arv = {}
 #    @enrollments = {}
-#    #    render (:inline => "<%= debug(@ptvisits.length) %>") and return false
-#    @ptvisits.each do | visit |
+#    #    render (:inline => "<%= debug(@visits.length) %>") and return false
+#    @visits.each do | visit |
 #      @arv_status.inc(visit.arv_status)
 #      @anti_tb_status.inc(visit.anti_tb_status)
 #      # tag patient as on ARV in this time period if the visit arv status is begin, continue, or change
@@ -322,9 +335,9 @@ class VisitsController < ApplicationController
 #  end
 #
 #  def make_growthchart
-#    @ptvisit = Ptvisit.find(params[:id])
-##  render(:inline => "<%= debug(@ptvisit.patient) %>") and return
-#    growth_chart_filename = @ptvisit.patient.growth_chart
+#    @visit = Visit.find(params[:id])
+##  render(:inline => "<%= debug(@visit.patient) %>") and return
+#    growth_chart_filename = @visit.patient.growth_chart
 #    send_file growth_chart_filename, :type => 'image/png', :disposition => 'inline'
 #
 #  end

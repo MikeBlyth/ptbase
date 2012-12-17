@@ -1,8 +1,8 @@
 - visit = @record
 - patient = @record.patient
 - @patient = patient
-= render(:partial => '/shared/medinfo', :object => patient)
-= render(:partial => 'shared/problem_list', :object => patient )
+-#= render(:partial => '/shared/medinfo', :object => patient)
+-#= render(:partial => 'shared/problem_list', :object => patient )
 = simple_fields_for visit do |form|
   = patient_name_link(patient)
   %fieldset
@@ -57,7 +57,7 @@
         = phys_findings_column(%w(skin lymph extr neuro genitalia tanner))
     = form.input :phys_exam
     %br
-    = text_area 'ptvisit', 'phys_exam', {:rows => '1', :cols => '70' }
+    = text_area 'visit', 'phys_exam', {:rows => '1', :cols => '70' }
   %fieldset
     %legend Assessment and Diagnosis
     = form.input :dx_hiv, label: "HIV"

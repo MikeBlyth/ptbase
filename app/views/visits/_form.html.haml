@@ -101,7 +101,6 @@
     = form.input :arv_status
     = form.input :arv_missed
     = form.input :arv_missed_week
-    -#= render(:partial => 'arv_regimen' )
-    %p Display ARV Regimen here-------
+    = render(:partial => 'arv_regimen', object: visit )
 
 %p Add JS validation for HIV pts

@@ -12,8 +12,8 @@ puts "diagnosis_check_boxes"
             dx_i = column*dx_rows + row # which diagnosis to put here
             dx_field = dx_fields[dx_i]
             unless dx_i >= dx_fields.size
-                box = check_box dx_field.name, dx_field.name
-                label = label_tag dx_field.name, dx_field.name
+                box = check_box :visit, dx_field.name
+                label = label_tag :visit, dx_field.name
                 row_contents << content_tag(:td, box+label)
             end
           end
@@ -37,6 +37,14 @@ puts "diagnosis_check_boxes"
     end
     s << '</table></td>'
     return s.html_safe
+  end
+
+  # Not in use #########
+  def  arv_check_box (arv_name, options={})
+  	fieldname = "reg_" + arv_name
+  	val = @visit.send(fieldname).to_i
+  	s = check_box('ptvisit',fieldname, options) + "<label for='#{fieldname}'>#{arv_name}</label>"
+  	return s
   end
 
 

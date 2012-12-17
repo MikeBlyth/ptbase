@@ -135,6 +135,10 @@ RSpec.configure do |config|
     Regexp.new(Regexp.escape(s))
   end
 
-
+  def controller_sign_in
+    @user = User.create(email: 'test@example.com', password: 'passxxx', username: 'SomeUser')
+    sign_in @user
+    return @user
+  end
 
 end

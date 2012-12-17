@@ -3,7 +3,7 @@ include Warden::Test::Helpers
 
 module RequestHelpers
   def create_logged_in_user
-    user = FactoryGirl.create(:admin_user, password: 'opensesame')
+    user = User.create(email: 'test@example.com', password: 'passxxx', username: 'SomeUser')
     login(user)
     user
   end

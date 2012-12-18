@@ -1,3 +1,5 @@
+require 'std_to_activescaffold_adapter'
+
 class PatientsController < ApplicationController
   before_filter :authenticate_user!
 
@@ -9,5 +11,8 @@ class PatientsController < ApplicationController
     config.show.link.page = true
 
   end
+
+  include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
+
 
 end

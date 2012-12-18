@@ -1,17 +1,15 @@
 - visit = @record
 - patient = @record.patient
 - @patient = patient
-- puts "In form, @patient=#@patient"
-- puts "In form, @record =#{@record.attributes}"
 -#= render(:partial => '/shared/medinfo', :object => patient)
 -#= render(:partial => 'shared/problem_list', :object => patient )
 = simple_fields_for visit do |form|
   = patient_name_link(patient)
   %fieldset
     %legend Visit info
-    = form.input :date
-    = form.input :next_visit, label: 'Next visit (add js buttons to give choices)'
-    = form.input :weight
+    = form.input :date, as: :string
+    = form.input :scheduled, label: 'Scheduled visit?'
+    = form.input :next_visit, as: :string, label: 'Next visit (add js buttons to give choices)'
     = form.input :provider
     = form.input :newpt, label: 'New patient?'
     = form.input :adm, label: 'Admitted?'
@@ -57,12 +55,12 @@
         = phys_findings_column(%w(scalp conjunct eyes ears mouth nose))
         = phys_findings_column(%w(chest heart abd liver spleen))
         = phys_findings_column(%w(skin lymph extr neuro genitalia tanner))
-    = form.input :phys_exam
     %br
     = text_area 'visit', 'phys_exam', {:rows => '1', :cols => '70' }
   %fieldset
     %legend Assessment and Diagnosis
     = form.input :dx_hiv, label: "HIV"
+    = form.input :dx_pneumonia, label: "pneumonia"
     = form.input :dx_tb_pulm, label: "pulmonary TB"
     = form.input :dx_malaria, label: "malaria"
     = form.input :dx_uri, label: "uri"
@@ -75,11 +73,13 @@
     = form.input :dx_parotitis, label: "parotitis"
     = form.input :dx_dysentery, label: "dysentery"
     = form.input :dx, label: 'Other diagnoses'
+    = form.input :newdx, label: 'New diagnosis given?'
     %br
     = form.input :assessment_stable, label: "Stable"
     = form.input :assessment_oi, label: "Active OI"
     = form.input :assessment_drug_toxicity, label: "Drug toxicity"
     = form.input :assessment_nonadherence, label: "Nonadherence"
+    = form.input :assessment
 
   %fieldset
     %legend Dx2

@@ -2,7 +2,6 @@ require 'pry'
 module VisitsHelper
 
   def diagnosis_check_boxes(dx_fields, dx_columns=4)
-puts "diagnosis_check_boxes"
     dx_columns = 4
     dx_rows = ((dx_fields.size + dx_columns -1) / dx_columns).to_i   # how many rows
       table_contents = ''.html_safe

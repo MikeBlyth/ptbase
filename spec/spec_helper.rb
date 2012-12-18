@@ -141,4 +141,45 @@ RSpec.configure do |config|
     return @user
   end
 
+  def fill_all_inputs(model, options={})
+    verbose = options[:verbose]
+    warnings = options[:warnings]
+    model_name = model.to_s.downcase
+    not_found = []
+    not_filled = []
+    target_columns = model.content_columns
+    if options[:exclude]
+      target_columns.delete_if {|c| options[:exclude].include? c.name}
+    end
+    model.content_columns.each do |column|
+      field_id = "##{model_name}_#{column.name}"
+      if page.has_selector?(field_id)
+        field_name = "#{model_name}[#{column.name}]"
+        value = case column.type
+                  when :datetime, :date then Date.today - 1.day
+                  when :string, :text then "Data for #{column.name}"
+                  when :integer then "5"
+                  when :float then "4.0"
+                  when :boolean then :boolean
+                  else nil
+                end
+        not_filled << column.name unless value
+        puts "Filling in #{field_name} with #{value}" if value && verbose
+        if value == :boolean
+          check field_name
+        else
+          fill_in(field_name, with: value) if value
+        end
+      else
+        not_found << column.name
+      end
+    end
+    if verbose || warnings
+      puts "Columns not found in form: #{not_found}"
+      puts "Columns found but not filled: #{not_filled}"
+    end
+
+  end
+
+
 end

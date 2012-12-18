@@ -28,7 +28,6 @@ describe PatientsController do
       response.status.should == 302 # Redirects after creating patient
       new_patient= Patient.last
       patient.each {|k,v| new_patient.send(k).should eq v}
-
     end
   end
 

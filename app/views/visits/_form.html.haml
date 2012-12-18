@@ -1,6 +1,8 @@
 - visit = @record
 - patient = @record.patient
 - @patient = patient
+- puts "In form, @patient=#@patient"
+- puts "In form, @record =#{@record.attributes}"
 -#= render(:partial => '/shared/medinfo', :object => patient)
 -#= render(:partial => 'shared/problem_list', :object => patient )
 = simple_fields_for visit do |form|

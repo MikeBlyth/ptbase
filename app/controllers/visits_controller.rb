@@ -4,6 +4,8 @@ class VisitsController < ApplicationController
 
   active_scaffold :visit do |config|
     config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm
+    config.create.link.page = true
+    config.create.link.inline = false
   end
 
   def do_edit

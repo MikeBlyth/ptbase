@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121216130832) do
+ActiveRecord::Schema.define(:version => 20121219111138) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -352,6 +352,40 @@ ActiveRecord::Schema.define(:version => 20121216130832) do
     t.boolean  "assessment_nonadherence"
     t.integer  "arv_missed"
     t.integer  "arv_missed_week"
+    t.boolean  "pe_scalp_ok"
+    t.string   "pe_scalp"
+    t.boolean  "pe_conjunct_ok"
+    t.string   "pe_conjunct"
+    t.boolean  "pe_eyes_ok"
+    t.string   "pe_eyes"
+    t.boolean  "pe_ears_ok"
+    t.string   "pe_ears"
+    t.boolean  "pe_mouth_ok"
+    t.string   "pe_mouth"
+    t.boolean  "pe_nose_ok"
+    t.string   "pe_nose"
+    t.boolean  "pe_chest_ok"
+    t.string   "pe_chest"
+    t.boolean  "pe_heart_ok"
+    t.string   "pe_heart"
+    t.boolean  "pe_abd_ok"
+    t.string   "pe_abd"
+    t.boolean  "pe_liver_ok"
+    t.string   "pe_liver"
+    t.boolean  "pe_spleen_ok"
+    t.string   "pe_spleen"
+    t.boolean  "pe_skin_ok"
+    t.string   "pe_skin"
+    t.boolean  "pe_lymph_ok"
+    t.string   "pe_lymph"
+    t.boolean  "pe_extr_ok"
+    t.string   "pe_extr"
+    t.boolean  "pe_neuro_ok"
+    t.string   "pe_neuro"
+    t.boolean  "pe_genitalia_ok"
+    t.string   "pe_genitalia"
+    t.boolean  "pe_tanner_ok"
+    t.string   "pe_tanner"
   end
 
 end

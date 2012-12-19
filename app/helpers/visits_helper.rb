@@ -2,15 +2,16 @@ require 'pry'
 module VisitsHelper
 
   def diagnosis_check_boxes(dx_fields, dx_columns=4)
+    return nil if dx_fields.blank?
     dx_columns = 4
-    dx_rows = ((dx_fields.size + dx_columns -1) / dx_columns).to_i   # how many rows
+    dx_rows = ((dx_fields.count + dx_columns -1) / dx_columns).to_i   # how many rows
       table_contents = ''.html_safe
       0.upto(dx_rows-1) do |row|
           row_contents = ''.html_safe
           0.upto(dx_columns-1) do |column|
             dx_i = column*dx_rows + row # which diagnosis to put here
             dx_field = dx_fields[dx_i]
-            unless dx_i >= dx_fields.size
+            unless dx_i >= dx_fields.count
                 box = check_box :visit, dx_field.name
                 label = label_tag :visit, dx_field.name
                 row_contents << content_tag(:td, box+label)

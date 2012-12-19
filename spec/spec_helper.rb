@@ -169,10 +169,11 @@ RSpec.configure do |config|
       column_name = column.name
       field_id = "##{model_name}_#{column_name}"
       if page.has_selector?(field_id)
-        filled_value = fill_in_column(model_name, column)
+        filled_value = fill_in_column(model_name, column,
+                                      (options[column_name.to_sym] || options[column_name]))
         if filled_value
-          filled_values[:column_name] = filled_value
-          puts "Filling in #{column_name} with #{filled_value}" if filled_value
+          filled_values[column_name] = filled_value
+          puts "Filling in #{column_name} with #{filled_value}" if verbose
         else
           not_filled << column_name
         end
@@ -181,8 +182,8 @@ RSpec.configure do |config|
       end
     end
     if verbose || warnings
-      puts "Columns for #{model_name} not found in form: #{not_found}"
-      puts "Columns for #{model_name} found but not filled: #{not_filled}"
+      puts "Columns for #{model_name} not found in form: #{not_found}" if not_found.any?
+      puts "Columns for #{model_name} found but not filled: #{not_filled}" if not_filled.any?
     end
     return filled_values
   end
@@ -193,8 +194,8 @@ RSpec.configure do |config|
     value ||= case column.type
               when :datetime, :date then Date.today - 1.day
               when :string, :text then "Data for #{column.name}"
-              when :integer then "5"
-              when :float then "4.0"
+              when :integer then 5
+              when :float then 40
               when :boolean then true
               else nil
             end
@@ -207,6 +208,7 @@ RSpec.configure do |config|
   end
 
   def check_all_equal(record, attributes)
+#puts attributes
     mismatched=[]
     record.reload
     attributes.each do |name, value|

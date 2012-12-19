@@ -17,9 +17,15 @@ feature "Visits" do
     else
       puts "NOT FOUND"
     end
-    filled_values = fill_all_inputs(Visit, exclude: ['dx2'], warnings: true)
+    filled_values = fill_all_inputs(Visit, exclude: ['dx2'],
+                    warnings: true,
+                    head_circ: 70.0 ,
+                    next_visit: Date.tomorrow
+                    )
     click_button 'Create'
-    check_all_equal(Visit.last, filled_values).should be true
+#save_and_open_page
+    Visit.last.should_not be_nil
+    check_all_equal(Visit.last, filled_values).should be_true
   end
 end
 

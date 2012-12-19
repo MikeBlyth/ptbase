@@ -9,6 +9,7 @@ class VisitsController < ApplicationController
   end
 
   def do_edit
+#puts 'do_edit'
     visit = Visit.find params[:id]
     patient = Patient.find visit.patient_id
     set_diagnosis_fields
@@ -17,19 +18,22 @@ class VisitsController < ApplicationController
   end
 
   def do_update
+#puts 'do_update'
     params[:record] = params[:visit]
     params.delete :visit
-puts "Params[:record] = #{params[:record]}"
+#puts "Params[:record] = #{params[:record]}"
     super
   end
 
   def do_create
+#puts 'do_create'
     params[:record] = params[:visit]
     params.delete :visit
     super
   end
 
   def do_new
+#puts 'do_new'
     patient = Patient.find params[:patient_id]
     set_diagnosis_fields
     @current_drugs = patient.current_drugs_formatted
@@ -37,6 +41,7 @@ puts "Params[:record] = #{params[:record]}"
   end
 
   def set_diagnosis_fields
+#puts "set dx fields"
     @dx_fields = Diagnosis.where(:show_visits => true).order('name ASC')
     @dx_fields.each { |dx| dx.name = 'dx_' + dx.name }   # prepend 'dx_' to each field name
   end

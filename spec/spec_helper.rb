@@ -141,45 +141,63 @@ RSpec.configure do |config|
     return @user
   end
 
+  # Called by fill_all_inputs to determine the set of columns (fields) to be included
+  def columns_for_fill_all_inputs(model, options={})
+    target_columns = model.content_columns
+    if options[:include]
+      target_columns.keep_if {|c| options[:include].include? c.name}
+    end
+    if options[:exclude]
+      target_columns.delete_if {|c| options[:exclude].include? c.name}
+    end
+    return target_columns
+  end
+
+  # fill_all_inputs(Visit)
+  # fill_all_inputs(Visit, exclude: [:hiv_status])
+  # fill_all_inputs(Visit, include: [:height, :weight, :date])
+  # fill_all_inputs(Visit, warn: true)
   def fill_all_inputs(model, options={})
     verbose = options[:verbose]
     warnings = options[:warnings]
     model_name = model.to_s.downcase
     not_found = []
     not_filled = []
-    target_columns = model.content_columns
-    if options[:exclude]
-      target_columns.delete_if {|c| options[:exclude].include? c.name}
-    end
-    model.content_columns.each do |column|
-      field_id = "##{model_name}_#{column.name}"
+    columns = columns_for_fill_all_inputs(model, options)
+    columns.each do |column|
+      column_name = column.name
+      field_id = "##{model_name}_#{column_name}"
       if page.has_selector?(field_id)
-        field_name = "#{model_name}[#{column.name}]"
-        value = case column.type
-                  when :datetime, :date then Date.today - 1.day
-                  when :string, :text then "Data for #{column.name}"
-                  when :integer then "5"
-                  when :float then "4.0"
-                  when :boolean then :boolean
-                  else nil
-                end
-        not_filled << column.name unless value
-        puts "Filling in #{field_name} with #{value}" if value && verbose
-        if value == :boolean
-          check field_name
-        else
-          fill_in(field_name, with: value) if value
-        end
+        filled_value = fill_in_column(model_name, column)
+        not_filled << column_name if filled_value.nil?
+        puts "Filling in #{column_name} with #{filled_value}" if filled_value && verbose
       else
-        not_found << column.name
+        not_found << column_name
       end
     end
     if verbose || warnings
-      puts "Columns not found in form: #{not_found}"
-      puts "Columns found but not filled: #{not_filled}"
+      puts "Columns for #{model_name} not found in form: #{not_found}"
+      puts "Columns for #{model_name} found but not filled: #{not_filled}"
     end
-
   end
 
+  # Called by fill_all_inputs to fill in given input
+  def fill_in_column(model_name, column, value=nil)
+    field_name = "#{model_name}[#{column.name}]"
+    value ||= case column.type
+              when :datetime, :date then Date.today - 1.day
+              when :string, :text then "Data for #{column.name}"
+              when :integer then "5"
+              when :float then "4.0"
+              when :boolean then :boolean
+              else nil
+            end
+    if value == :boolean
+      check field_name
+    elsif value
+      fill_in(field_name, with: value)
+    end
+    return value
+  end
 
 end

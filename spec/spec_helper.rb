@@ -163,14 +163,19 @@ RSpec.configure do |config|
     model_name = model.to_s.downcase
     not_found = []
     not_filled = []
+    filled_values = {}
     columns = columns_for_fill_all_inputs(model, options)
     columns.each do |column|
       column_name = column.name
       field_id = "##{model_name}_#{column_name}"
       if page.has_selector?(field_id)
         filled_value = fill_in_column(model_name, column)
-        not_filled << column_name if filled_value.nil?
-        puts "Filling in #{column_name} with #{filled_value}" if filled_value && verbose
+        if filled_value
+          filled_values[:column_name] = filled_value
+          puts "Filling in #{column_name} with #{filled_value}" if filled_value
+        else
+          not_filled << column_name
+        end
       else
         not_found << column_name
       end
@@ -179,6 +184,7 @@ RSpec.configure do |config|
       puts "Columns for #{model_name} not found in form: #{not_found}"
       puts "Columns for #{model_name} found but not filled: #{not_filled}"
     end
+    return filled_values
   end
 
   # Called by fill_all_inputs to fill in given input
@@ -189,10 +195,10 @@ RSpec.configure do |config|
               when :string, :text then "Data for #{column.name}"
               when :integer then "5"
               when :float then "4.0"
-              when :boolean then :boolean
+              when :boolean then true
               else nil
             end
-    if value == :boolean
+    if value == true
       check field_name
     elsif value
       fill_in(field_name, with: value)
@@ -200,4 +206,18 @@ RSpec.configure do |config|
     return value
   end
 
+  def check_all_equal(record, attributes)
+    mismatched=[]
+    record.reload
+    attributes.each do |name, value|
+      if  record.send(name) != value
+        mismatched << {name: name, found: record.send(name), expected: value}
+      end
+    end
+    if mismatched.any?
+      puts "Attributes for #{record} do not match expected:"
+      mismatched.each {|m| puts "\t#{m[:name]}: expected #{m[:expected]} but got #{m[:found]}"}
+    end
+    return mismatched.empty?
+  end
 end

@@ -17,8 +17,9 @@ feature "Visits" do
     else
       puts "NOT FOUND"
     end
-    fill_all_inputs(Visit, exclude: ['dx2'], warnings: true)
-    fill_in "visit[dx]", with: "Other Dxs"
+    filled_values = fill_all_inputs(Visit, exclude: ['dx2'], warnings: true)
+    click_button 'Create'
+    check_all_equal(Visit.last, filled_values).should be true
   end
 end
 

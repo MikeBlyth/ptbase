@@ -143,12 +143,14 @@ RSpec.configure do |config|
 
   # Called by fill_all_inputs to determine the set of columns (fields) to be included
   def columns_for_fill_all_inputs(model, options={})
-    target_columns = model.content_columns
+    exclude = options[:exclude] || []
+    exclude << 'created_at'
+    exclude << 'updated_at'
+    target_columns = model.content_columns.
+        delete_if {|c|  exclude.include?(c.name) ||
+                        exclude.include?(c.name.to_sym)}
     if options[:include]
       target_columns.keep_if {|c| options[:include].include? c.name}
-    end
-    if options[:exclude]
-      target_columns.delete_if {|c| options[:exclude].include? c.name}
     end
     return target_columns
   end
@@ -157,6 +159,7 @@ RSpec.configure do |config|
   # fill_all_inputs(Visit, exclude: [:hiv_status])
   # fill_all_inputs(Visit, include: [:height, :weight, :date])
   # fill_all_inputs(Visit, warn: true)
+  # Would be nice ... fix so that select and radio buttons will work automatically
   def fill_all_inputs(model, options={})
     verbose = options[:verbose]
     warnings = options[:warnings]
@@ -169,7 +172,8 @@ RSpec.configure do |config|
       column_name = column.name
       field_id = "##{model_name}_#{column_name}"
       if page.has_selector?(field_id)
-        filled_value = fill_in_column(model_name, column,
+        field_tag = page.find(field_id).tag_name # superfluous for now.
+        filled_value = fill_in_column(model_name, column, field_tag,
                                       (options[column_name.to_sym] || options[column_name]))
         if filled_value
           filled_values[column_name] = filled_value
@@ -189,7 +193,7 @@ RSpec.configure do |config|
   end
 
   # Called by fill_all_inputs to fill in given input
-  def fill_in_column(model_name, column, value=nil)
+  def fill_in_column(model_name, column, field_tag, value=nil)
     field_name = "#{model_name}[#{column.name}]"
     value ||= case column.type
               when :datetime, :date then Date.today - 1.day
@@ -222,4 +226,13 @@ RSpec.configure do |config|
     end
     return mismatched.empty?
   end
+
+  def select_second_option(id)
+  # from Jason Neylon's Blog http://bit.ly/gIPq1R
+  # original  second_option_xpath = "//*[@id='#{id}']/option[2]"
+    second_option_xpath = "//select[@id='#{id}']/option[2]"
+    second_option = find(:xpath, second_option_xpath).text
+    select(second_option, :from => id)
+  end
+
 end

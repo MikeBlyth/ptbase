@@ -1,0 +1,22 @@
+- @prescription = @record
+- patient = @prescription.patient
+- in_heading_div = false
+- provider = @prescription.provider || current_user
+- if @prescription.errors[:caution].any?
+  .errorExplanation
+    %p
+      Consider warnings and cautions before overriding them.
+      %br
+      %span.emphasis Errors
+      cannot be overriden and must be corrected.
+    %label{:for => "override"} Override warnings?
+    %input#override{:name => "override_warning", :type => "checkbox", :value => "1"}
+= simple_fields_for @prescription do |form|
+  #suggested
+    = "Age: #{patient.age_human}, Weight: #{@weight || "--"} kg, "
+    = "Height: #{@height || "--"} cm, BSA: #{@bsa || "--"} m<sup>2</sup>".html_safe
+    = form.input :date, as: :string
+    = form.association :provider
+    %br
+  #prescription-items
+    = render(partial: "/prescription_items/_form", object: @prescription.items)

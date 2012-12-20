@@ -11,6 +11,8 @@ feature "Visits" do
     path = "/visits/new?patient_id=#{pt_id}&association=visits&parent_scaffold=patients&patient_id=#{pt_id}"
     visit path
     expect(page).to have_text("Create Visit")
+    page.should have_content("Current medical info")   # Form includes current medical info and
+    page.should have_content("Problem list")           # problem list
     filled_values = fill_all_inputs(Visit, exclude: ['dx2'],
                     warnings: true,
                     head_circ: 70.0 ,

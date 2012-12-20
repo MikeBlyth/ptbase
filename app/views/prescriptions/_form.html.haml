@@ -19,4 +19,5 @@
     = form.association :provider
     %br
   #prescription-items
-    = render(partial: "/prescription_items/_form", object: @prescription.items)
+    - @items = @prescription.items
+    = render(partial: "prescription_items/form", collection: @prescription.items, as: :item)

@@ -1,0 +1,8 @@
+= simple_fields_for item do |form|
+  = formatted_prescription_item(item)
+  = form.input :drug
+  = form.input :dose
+  = form.input :units
+  = form.input :route
+  = form.input :interval, label: "Interval (hours)"
+  = form.input :duration, label: "Duration (days)"

@@ -77,6 +77,42 @@
 #  assessment_nonadherence    :boolean
 #  arv_missed                 :integer
 #  arv_missed_week            :integer
+#  pe_scalp_ok                :boolean
+#  pe_scalp                   :string(255)
+#  pe_conjunct_ok             :boolean
+#  pe_conjunct                :string(255)
+#  pe_eyes_ok                 :boolean
+#  pe_eyes                    :string(255)
+#  pe_ears_ok                 :boolean
+#  pe_ears                    :string(255)
+#  pe_mouth_ok                :boolean
+#  pe_mouth                   :string(255)
+#  pe_nose_ok                 :boolean
+#  pe_nose                    :string(255)
+#  pe_chest_ok                :boolean
+#  pe_chest                   :string(255)
+#  pe_heart_ok                :boolean
+#  pe_heart                   :string(255)
+#  pe_abd_ok                  :boolean
+#  pe_abd                     :string(255)
+#  pe_liver_ok                :boolean
+#  pe_liver                   :string(255)
+#  pe_spleen_ok               :boolean
+#  pe_spleen                  :string(255)
+#  pe_skin_ok                 :boolean
+#  pe_skin                    :string(255)
+#  pe_lymph_ok                :boolean
+#  pe_lymph                   :string(255)
+#  pe_extr_ok                 :boolean
+#  pe_extr                    :string(255)
+#  pe_neuro_ok                :boolean
+#  pe_neuro                   :string(255)
+#  pe_genitalia_ok            :boolean
+#  pe_genitalia               :string(255)
+#  pe_tanner_ok               :boolean
+#  pe_tanner                  :string(255)
+#  created_at                 :datetime
+#  updated_at                 :datetime
 #
 
 # ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.

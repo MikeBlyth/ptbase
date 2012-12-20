@@ -26,7 +26,7 @@ module PrescriptionItemsHelper
     end
   end
 
-  def formatted_prescription_item(item)
-    item.drug
+  def formatted_prescription_item(p)
+    "#{p.drug} #{p.dose} #{p.units} #{p.route} every #{p.interval} hours for #{p.duration} days."
   end
 end

@@ -19,26 +19,6 @@
 #  updated_at         :datetime         not null
 #
 
-# == Schema Information
-#
-# Table name: prescription_items
-#
-#  id                 :integer          not null, primary key
-#  drug               :string(255)
-#  prescription_id    :integer
-#  dose               :float
-#  units              :string(255)
-#  route              :string(255)
-#  interval           :integer
-#  use_liquid         :boolean
-#  liquid             :integer
-#  duration           :integer
-#  other_description  :string(255)
-#  other_instructions :string(255)
-#  filled             :boolean
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#
 require 'forwardable'
 
 class PrescriptionItem < ActiveRecord::Base
@@ -48,6 +28,14 @@ class PrescriptionItem < ActiveRecord::Base
   validates_presence_of :drug, :prescription_id, :interval, :duration
   validate :valid_interval
   delegate :date, :patient, :confirmed, :void, :filled, to: :prescription
+
+  def to_label
+    drug
+  end
+
+  def to_s
+    drug
+  end
 
   def current?
     date + duration.days >= Date.today

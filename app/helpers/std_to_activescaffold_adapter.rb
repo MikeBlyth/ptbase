@@ -1,6 +1,7 @@
 # Include this module to Rails controllers using ActiveScaffold to be able to receive 
 # form parameters in normal Rails format ( {... model: {...}}) and change them to the
 # format needed by AS ({... record:{...}})
+# ActiveScaffold also wants to see associations by name (xxxx) and not xxxx_id
 # The module adds do_update and do_create methods, so these should not be overridden
 # in the controller (unless the same functionality is added). Instead, you can override
 # my_do_update and my_do_create, which are called by do_create and do_update just before
@@ -24,19 +25,25 @@ module StdToActivescaffoldAdapter
     # Override in controller to further modify state before calling AS create
   end
 
-  def do_update
+  def tweak_params_for_as
     params[:record] = params[my_model_sym]
+    # Convert refs to xxxx_id to xxxx
+    params[:record].select {|k,v| k =~ /(.*)_id\Z/}.each do |k,v|
+        params[:record][k[0..-4]] = v
+    end
     params.delete my_model_sym
+  end
+
+  def do_update
+    tweak_params_for_as
     my_do_update
     super  # AS does the actual update
   end
 
   def do_create
-    params[:record] = params[my_model_sym]
-    params.delete my_model_sym
+    tweak_params_for_as
     my_do_create
     super  # AS does the actual create action
   end
-
 
 end

@@ -17,6 +17,11 @@
     = "Height: #{@height || "--"} cm, BSA: #{@bsa || "--"} m<sup>2</sup>".html_safe
     = form.input :date, as: :string
     = form.association :provider
+    = form.input :weight, label: 'Patient weight'
+    = form.input :height, label: 'Patient height'
+    = form.input :confirmed
+    = form.input :void
+
     %br
   #prescription-items
     - @items = @prescription.items

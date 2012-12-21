@@ -1,7 +1,11 @@
 class PrescriptionsController < ApplicationController
+
   active_scaffold :prescription do |config|
     config.list.columns = :patient, :date, :provider, :prescription_items
   end
+
+  include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
+
 
   ########## FROM ORIGINAL APP ################
 #  def show

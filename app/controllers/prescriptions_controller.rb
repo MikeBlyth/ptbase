@@ -6,6 +6,20 @@ class PrescriptionsController < ApplicationController
 
   include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
 
+  def new
+    blank_prescription_item_count = 5
+    @blank_items = []
+    blank_prescription_item_count.times { @blank_items <<  PrescriptionItem.new}
+    super
+#binding.pry
+
+    blank_prescription_item_count.times {@record.prescription_items << PrescriptionItem.new}
+
+  end
+
+  def my_do_create
+    binding.pry
+  end
 
   ########## FROM ORIGINAL APP ################
 #  def show

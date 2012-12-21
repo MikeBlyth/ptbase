@@ -29,4 +29,21 @@ module PrescriptionItemsHelper
   def formatted_prescription_item(p)
     "#{p.drug} #{p.dose} #{p.units} #{p.route} every #{p.interval} hours for #{p.duration} days."
   end
+
+  def single_line_form(item, index)
+    item_id = item.id || "New#{index}"
+    name_base =  "prescription[prescription_items][#{item_id}]"
+    id_base = "prescription_item_#{item_id}"
+    content_tag(:div,
+      content_tag(:input, item.drug, id: "#{id_base}_drug",
+                class: '',
+                name: "#{name_base}[drug]") +
+      content_tag(:input, item.dose, id: "#{id_base}_dose",
+                class: '',
+                name: "#{name_base}[dose]"),
+      id: "#{id_base}")
+
+  end
 end
+
+#<input id="prescription_item_dose" class="numeric float optional" type="number" step="any" name="prescription_item[dose]">

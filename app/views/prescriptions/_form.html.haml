@@ -1,6 +1,6 @@
+- @record.prescription_items << (@blank_items || [])
 - @prescription = @record
 - patient = @prescription.patient
-- in_heading_div = false
 - provider = @prescription.provider || current_user
 - if @prescription.errors[:caution].any?
   .errorExplanation
@@ -8,7 +8,7 @@
       Consider warnings and cautions before overriding them.
       %br
       %span.emphasis Errors
-      cannot be overriden and must be corrected.
+      cannot be overridden and must be corrected.
     %label{:for => "override"} Override warnings?
     %input#override{:name => "override_warning", :type => "checkbox", :value => "1"}
 = simple_fields_for @prescription do |form|
@@ -21,8 +21,5 @@
     = form.input :height, label: 'Patient height'
     = form.input :confirmed
     = form.input :void
-
-    %br
   #prescription-items
-    - @items = @prescription.items
     = render(partial: "prescription_items/form", collection: @prescription.items, as: :item)

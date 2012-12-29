@@ -1,13 +1,4 @@
-- puts "@record=#{@prescription.inspect}"
-- patient = @patient
 - provider = @prescription.provider || current_user
--#= form_for @prescription do |form|
--#  = form.label :date
--#  = form.text_field :date
--#
--#  = form.fields_for :prescription_items do |builder|
--#    = render 'prescription_items/form', f: builder
-
 - if @prescription.errors[:caution].any?
   .errorExplanation
     %p
@@ -20,7 +11,7 @@
 = simple_form_for @prescription do |form|
   = hidden_field(:prescription, :patient_id)
   #rx-main
-    = "Age: #{patient.age_human}, Weight: #{@weight || "--"} kg, "
+    = "Age: #{@patient.age_human}, Weight: #{@weight || "--"} kg, "
     = "Height: #{@height || "--"} cm, BSA: #{@bsa || "--"} m<sup>2</sup>".html_safe
     = form.input :date, as: :string
     = form.association :provider
@@ -31,5 +22,4 @@
   #prescription-items
     = form.simple_fields_for :prescription_items do |builder|
       = render 'prescription_items/form', f: builder
-      -#= render(partial: "prescription_items/form", collection: @prescription.items, as: :item)
   = form.submit

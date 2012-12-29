@@ -12,7 +12,7 @@ class PrescriptionsController < ApplicationController
 
   def new
     @patient = Patient.find params[:patient_id]
-    @prescription = @patient.prescriptions.new
+    @prescription = @patient.prescriptions.new(provider_id: current_user.id)
     blank_prescription_item_count = 2
     blank_prescription_item_count.times { @prescription.prescription_items <<  PrescriptionItem.new}
 
@@ -21,12 +21,13 @@ class PrescriptionsController < ApplicationController
   end
 
   def edit
-    @patient = Patient.find params[:patient_id]
+puts "edit - params=#{params}"
     @prescription = Prescription.find(params[:id])
+    @patient = @prescription.patient
   end
 
   def create
-puts "Create - params=#{params}"
+    puts "Create - params=#{params}"
 #    binding.pry
     rx_attributes = params[:prescription]
     rx = Prescription.new rx_attributes
@@ -34,9 +35,24 @@ puts "Create - params=#{params}"
       flash[:notice] = 'Prescription saved successfully'
       redirect_to prescription_path(rx)
     else
-puts "Errors: #{rx.errors.messages}"
+      puts "Errors: #{rx.errors.messages}"
       @prescription = rx
       render :new
+    end
+  end
+
+  def update
+    puts "update - params=#{params}"
+    rx = Prescription.find params[:id]
+#    binding.pry
+    rx_attributes = params[:prescription]
+    if rx.update_attributes rx_attributes
+      flash[:notice] = 'Prescription updated successfully'
+      redirect_to prescription_path(rx)
+    else
+      puts "Errors: #{rx.errors.messages}"
+      @prescription = rx
+      render :edit
     end
   end
 

@@ -4,19 +4,25 @@ class PrescriptionsController < ApplicationController
     config.list.columns = :patient, :date, :provider, :prescription_items
     config.create.link.page = true
     config.create.link.inline = false
+    config.update.link.page = true
+    config.update.link.inline = false
   end
 
   include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
 
   def new
-    blank_prescription_item_count = 5
-    @blank_items = []
-    blank_prescription_item_count.times { @blank_items <<  PrescriptionItem.new}
-    super
+    patient = Patient.find params[:patient_id]
+    @prescription = patient.prescriptions.new
+    blank_prescription_item_count = 2
+    blank_prescription_item_count.times { @prescription.prescription_items <<  PrescriptionItem.new}
+
+#    super
 #binding.pry
+  end
 
-    blank_prescription_item_count.times {@record.prescription_items << PrescriptionItem.new}
-
+  def edit
+    patient = Patient.find params[:patient_id]
+    @prescription = Prescription.find(params[:id])
   end
 
   def create

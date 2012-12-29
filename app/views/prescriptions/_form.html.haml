@@ -1,8 +1,13 @@
-- puts @record.inspect
-- @record.prescription_items << (@blank_items || [])
-- @prescription = @record
+- puts "@record=#{@prescription.inspect}"
 - patient = @prescription.patient
 - provider = @prescription.provider || current_user
+-#= form_for @prescription do |form|
+-#  = form.label :date
+-#  = form.text_field :date
+-#
+-#  = form.fields_for :prescription_items do |builder|
+-#    = render 'prescription_items/form', f: builder
+
 - if @prescription.errors[:caution].any?
   .errorExplanation
     %p
@@ -12,8 +17,8 @@
       cannot be overridden and must be corrected.
     %label{:for => "override"} Override warnings?
     %input#override{:name => "override_warning", :type => "checkbox", :value => "1"}
-= simple_fields_for @prescription do |form|
-  #suggested
+= simple_form_for @prescription do |form|
+  #rx-main
     = "Age: #{patient.age_human}, Weight: #{@weight || "--"} kg, "
     = "Height: #{@height || "--"} cm, BSA: #{@bsa || "--"} m<sup>2</sup>".html_safe
     = form.input :date, as: :string
@@ -23,4 +28,6 @@
     = form.input :confirmed
     = form.input :void
   #prescription-items
-    = render(partial: "prescription_items/form", collection: @prescription.items, as: :item)
+    = form.simple_fields_for :prescription_items do |builder|
+      = render 'prescription_items/form', f: builder
+      -#= render(partial: "prescription_items/form", collection: @prescription.items, as: :item)

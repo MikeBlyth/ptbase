@@ -1,8 +1,9 @@
-= simple_fields_for 'prescription[prescription_items_attributes][]', item do |form|
+%fieldset
+  %legend Item
   -#= single_line_form(item, item_counter)
-  = form.input :drug
-  = form.input :dose
-  = form.input :units
-  = form.input :route
-  = form.input :interval, label: "Interval (hours)"
-  = form.input :duration, label: "Duration (days)"
+  = f.input :drug
+  = f.input :dose
+  = f.input :units
+  = f.input :route
+  = f.input :interval, label: "Interval (hours)"
+  = f.input :duration, label: "Duration (days)"

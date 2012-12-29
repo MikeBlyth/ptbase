@@ -18,6 +18,11 @@ feature "Prescriptions" do
                                     exclude: [:filled],
     )
     select(provider.name)
+    within('Drug') do
+      fill_in 'Name', with: 'DrugX'
+      fill_in 'Interval', with: '6'
+      fill_in 'Days', with: '5'
+    end
     click_button 'Create'
 #save_and_open_page
     new_rec = Prescription.last

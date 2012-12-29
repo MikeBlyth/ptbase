@@ -17,8 +17,22 @@ class PrescriptionsController < ApplicationController
 
   end
 
-  def my_do_create
+  def create
     binding.pry
+    rx_attributes = params[:prescription]
+    rx = Prescription.new
+    items = rx_attributes[:prescription_items]
+    rx.prescription_items = items.select{|i| i[:drug].any?}.map {|item| PrescriptionItem.new(item)}
+    rx_attributes.delete :prescription_items
+    rx.attributes = rx_attributes
+    if rx.save
+      flash[:notice] = 'Prescription saved successfully'
+      redirect_to prescription_path(rx)
+    else
+      @record = rx
+      @blank_items = [PrescriptionItem.new]
+      render :new
+    end
   end
 
   ########## FROM ORIGINAL APP ################

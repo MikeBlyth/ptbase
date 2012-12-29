@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121219124115) do
+ActiveRecord::Schema.define(:version => 20121222123656) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(:version => 20121219124115) do
   create_table "prescription_items", :force => true do |t|
     t.string   "drug"
     t.integer  "prescription_id"
-    t.float    "dose"
+    t.string   "dose"
     t.string   "units"
     t.string   "route"
     t.integer  "interval"

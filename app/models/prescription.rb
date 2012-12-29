@@ -18,8 +18,9 @@
 class Prescription < ActiveRecord::Base
   include DateValidators
   attr_accessible :confirmed, :date, :filled, :height, :provider_id, :provider, :void, :weight,
-                  :patient
+                  :patient, :prescription_items
   attr_accessor :warnings
+  accepts_nested_attributes_for :prescription_item
   belongs_to :patient
   belongs_to :provider
   has_many :prescription_items, :dependent=>:delete_all

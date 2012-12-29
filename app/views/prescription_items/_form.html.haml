@@ -1,8 +1,8 @@
-= simple_fields_for item do |form|
-  = single_line_form(item, item_counter)
-  -#= form.input :drug
-  -#= form.input :dose
-  -#= form.input :units
-  -#= form.input :route
-  -#= form.input :interval, label: "Interval (hours)"
-  -#= form.input :duration, label: "Duration (days)"
+= simple_fields_for 'prescription[prescription_items][]', item do |form|
+  -#= single_line_form(item, item_counter)
+  = form.input :drug
+  = form.input :dose
+  = form.input :units
+  = form.input :route
+  = form.input :interval, label: "Interval (hours)"
+  = form.input :duration, label: "Duration (days)"

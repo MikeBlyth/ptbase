@@ -30,20 +30,35 @@ module PrescriptionItemsHelper
     "#{p.drug} #{p.dose} #{p.units} #{p.route} every #{p.interval} hours for #{p.duration} days."
   end
 
+
   def single_line_form(item, index)
     item_id = item.id || "New#{index}"
-    name_base =  "prescription[prescription_items][#{item_id}]"
     id_base = "prescription_item_#{item_id}"
     content_tag(:div,
-      content_tag(:input, item.drug, id: "#{id_base}_drug",
-                class: '',
-                name: "#{name_base}[drug]") +
-      content_tag(:input, item.dose, id: "#{id_base}_dose",
-                class: '',
-                name: "#{name_base}[dose]"),
+      (content_tag(:span, "#{index}", class: "rx_item_num") +
+        rx_field(item, item_id, 'drug', id_base) +
+        rx_field(item, item_id, 'dose', id_base) +
+        rx_field(item, item_id, 'units', id_base) +
+        rx_field(item, item_id, 'route', id_base) +
+        rx_field(item, item_id, 'interval', id_base) +
+        rx_field(item, item_id, 'duration', id_base) +
+        rx_field(item, item_id, 'other_instructions', id_base)
+      ),
       id: "#{id_base}")
 
   end
+
+private
+
+  def rx_field(item, item_id, field, id_base)
+    name_base =  "prescription[prescription_items][#{item_id}]"
+    z = simple_fields_for item do |f|
+      f.input field, input_html: {id: "#{id_base}_#{field}", name: "#{name_base}[#{field}]"}
+    end
+    puts z
+    z
+  end
+
 end
 
 #<input id="prescription_item_dose" class="numeric float optional" type="number" step="any" name="prescription_item[dose]">

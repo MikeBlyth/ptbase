@@ -2,6 +2,8 @@ class PrescriptionsController < ApplicationController
 
   active_scaffold :prescription do |config|
     config.list.columns = :patient, :date, :provider, :prescription_items
+    config.create.link.page = true
+    config.create.link.inline = false
   end
 
   include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
@@ -18,13 +20,10 @@ class PrescriptionsController < ApplicationController
   end
 
   def create
-    binding.pry
+#    binding.pry
+    patient = Patient.find params[:patient_id]
     rx_attributes = params[:prescription]
-    rx = Prescription.new
-    items = rx_attributes[:prescription_items]
-    rx.prescription_items = items.select{|i| i[:drug].any?}.map {|item| PrescriptionItem.new(item)}
-    rx_attributes.delete :prescription_items
-    rx.attributes = rx_attributes
+    rx = patient.prescriptions.new rx_attributes
     if rx.save
       flash[:notice] = 'Prescription saved successfully'
       redirect_to prescription_path(rx)

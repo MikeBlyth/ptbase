@@ -11,7 +11,7 @@ feature "Prescriptions" do
     # This path lets us go directly to new admission form, accomodating AS
     path = "/prescriptions/new?patient_id=#{pt_id}&association=prescriptions&parent_scaffold=patients&patient_id=#{pt_id}"
     visit path
-    #save_and_open_page
+#save_and_open_page
     expect(page).to have_text("Create Prescription")
     filled_values = fill_all_inputs(Prescription,
                                     warnings: true,

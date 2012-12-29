@@ -1,4 +1,4 @@
-= simple_fields_for 'prescription[prescription_items][]', item do |form|
+= simple_fields_for 'prescription[prescription_items_attributes][]', item do |form|
   -#= single_line_form(item, item_counter)
   = form.input :drug
   = form.input :dose

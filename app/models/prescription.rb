@@ -17,13 +17,13 @@
 
 class Prescription < ActiveRecord::Base
   include DateValidators
+  has_many :prescription_items, :dependent=>:delete_all
   attr_accessible :confirmed, :date, :filled, :height, :provider_id, :provider, :void, :weight,
-                  :patient, :prescription_items
+                  :patient, :patient_id, :prescription_items, :prescription_items_attributes
   attr_accessor :warnings
-  accepts_nested_attributes_for :prescription_item
+  accepts_nested_attributes_for :prescription_items, reject_if: proc {|attr| attr[:drug].blank? }
   belongs_to :patient
   belongs_to :provider
-  has_many :prescription_items, :dependent=>:delete_all
 
   validates_presence_of :patient_id, :date, :provider_id
   validate :not_future

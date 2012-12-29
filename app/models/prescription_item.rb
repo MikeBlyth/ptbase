@@ -25,7 +25,7 @@ class PrescriptionItem < ActiveRecord::Base
   attr_accessible :dose, :drug, :duration, :filled, :interval, :liquid, :prescription, :prescription_id,
                   :other_description, :other_instructions, :route, :units, :use_liquid
   belongs_to :prescription
-  validates_presence_of :drug, :prescription_id, :interval, :duration
+  validates_presence_of :drug, :interval, :duration #, :prescription_id
   validate :valid_interval
   delegate :date, :patient, :confirmed, :void, :filled, to: :prescription
 

@@ -11,8 +11,8 @@ class PrescriptionsController < ApplicationController
   include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
 
   def new
-    patient = Patient.find params[:patient_id]
-    @prescription = patient.prescriptions.new
+    @patient = Patient.find params[:patient_id]
+    @prescription = @patient.prescriptions.new
     blank_prescription_item_count = 2
     blank_prescription_item_count.times { @prescription.prescription_items <<  PrescriptionItem.new}
 
@@ -21,21 +21,21 @@ class PrescriptionsController < ApplicationController
   end
 
   def edit
-    patient = Patient.find params[:patient_id]
+    @patient = Patient.find params[:patient_id]
     @prescription = Prescription.find(params[:id])
   end
 
   def create
+puts "Create - params=#{params}"
 #    binding.pry
-    patient = Patient.find params[:patient_id]
     rx_attributes = params[:prescription]
-    rx = patient.prescriptions.new rx_attributes
+    rx = Prescription.new rx_attributes
     if rx.save
       flash[:notice] = 'Prescription saved successfully'
       redirect_to prescription_path(rx)
     else
-      @record = rx
-      @blank_items = [PrescriptionItem.new]
+puts "Errors: #{rx.errors.messages}"
+      @prescription = rx
       render :new
     end
   end

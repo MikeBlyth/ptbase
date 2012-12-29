@@ -32,8 +32,6 @@ describe PrescriptionItem do
 
     it { should validate_presence_of(:drug)}
 
-    it { should validate_presence_of(:prescription_id)}
-
     it { should validate_presence_of(:interval)}
 
     it { should validate_presence_of(:duration)}

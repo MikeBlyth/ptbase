@@ -13,16 +13,24 @@ class PrescriptionsController < ApplicationController
   def new
     @patient = Patient.find params[:patient_id]
     @prescription = @patient.prescriptions.new(provider_id: current_user.id)
-    blank_prescription_item_count = 1
-    blank_prescription_item_count.times { @prescription.prescription_items <<  PrescriptionItem.new}
     @selected = get_selected_drugs(params)  # need to use empty array if no drugs already selected
     @preselect = @selected.any?  # means user has preselected drugs, so we'll "tick" each one's box on prescr. form
-    @doses = suggested_doses(@selected)
+    @doses = suggested_doses(@selected, @patient)
 puts "@doses = #{@doses}"
+    puts "Make= #{make_items_from_suggested(@doses, @patient) }"
+    @prescription.items << make_items_from_suggested(@doses, @patient)
+    blank_prescription_item_count = 1
+    blank_prescription_item_count.times { @prescription.prescription_items <<  PrescriptionItem.new}
   end
 
   def get_selected_drugs(params)
     params[:selected].select {|k,v| v == '1'}.map {|k,v| k}
+  end
+
+  def make_items_from_suggested(suggested, patient)
+    suggested.select{|s| s[:drug].any?}.sort{|x,y| x[:sorting] <=> y[:sorting]}.map do |drug|
+      PrescriptionItem.new.set_attrs_soft(drug)
+    end
   end
 
   def edit
@@ -74,13 +82,12 @@ puts "edit - params=#{params}"
     ]
   end
 
-  def suggested_doses(selected={})
+  def suggested_doses(selected={}, patient)
     # return an array of suggested doses based on patient's height and weight, in form like
     # [ {:name => 'Lamivudine', :dose_rounded => 60, :dose_exact => 57, :unit => "mg", :interval => 12 }, ...
     # using a hash means we can easily add pieces as needed
     # The array will be ordered in the order that the individual drug-dose-hashes are added.
     # If there are any drug names in selected, then only those will be included in the suggestions
-    patient = @patient
     latest_parameters = patient.latest_parameters
     age = patient.age_years
     @weight = latest_parameters[:weight][:value]
@@ -98,12 +105,12 @@ puts "edit - params=#{params}"
     # Lamivudine, the easiest
     if selected.include?('Lamivudine')
       suggested = {}  # collect the name, the corresponding suggested dose
-      suggested[:name] = 'Lamivudine'
+      suggested[:drug] = 'Lamivudine'
       suggested[:code] = 'Lamivudine'
       suggested[:sorting] = 'A_1_2'
       exact = wt * 4    # 4 mg/kg/dose
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact.between?(60,80) then 75
                                    when exact < 115 then round_to(exact+3,10)
                                    when exact >= 115 then 150
@@ -119,12 +126,12 @@ puts "edit - params=#{params}"
     # d4T
     if selected.include?('Stavudine')
       suggested = Hash.new
-      suggested[:name] = 'Stavudine'
+      suggested[:drug] = 'Stavudine'
       suggested[:code] = 'Stavudine'
       suggested[:sorting] = 'A_1_1'
       exact = wt    # 1 mg/kg bid (160 mg/m2 q8h)
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact.between?(0,12) then exact.ceil
                                    when exact.between?(12,16) then 15
                                    when exact.between?(16,22) then 20
@@ -143,12 +150,12 @@ puts "edit - params=#{params}"
     # Didanosine
     if selected.include?('Didanosine')
       suggested = Hash.new
-      suggested[:name] = 'Didanosine'
+      suggested[:drug] = 'Didanosine'
       suggested[:code] = 'Didanosine'
       suggested[:sorting] = 'A_1_4'
       exact = 120 * bsa_pt    # 240 mg/m2/dose bid (160 mg/m2 q8h)
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact.between?(0,45) then round_to(exact,10)
                                    when exact.between?(45.0001,150) then round_to(exact, 25)
                                    when exact > 150 then 150
@@ -164,12 +171,12 @@ puts "edit - params=#{params}"
     # Zidovudine
     if selected.include?('Zidovudine')
       suggested = Hash.new
-      suggested[:name] = 'Zidovudine'
+      suggested[:drug] = 'Zidovudine'
       suggested[:code] = 'Zidovudine'
       suggested[:sorting] = 'A_1_1'
       exact = 240 * bsa_pt    # 240 mg/m2/dose bid (160 mg/m2 q8h)
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact.between?(0,130) then round_to(exact,10)
                                    when exact.between?(130.0001,170) then 150
                                    when exact.between?(170,220) then round_to(exact,10)
@@ -183,9 +190,9 @@ puts "edit - params=#{params}"
       suggested_return << suggested  # add completed hash to the list of suggestions
       if bsa_pt.between?(0.5, 0.75) && weight.between?(12, 19)
         suggested = Hash.new
-        suggested[:name] = "Combivir"
+        suggested[:drug] = "Combivir"
         suggested[:unit] = 'tab'
-        suggested[:dose_rounded] = 0.5
+        suggested[:dose] = 0.5
         suggested[:interval] = 12  # q 12 hours
         suggested[:duration] = 30
         suggested[:comment] = ". Consider 1/2 Combivir bd <em>in place of</em> zidovudine/lamivudine."
@@ -195,9 +202,9 @@ puts "edit - params=#{params}"
 
       if bsa_pt.between?(0.75, 1.12) && weight.between?(19, 28)
         suggested = Hash.new
-        suggested[:name] = "Combivir"
+        suggested[:drug] = "Combivir"
         suggested[:unit] = 'tab'
-        suggested[:dose_rounded] = 0.5
+        suggested[:dose] = 0.5
         suggested[:interval] = 8  # q 8 hours
         suggested[:comment] = "Consider 1/2 Combivir 3 times daily <em>in place of</em> zidovudine/lamivudine. "
         suggested[:duration] = 30
@@ -207,8 +214,8 @@ puts "edit - params=#{params}"
 
       if bsa_pt > 1.0 && weight > 25
         suggested = Hash.new
-        suggested[:name] = "Combivir"
-        suggested[:dose_rounded] = 1
+        suggested[:drug] = "Combivir"
+        suggested[:dose] = 1
         suggested[:unit] = 'tab'
         suggested[:interval] = 12  # q 12 hours
         suggested[:comment] = "Consider 1 Combivir bd <em>in place</em> of zidovudine/lamivudine. "
@@ -223,13 +230,13 @@ puts "edit - params=#{params}"
     if selected.include?('Nevirapine_start')
       # Nevirapine -- Initial
       suggested = Hash.new
-      suggested[:name] = 'Nevirapine--initial'
+      suggested[:drug] = 'Nevirapine--initial'
       suggested[:code] = 'Nevirapine'
       suggested[:sorting] = 'A_2'
       suggested[:comment] = '(daily x 2 wk then increase to bd. 120 mg/m2). '
       exact = 120 * bsa_pt    # 120 mg/m2/dose bd or qd
       suggested[:dose_exact] = exact
-      rounded = suggested[:dose_rounded] = case       # rounding
+      rounded = suggested[:dose] = case       # rounding
                                              when exact.between?(0,80) then round_to(exact,10)
                                              when exact.between?(80,115) then 100
                                              when exact.between?(115.01,149.99) then round_to(exact,10)
@@ -247,7 +254,7 @@ puts "edit - params=#{params}"
     if selected.include?('Nevirapine_cont')
       suggested = Hash.new  # there's probably a better way, but must do something to create a new object and not
                             # simply overwrite the last one
-      suggested[:name] = 'Nevirapine--std'
+      suggested[:drug] = 'Nevirapine--std'
       suggested[:code] = 'Nevirapine'
       suggested[:sorting] = 'A_2'
       per_m2 = case
@@ -259,7 +266,7 @@ puts "edit - params=#{params}"
       exact = per_m2 * bsa_pt
       exact = 200 if exact > 200       # 200 mg is the maximum standard dose
       suggested[:dose_exact] = exact
-      rounded = suggested[:dose_rounded] = case       # rounding
+      rounded = suggested[:dose] = case       # rounding
                                              when exact.between?(0,80) then round_to(exact,10)
                                              when exact.between?(80,110) then 100
                                              when exact.between?(110.001,140) then round_to(exact,10)
@@ -282,10 +289,10 @@ puts "edit - params=#{params}"
     # EFV
     if selected.include?('Efavirenz')
       suggested = Hash.new
-      suggested[:name] = 'Efavirenz (Stocrin)'
+      suggested[:drug] = 'Efavirenz (Stocrin)'
       suggested[:code] = 'Efavirenz'
       suggested[:sorting] = 'A_2'
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when weight < 10 then "? "
                                    when weight.between?(10,15) then 200
                                    when weight.between?(15,20) then 250
@@ -294,14 +301,14 @@ puts "edit - params=#{params}"
                                    when weight.between?(32.5,40) then 400
                                    when weight > 40 then 600
                                  end
-      suggested[:dose_exact] = suggested[:dose_rounded]
+      suggested[:dose_exact] = suggested[:dose]
       suggested[:interval] = 24    # daily = q24 hours
       suggested[:unit] = 'mg'
       suggested[:use_liquid] = (wt < 10)
       suggested[:liquid] = 30   # 30 mg/ml
       if age < 3
         suggested[:dose_exact] = 20*wt   # this is just a best estimate -- no recommendations available yet!
-        suggested[:dose_rounded] = round_to(suggested[:dose_exact], 7.5)  # 7.5 mg = 0.5 ml
+        suggested[:dose] = round_to(suggested[:dose_exact], 7.5)  # 7.5 mg = 0.5 ml
         suggested[:comment] = "<br>** Not recommended for children under 3 years old, use w caution ** "
       end
       suggested[:duration] = 30
@@ -313,7 +320,7 @@ puts "edit - params=#{params}"
     # Kaletra
     if selected.include?('Kaletra')
       suggested = Hash.new
-      suggested[:name] = 'Kaletra (lpv/r)'
+      suggested[:drug] = 'Kaletra (lpv/r)'
       suggested[:code] = 'Kaletra'
       suggested[:sorting] = 'A_3'
       suggested[:dose_exact] = case
@@ -321,7 +328,7 @@ puts "edit - params=#{params}"
                                  when weight >= 15 then wt * 10     # 10 mg/kg
                                end
       exact = suggested[:dose_exact]
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact < 120 || age < 1.5 then round_to(exact,20)
                                    when exact.between?(120,150) then 133
                                    when exact.between?(220,290) then 266
@@ -341,12 +348,12 @@ puts "edit - params=#{params}"
     if selected.include?('Cotrimoxazole') || selected.include?('Septrin')
       # Cotrimoxazole (Doses based on TMP component)
       suggested = Hash.new
-      suggested[:name] = 'Cotrimoxazole'
+      suggested[:drug] = 'Cotrimoxazole'
       suggested[:code] = 'Cotrimoxazole'
       suggested[:sorting] = 'B_1'
       exact = wt.to_f / 20   # 4 mg/kg/dose
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when weight <= 10.5 then round_to(exact,0.1)
                                    when weight.between?(10.5,14) then 0.5
                                    when weight.between?(14,20) then 1
@@ -365,7 +372,7 @@ puts "edit - params=#{params}"
     # Nystatin oral suspension
     if selected.include?('Nystatin_oral')
       suggested = Hash.new
-      suggested[:name] = 'Nystatin oral susp'
+      suggested[:drug] = 'Nystatin oral susp'
       suggested[:code] = 'Nystatin_oral'
       suggested[:sorting] = 'B_2'
       suggested[:dose_exact] = case       # rounding
@@ -373,7 +380,7 @@ puts "edit - params=#{params}"
                                  when weight.between?(4,25) then 2
                                  when weight > 25 then 4
                                end
-      suggested[:dose_rounded] = suggested[:dose_exact]
+      suggested[:dose] = suggested[:dose_exact]
       suggested[:interval] = 6  # q 6 hourly
       suggested[:unit] = 'ml'
       suggested[:duration] = 10
@@ -383,25 +390,25 @@ puts "edit - params=#{params}"
     # Fluconazole
     if selected.include?('Fluconazole')
       suggested = Hash.new
-      suggested[:name] = 'Fluconazole'
+      suggested[:drug] = 'Fluconazole'
       suggested[:code] = 'Fluconazole'
       suggested[:sorting] = 'B_3'
       suggested[:dose_exact] = exact = [wt * 3, 200].min
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact < 40 then round_to(exact, 10)
                                    when exact.between?(40, 60) then 50
                                    when exact.between?(60.001, 120) then 100
                                    when exact.between?(120, 170) then 150
                                    when exact > 170  then 200
                                  end
-      rounded = suggested[:dose_rounded]
+      rounded = suggested[:dose]
       suggested[:interval] = 24    # daily = q24 hours
       suggested[:unit] = 'mg'
       suggested[:duration] = 10
       suggested[:use_liquid] = (exact < 40)
       suggested[:liquid] = 10   # 10 mg/ml
       suggested[:instructions] = case
-                                   when exact < 100 then "Take double the dose (#{2*suggested[:dose_rounded]} mg) today only, then continue with #{rounded} mg daily."
+                                   when exact < 100 then "Take double the dose (#{2*suggested[:dose]} mg) today only, then continue with #{rounded} mg daily."
                                    when exact.between?(100,200) then "Take 200 mg today only then continue with #{rounded} mg daily."
                                    when exact > 200 then nil
                                  end
@@ -411,10 +418,10 @@ puts "edit - params=#{params}"
     # Multivits
     if selected.include?('Multivits')
       suggested = Hash.new
-      suggested[:name] = 'Multivits'
+      suggested[:drug] = 'Multivits'
       suggested[:code] = 'Multivits'
       suggested[:sorting] = 'Z_1'
-      suggested[:dose_exact] = suggested[:dose_rounded] = case       # rounding
+      suggested[:dose_exact] = suggested[:dose] = case       # rounding
                                                             when age < 1.5 then 0.5
                                                             when age > 1.5 then 1
                                                           end
@@ -431,10 +438,10 @@ puts "edit - params=#{params}"
     # chlorpheniramine
     if selected.include?('Chlorpheniramine')
       suggested = Hash.new
-      suggested[:name] = 'Chlorpheniramine'
+      suggested[:drug] = 'Chlorpheniramine'
       suggested[:code] = 'Chlorpheniramine'
       suggested[:sorting] = 'Z_3'
-      suggested[:dose_exact] = suggested[:dose_rounded] = case       # rounding
+      suggested[:dose_exact] = suggested[:dose] = case       # rounding
                                                             when age < 2 then round_to(0.09 * wt,0.4)
                                                             when age.between?(2,6) then 1
                                                             when age.between?(6,12) then 2
@@ -453,12 +460,12 @@ puts "edit - params=#{params}"
     # Amoxycillin
     if selected.include?('Amoxycillin')
       suggested = Hash.new
-      suggested[:name] = 'Amoxycillin'
+      suggested[:drug] = 'Amoxycillin'
       suggested[:code] = 'Amoxycillin'
       suggested[:sorting] = 'E_2'
       exact = [wt*13, 500].min    # 13 mg/kg/dose = 39 mg/kg/day
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact < 175 then round_to(exact,25)
                                    when exact.between?(175,275) then 250
                                    when exact > 275 then 500
@@ -474,12 +481,12 @@ puts "edit - params=#{params}"
     # Augmentin
     if selected.include?('Augmentin')
       suggested = Hash.new
-      suggested[:name] = 'Augmentin'
+      suggested[:drug] = 'Augmentin'
       suggested[:code] = 'Augmentin'
       suggested[:sorting] = 'E_3'
       exact = wt*10 # 10 mg/kg/dose = 30 mg/kg/day
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact < 175 then round_to(exact,25)
                                    when exact.between?(175,275) then 250
                                    when exact > 275 then 500
@@ -496,18 +503,18 @@ puts "edit - params=#{params}"
     # Erythromycin
     if selected.include?('Erythromycin')
       suggested = Hash.new
-      suggested[:name] = 'Erythromycin'
+      suggested[:drug] = 'Erythromycin'
       suggested[:code] = 'Erythromycin'
       suggested[:sorting] = 'E_4'
       exact = [wt*13, 500].min    # 13 mg/kg/dose = 39 mg/kg/day
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact < 175 then round_to(exact,25)
                                    when exact.between?(175,275) then 250
                                    when exact > 275 then 500
                                  end
       if age < (1.0 / 12)  # Neonates, 30 mg/kg/day
-        suggested[:dose_exact] = suggested[:dose_rounded] = wt*10
+        suggested[:dose_exact] = suggested[:dose] = wt*10
       end
       suggested[:interval] = 8  # q 8 hours
       suggested[:unit] = 'mg'
@@ -523,12 +530,12 @@ puts "edit - params=#{params}"
     # Chloroquine
     if selected.include?('Chloroquine')
       suggested = Hash.new
-      suggested[:name] = 'Chloroquine'
+      suggested[:drug] = 'Chloroquine'
       suggested[:code] = 'Chloroquine'
       suggested[:sorting] = 'M_2'
       exact = [wt*10, 600].min    # 10 mg/kg/dose, max 600 mg
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = rounded = case       # rounding
+      suggested[:dose] = rounded = case       # rounding
                                              when exact < 120 then round_to(exact,10)
                                              when exact.between?(120,160) then 150
                                              when exact.between?(160, 250) then 225
@@ -549,12 +556,12 @@ puts "edit - params=#{params}"
     # Artesunate
     if selected.include?('Artesunate')
       suggested = Hash.new
-      suggested[:name] = 'Artesunate'
+      suggested[:drug] = 'Artesunate'
       suggested[:code] = 'Artesunate'
       suggested[:sorting] = 'M_1'
       exact = [wt*2, 100].min    #
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = rounded = case       # rounding
+      suggested[:dose] = rounded = case       # rounding
                                              when exact < 20 then exact.round
                                              when exact.between?(20,30) then 25
                                              when exact.between?(30,60) then 50
@@ -573,12 +580,12 @@ puts "edit - params=#{params}"
     # Fansidar
     if selected.include?('Fansidar')
       suggested = Hash.new
-      suggested[:name] = 'Fansidar'
+      suggested[:drug] = 'Fansidar'
       suggested[:code] = 'Fansidar'
       suggested[:sorting] = 'M_3'
       exact = [wt*0.06, 3].min    #  0.06 tabs per kg ~= 1 tab per 15 kg
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when wt.between?(5,10) then 0.5
                                    when wt.between?(10.001,20) then 1
                                    when wt.between?(20.001, 30) then 1.5
@@ -600,12 +607,12 @@ puts "edit - params=#{params}"
     # INH
     if selected.include?('Isoniazid')
       suggested = Hash.new
-      suggested[:name] = 'Isoniazid (INH)'
+      suggested[:drug] = 'Isoniazid (INH)'
       suggested[:code] = 'Isoniazid'
       suggested[:sorting] = 'T_1'
       exact = wt * 5    # 5 mg/kg/dose
       suggested[:dose_exact] = exact
-      inh_dose_rounded = suggested[:dose_rounded] = case       # rounding
+      inh_dose_rounded = suggested[:dose] = case       # rounding
                                                       when weight < 12 then round_to(exact,10)
                                                       when weight.between?(12,15) then 75
                                                       when weight.between?(15,30) then 150
@@ -622,14 +629,14 @@ puts "edit - params=#{params}"
     # Pyridoxine
     if selected.include?('Pyridoxine')
       suggested = Hash.new
-      suggested[:name] = 'Pyridoxine (B6)'
+      suggested[:drug] = 'Pyridoxine (B6)'
       suggested[:code] = 'Pyridoxine'
       suggested[:sorting] = 'T_2'
       suggested[:dose_exact] = case
                                  when weight < 30 then 25
                                  else 50
                                end
-      suggested[:dose_rounded] = suggested[:dose_exact]
+      suggested[:dose] = suggested[:dose_exact]
       suggested[:interval] = 24    # daily = q24 hours
       suggested[:unit] = 'mg'
       suggested[:duration] = 30
@@ -641,10 +648,10 @@ puts "edit - params=#{params}"
     if selected.include?('Rifampacin')
       suggested = Hash.new
       suggested[:comment] = ''
-      suggested[:name] = 'Rifampacin'
+      suggested[:drug] = 'Rifampacin'
       suggested[:code] = 'Rifampacin'
       suggested[:sorting] = 'T_3'
-      suggested[:dose_rounded] = 2 * inh_dose_rounded  # keep 2:1 ratio so fixed-dose combinations can be used
+      suggested[:dose] = 2 * inh_dose_rounded  # keep 2:1 ratio so fixed-dose combinations can be used
       suggested[:interval] = 24    # daily = q24 hours
       suggested[:unit] = 'mg'
       suggested[:duration] = 30
@@ -655,11 +662,11 @@ puts "edit - params=#{params}"
     if selected.include?('Pyrazinamide')
       suggested = Hash.new
       suggested[:comment] = ''
-      suggested[:code] = suggested[:name] = 'Pyrazinamide'
+      suggested[:code] = suggested[:drug] = 'Pyrazinamide'
       suggested[:sorting] = 'T_4'
       exact = wt * 25    # 25 mg/kg/dose
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = (5.333 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
+      suggested[:dose] = (5.333 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
       suggested[:interval] = 24    # daily = q24 hours
       suggested[:unit] = 'mg'
       suggested[:duration] = 30
@@ -670,12 +677,12 @@ puts "edit - params=#{params}"
     if selected.include?('Ethambutol')
       suggested = Hash.new
       suggested[:comment] = 'Use cautiously in children due to possible optic neuritis.'
-      suggested[:name] = 'Ethambutol'
+      suggested[:drug] = 'Ethambutol'
       suggested[:code] = 'Ethambutol'
       suggested[:sorting] = 'T_5'
       exact = wt * 13    # 13 mg/kg/dose
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = (3.667 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
+      suggested[:dose] = (3.667 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
       suggested[:interval] = 24    # daily = q24 hours
       suggested[:unit] = 'mg'
       suggested[:duration] = 30
@@ -689,11 +696,11 @@ puts "edit - params=#{params}"
     if selected.include?('Paracetamol')
       suggested = Hash.new
       suggested[:comment] = ''
-      suggested[:code] = suggested[:name] = 'Paracetamol'
+      suggested[:code] = suggested[:drug] = 'Paracetamol'
       suggested[:sorting] = 'Z_2'
       exact = wt * 15    # 25 mg/kg/dose
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when wt < 12 then exact
                                    when wt.between?(12, 25) then 250
                                    when wt > 25 then 500
@@ -702,7 +709,7 @@ puts "edit - params=#{params}"
       suggested[:unit] = 'mg'
       suggested[:duration] = 7
       suggested[:liquid] = 24
-      suggested[:use_liquid] = suggested[:dose_rounded] < 250
+      suggested[:use_liquid] = suggested[:dose] < 250
       suggested_return << suggested  # add completed hash to the list of suggestions
     end
 
@@ -711,11 +718,11 @@ puts "edit - params=#{params}"
       suggested = Hash.new
       suggested[:comment] = 'These doses are starting doses for tinea capitis or tinea corporis. Higher doses may be required. Suggested duration: 2-4 weeks for t. corporis, 4-8 weeks for t. capitis. Take with meals, ideally a fatty meal.'
       suggested[:instructions] = "Give with a meal, a food with fat or oil if possible."
-      suggested[:code] = suggested[:name] = 'Griseofulvin'
+      suggested[:code] = suggested[:drug] = 'Griseofulvin'
       suggested[:sorting] = 'Z_4'
       exact = wt * 20    # 25 mg/kg/dose
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when wt < 12 then exact
                                    when wt.between?(12, 17) then 250
                                    when wt.between?(17.000001, 25) then 500
@@ -731,10 +738,10 @@ puts "edit - params=#{params}"
     if selected.include?('Albendazole')
       suggested = Hash.new
       suggested[:comment] = 'For children > 2 years. For strongyloides, use 400 mg x 3 days.'
-      suggested[:code] = suggested[:name] = 'Albendazole'
+      suggested[:code] = suggested[:drug] = 'Albendazole'
       suggested[:sorting] = 'Z_6'
       suggested[:dose_exact] = 400
-      suggested[:dose_rounded] = 400
+      suggested[:dose] = 400
       suggested[:interval] = 24
       suggested[:unit] = 'mg'
       suggested[:duration] = 1
@@ -745,11 +752,11 @@ puts "edit - params=#{params}"
     if selected.include?('Flagyl_amoeba')
       suggested = Hash.new
       suggested[:comment] = 'This is the suggested dosing for treatment of amoeba infections'
-      suggested[:code] = suggested[:name] = 'Flagyl'
+      suggested[:code] = suggested[:drug] = 'Flagyl'
       suggested[:sorting] = 'Z_6'
       exact = wt * 15
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when wt < 12 then round_to(exact+10, 20)
                                    when wt.between?(12, 17) then 200
                                    when wt.between?(17.0001, 24) then 300
@@ -761,18 +768,18 @@ puts "edit - params=#{params}"
       suggested[:unit] = 'mg'
       suggested[:duration] = 10
       suggested[:liquid] = 40
-      suggested[:use_liquid] = suggested[:dose_rounded] < 200
+      suggested[:use_liquid] = suggested[:dose] < 200
       suggested_return << suggested  # add completed hash to the list of suggestions
     end
 
     if selected.include?('Flagyl_giardia')
       suggested = Hash.new
       suggested[:comment] = 'This is the suggested dosing for treatment of giardia infections'
-      suggested[:code] = suggested[:name] = 'Flagyl'
+      suggested[:code] = suggested[:drug] = 'Flagyl'
       suggested[:sorting] = 'Z_6'
       exact = wt * 6
       suggested[:dose_exact] = exact
-      suggested[:dose_rounded] = case       # rounding
+      suggested[:dose] = case       # rounding
                                    when exact < 90 then round_to(exact+10, 20)
                                    when exact.between?(90.001, 120) then 100
                                    when exact.between?(120.001, 180) then round_to(exact, 40)
@@ -783,7 +790,7 @@ puts "edit - params=#{params}"
       suggested[:unit] = 'mg'
       suggested[:duration] = 7
       suggested[:liquid] = 40
-      suggested[:use_liquid] = (suggested[:dose_rounded].modulo 100) > 0  # i.e. use liquid if dose not a multiple of 100
+      suggested[:use_liquid] = (suggested[:dose].modulo 100) > 0  # i.e. use liquid if dose not a multiple of 100
       suggested_return << suggested  # add completed hash to the list of suggestions
     end
 
@@ -1238,12 +1245,12 @@ puts "edit - params=#{params}"
 #    # Lamivudine, the easiest
 #    if selected.include?('Lamivudine')
 #      suggested = {}  # collect the name, the corresponding suggested dose
-#      suggested[:name] = 'Lamivudine'
+#      suggested[:drug] = 'Lamivudine'
 #      suggested[:code] = 'Lamivudine'
 #      suggested[:sorting] = 'A_1_2'
 #      exact = wt * 4    # 4 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact.between?(60,80) then 75
 #                                   when exact < 115 then round_to(exact+3,10)
 #                                   when exact >= 115 then 150
@@ -1259,12 +1266,12 @@ puts "edit - params=#{params}"
 #    # d4T
 #    if selected.include?('Stavudine')
 #      suggested = Hash.new
-#      suggested[:name] = 'Stavudine'
+#      suggested[:drug] = 'Stavudine'
 #      suggested[:code] = 'Stavudine'
 #      suggested[:sorting] = 'A_1_1'
 #      exact = wt    # 1 mg/kg bid (160 mg/m2 q8h)
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact.between?(0,12) then exact.ceil
 #                                   when exact.between?(12,16) then 15
 #                                   when exact.between?(16,22) then 20
@@ -1283,12 +1290,12 @@ puts "edit - params=#{params}"
 #    # Didanosine
 #    if selected.include?('Didanosine')
 #      suggested = Hash.new
-#      suggested[:name] = 'Didanosine'
+#      suggested[:drug] = 'Didanosine'
 #      suggested[:code] = 'Didanosine'
 #      suggested[:sorting] = 'A_1_4'
 #      exact = 120 * bsa_pt    # 240 mg/m2/dose bid (160 mg/m2 q8h)
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact.between?(0,45) then round_to(exact,10)
 #                                   when exact.between?(45.0001,150) then round_to(exact, 25)
 #                                   when exact > 150 then 150
@@ -1304,12 +1311,12 @@ puts "edit - params=#{params}"
 #    # Zidovudine
 #    if selected.include?('Zidovudine')
 #      suggested = Hash.new
-#      suggested[:name] = 'Zidovudine'
+#      suggested[:drug] = 'Zidovudine'
 #      suggested[:code] = 'Zidovudine'
 #      suggested[:sorting] = 'A_1_1'
 #      exact = 240 * bsa_pt    # 240 mg/m2/dose bid (160 mg/m2 q8h)
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact.between?(0,130) then round_to(exact,10)
 #                                   when exact.between?(130.0001,170) then 150
 #                                   when exact.between?(170,220) then round_to(exact,10)
@@ -1323,9 +1330,9 @@ puts "edit - params=#{params}"
 #      suggested_return << suggested  # add completed hash to the list of suggestions
 #      if bsa_pt.between?(0.5, 0.75) && weight.between?(12, 19)
 #        suggested = Hash.new
-#        suggested[:name] = "Combivir"
+#        suggested[:drug] = "Combivir"
 #        suggested[:unit] = 'tab'
-#        suggested[:dose_rounded] = 0.5
+#        suggested[:dose] = 0.5
 #        suggested[:interval] = 12  # q 12 hours
 #        suggested[:duration] = 30
 #        suggested[:comment] = ". Consider 1/2 Combivir bd <em>in place of</em> zidovudine/lamivudine."
@@ -1335,9 +1342,9 @@ puts "edit - params=#{params}"
 #
 #      if bsa_pt.between?(0.75, 1.12) && weight.between?(19, 28)
 #        suggested = Hash.new
-#        suggested[:name] = "Combivir"
+#        suggested[:drug] = "Combivir"
 #        suggested[:unit] = 'tab'
-#        suggested[:dose_rounded] = 0.5
+#        suggested[:dose] = 0.5
 #        suggested[:interval] = 8  # q 8 hours
 #        suggested[:comment] = "Consider 1/2 Combivir 3 times daily <em>in place of</em> zidovudine/lamivudine. "
 #        suggested[:duration] = 30
@@ -1347,8 +1354,8 @@ puts "edit - params=#{params}"
 #
 #      if bsa_pt > 1.0 && weight > 25
 #        suggested = Hash.new
-#        suggested[:name] = "Combivir"
-#        suggested[:dose_rounded] = 1
+#        suggested[:drug] = "Combivir"
+#        suggested[:dose] = 1
 #        suggested[:unit] = 'tab'
 #        suggested[:interval] = 12  # q 12 hours
 #        suggested[:comment] = "Consider 1 Combivir bd <em>in place</em> of zidovudine/lamivudine. "
@@ -1363,13 +1370,13 @@ puts "edit - params=#{params}"
 #    if selected.include?('Nevirapine_start')
 #      # Nevirapine -- Initial
 #      suggested = Hash.new
-#      suggested[:name] = 'Nevirapine--initial'
+#      suggested[:drug] = 'Nevirapine--initial'
 #      suggested[:code] = 'Nevirapine'
 #      suggested[:sorting] = 'A_2'
 #      suggested[:comment] = '(daily x 2 wk then increase to bd. 120 mg/m2). '
 #      exact = 120 * bsa_pt    # 120 mg/m2/dose bd or qd
 #      suggested[:dose_exact] = exact
-#      rounded = suggested[:dose_rounded] = case       # rounding
+#      rounded = suggested[:dose] = case       # rounding
 #                                             when exact.between?(0,80) then round_to(exact,10)
 #                                             when exact.between?(80,115) then 100
 #                                             when exact.between?(115.01,149.99) then round_to(exact,10)
@@ -1387,7 +1394,7 @@ puts "edit - params=#{params}"
 #    if selected.include?('Nevirapine_cont')
 #      suggested = Hash.new  # there's probably a better way, but must do something to create a new object and not
 #                            # simply overwrite the last one
-#      suggested[:name] = 'Nevirapine--std'
+#      suggested[:drug] = 'Nevirapine--std'
 #      suggested[:code] = 'Nevirapine'
 #      suggested[:sorting] = 'A_2'
 #      per_m2 = case
@@ -1399,7 +1406,7 @@ puts "edit - params=#{params}"
 #      exact = per_m2 * bsa_pt
 #      exact = 200 if exact > 200       # 200 mg is the maximum standard dose
 #      suggested[:dose_exact] = exact
-#      rounded = suggested[:dose_rounded] = case       # rounding
+#      rounded = suggested[:dose] = case       # rounding
 #                                             when exact.between?(0,80) then round_to(exact,10)
 #                                             when exact.between?(80,110) then 100
 #                                             when exact.between?(110.001,140) then round_to(exact,10)
@@ -1422,10 +1429,10 @@ puts "edit - params=#{params}"
 #    # EFV
 #    if selected.include?('Efavirenz')
 #      suggested = Hash.new
-#      suggested[:name] = 'Efavirenz (Stocrin)'
+#      suggested[:drug] = 'Efavirenz (Stocrin)'
 #      suggested[:code] = 'Efavirenz'
 #      suggested[:sorting] = 'A_2'
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when weight < 10 then "? "
 #                                   when weight.between?(10,15) then 200
 #                                   when weight.between?(15,20) then 250
@@ -1434,14 +1441,14 @@ puts "edit - params=#{params}"
 #                                   when weight.between?(32.5,40) then 400
 #                                   when weight > 40 then 600
 #                                 end
-#      suggested[:dose_exact] = suggested[:dose_rounded]
+#      suggested[:dose_exact] = suggested[:dose]
 #      suggested[:interval] = 24    # daily = q24 hours
 #      suggested[:unit] = 'mg'
 #      suggested[:use_liquid] = (wt < 10)
 #      suggested[:liquid] = 30   # 30 mg/ml
 #      if age < 3
 #        suggested[:dose_exact] = 20*wt   # this is just a best estimate -- no recommendations available yet!
-#        suggested[:dose_rounded] = round_to(suggested[:dose_exact], 7.5)  # 7.5 mg = 0.5 ml
+#        suggested[:dose] = round_to(suggested[:dose_exact], 7.5)  # 7.5 mg = 0.5 ml
 #        suggested[:comment] = "<br>** Not recommended for children under 3 years old, use w caution ** "
 #      end
 #      suggested[:duration] = 30
@@ -1453,7 +1460,7 @@ puts "edit - params=#{params}"
 #    # Kaletra
 #    if selected.include?('Kaletra')
 #      suggested = Hash.new
-#      suggested[:name] = 'Kaletra (lpv/r)'
+#      suggested[:drug] = 'Kaletra (lpv/r)'
 #      suggested[:code] = 'Kaletra'
 #      suggested[:sorting] = 'A_3'
 #      suggested[:dose_exact] = case
@@ -1461,7 +1468,7 @@ puts "edit - params=#{params}"
 #                                 when weight >= 15 then wt * 10     # 10 mg/kg
 #                               end
 #      exact = suggested[:dose_exact]
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact < 120 || age < 1.5 then round_to(exact,20)
 #                                   when exact.between?(120,150) then 133
 #                                   when exact.between?(220,290) then 266
@@ -1481,12 +1488,12 @@ puts "edit - params=#{params}"
 #    if selected.include?('Cotrimoxazole') || selected.include?('Septrin')
 #      # Cotrimoxazole (Doses based on TMP component)
 #      suggested = Hash.new
-#      suggested[:name] = 'Cotrimoxazole'
+#      suggested[:drug] = 'Cotrimoxazole'
 #      suggested[:code] = 'Cotrimoxazole'
 #      suggested[:sorting] = 'B_1'
 #      exact = wt.to_f / 20   # 4 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when weight <= 10.5 then round_to(exact,0.1)
 #                                   when weight.between?(10.5,14) then 0.5
 #                                   when weight.between?(14,20) then 1
@@ -1505,7 +1512,7 @@ puts "edit - params=#{params}"
 #    # Nystatin oral suspension
 #    if selected.include?('Nystatin_oral')
 #      suggested = Hash.new
-#      suggested[:name] = 'Nystatin oral susp'
+#      suggested[:drug] = 'Nystatin oral susp'
 #      suggested[:code] = 'Nystatin_oral'
 #      suggested[:sorting] = 'B_2'
 #      suggested[:dose_exact] = case       # rounding
@@ -1513,7 +1520,7 @@ puts "edit - params=#{params}"
 #                                 when weight.between?(4,25) then 2
 #                                 when weight > 25 then 4
 #                               end
-#      suggested[:dose_rounded] = suggested[:dose_exact]
+#      suggested[:dose] = suggested[:dose_exact]
 #      suggested[:interval] = 6  # q 6 hourly
 #      suggested[:unit] = 'ml'
 #      suggested[:duration] = 10
@@ -1523,25 +1530,25 @@ puts "edit - params=#{params}"
 #    # Fluconazole
 #    if selected.include?('Fluconazole')
 #      suggested = Hash.new
-#      suggested[:name] = 'Fluconazole'
+#      suggested[:drug] = 'Fluconazole'
 #      suggested[:code] = 'Fluconazole'
 #      suggested[:sorting] = 'B_3'
 #      suggested[:dose_exact] = exact = [wt * 3, 200].min
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact < 40 then round_to(exact, 10)
 #                                   when exact.between?(40, 60) then 50
 #                                   when exact.between?(60.001, 120) then 100
 #                                   when exact.between?(120, 170) then 150
 #                                   when exact > 170  then 200
 #                                 end
-#      rounded = suggested[:dose_rounded]
+#      rounded = suggested[:dose]
 #      suggested[:interval] = 24    # daily = q24 hours
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 10
 #      suggested[:use_liquid] = (exact < 40)
 #      suggested[:liquid] = 10   # 10 mg/ml
 #      suggested[:instructions] = case
-#                                   when exact < 100 then "Take double the dose (#{2*suggested[:dose_rounded]} mg) today only, then continue with #{rounded} mg daily."
+#                                   when exact < 100 then "Take double the dose (#{2*suggested[:dose]} mg) today only, then continue with #{rounded} mg daily."
 #                                   when exact.between?(100,200) then "Take 200 mg today only then continue with #{rounded} mg daily."
 #                                   when exact > 200 then nil
 #                                 end
@@ -1551,10 +1558,10 @@ puts "edit - params=#{params}"
 #    # Multivits
 #    if selected.include?('Multivits')
 #      suggested = Hash.new
-#      suggested[:name] = 'Multivits'
+#      suggested[:drug] = 'Multivits'
 #      suggested[:code] = 'Multivits'
 #      suggested[:sorting] = 'Z_1'
-#      suggested[:dose_exact] = suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose_exact] = suggested[:dose] = case       # rounding
 #                                                            when age < 1.5 then 0.5
 #                                                            when age > 1.5 then 1
 #                                                          end
@@ -1571,10 +1578,10 @@ puts "edit - params=#{params}"
 #    # chlorpheniramine
 #    if selected.include?('Chlorpheniramine')
 #      suggested = Hash.new
-#      suggested[:name] = 'Chlorpheniramine'
+#      suggested[:drug] = 'Chlorpheniramine'
 #      suggested[:code] = 'Chlorpheniramine'
 #      suggested[:sorting] = 'Z_3'
-#      suggested[:dose_exact] = suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose_exact] = suggested[:dose] = case       # rounding
 #                                                            when age < 2 then round_to(0.09 * wt,0.4)
 #                                                            when age.between?(2,6) then 1
 #                                                            when age.between?(6,12) then 2
@@ -1593,12 +1600,12 @@ puts "edit - params=#{params}"
 #    # Amoxycillin
 #    if selected.include?('Amoxycillin')
 #      suggested = Hash.new
-#      suggested[:name] = 'Amoxycillin'
+#      suggested[:drug] = 'Amoxycillin'
 #      suggested[:code] = 'Amoxycillin'
 #      suggested[:sorting] = 'E_2'
 #      exact = [wt*13, 500].min    # 13 mg/kg/dose = 39 mg/kg/day
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact < 175 then round_to(exact,25)
 #                                   when exact.between?(175,275) then 250
 #                                   when exact > 275 then 500
@@ -1614,12 +1621,12 @@ puts "edit - params=#{params}"
 #    # Augmentin
 #    if selected.include?('Augmentin')
 #      suggested = Hash.new
-#      suggested[:name] = 'Augmentin'
+#      suggested[:drug] = 'Augmentin'
 #      suggested[:code] = 'Augmentin'
 #      suggested[:sorting] = 'E_3'
 #      exact = wt*10 # 10 mg/kg/dose = 30 mg/kg/day
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact < 175 then round_to(exact,25)
 #                                   when exact.between?(175,275) then 250
 #                                   when exact > 275 then 500
@@ -1636,18 +1643,18 @@ puts "edit - params=#{params}"
 #    # Erythromycin
 #    if selected.include?('Erythromycin')
 #      suggested = Hash.new
-#      suggested[:name] = 'Erythromycin'
+#      suggested[:drug] = 'Erythromycin'
 #      suggested[:code] = 'Erythromycin'
 #      suggested[:sorting] = 'E_4'
 #      exact = [wt*13, 500].min    # 13 mg/kg/dose = 39 mg/kg/day
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact < 175 then round_to(exact,25)
 #                                   when exact.between?(175,275) then 250
 #                                   when exact > 275 then 500
 #                                 end
 #      if age < (1.0 / 12)  # Neonates, 30 mg/kg/day
-#        suggested[:dose_exact] = suggested[:dose_rounded] = wt*10
+#        suggested[:dose_exact] = suggested[:dose] = wt*10
 #      end
 #      suggested[:interval] = 8  # q 8 hours
 #      suggested[:unit] = 'mg'
@@ -1663,12 +1670,12 @@ puts "edit - params=#{params}"
 #    # Chloroquine
 #    if selected.include?('Chloroquine')
 #      suggested = Hash.new
-#      suggested[:name] = 'Chloroquine'
+#      suggested[:drug] = 'Chloroquine'
 #      suggested[:code] = 'Chloroquine'
 #      suggested[:sorting] = 'M_2'
 #      exact = [wt*10, 600].min    # 10 mg/kg/dose, max 600 mg
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = rounded = case       # rounding
+#      suggested[:dose] = rounded = case       # rounding
 #                                             when exact < 120 then round_to(exact,10)
 #                                             when exact.between?(120,160) then 150
 #                                             when exact.between?(160, 250) then 225
@@ -1689,12 +1696,12 @@ puts "edit - params=#{params}"
 #    # Artesunate
 #    if selected.include?('Artesunate')
 #      suggested = Hash.new
-#      suggested[:name] = 'Artesunate'
+#      suggested[:drug] = 'Artesunate'
 #      suggested[:code] = 'Artesunate'
 #      suggested[:sorting] = 'M_1'
 #      exact = [wt*2, 100].min    #
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = rounded = case       # rounding
+#      suggested[:dose] = rounded = case       # rounding
 #                                             when exact < 20 then exact.round
 #                                             when exact.between?(20,30) then 25
 #                                             when exact.between?(30,60) then 50
@@ -1713,12 +1720,12 @@ puts "edit - params=#{params}"
 #    # Fansidar
 #    if selected.include?('Fansidar')
 #      suggested = Hash.new
-#      suggested[:name] = 'Fansidar'
+#      suggested[:drug] = 'Fansidar'
 #      suggested[:code] = 'Fansidar'
 #      suggested[:sorting] = 'M_3'
 #      exact = [wt*0.06, 3].min    #  0.06 tabs per kg ~= 1 tab per 15 kg
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when wt.between?(5,10) then 0.5
 #                                   when wt.between?(10.001,20) then 1
 #                                   when wt.between?(20.001, 30) then 1.5
@@ -1740,12 +1747,12 @@ puts "edit - params=#{params}"
 #    # INH
 #    if selected.include?('Isoniazid')
 #      suggested = Hash.new
-#      suggested[:name] = 'Isoniazid (INH)'
+#      suggested[:drug] = 'Isoniazid (INH)'
 #      suggested[:code] = 'Isoniazid'
 #      suggested[:sorting] = 'T_1'
 #      exact = wt * 5    # 5 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      inh_dose_rounded = suggested[:dose_rounded] = case       # rounding
+#      inh_dose_rounded = suggested[:dose] = case       # rounding
 #                                                      when weight < 12 then round_to(exact,10)
 #                                                      when weight.between?(12,15) then 75
 #                                                      when weight.between?(15,30) then 150
@@ -1762,14 +1769,14 @@ puts "edit - params=#{params}"
 #    # Pyridoxine
 #    if selected.include?('Pyridoxine')
 #      suggested = Hash.new
-#      suggested[:name] = 'Pyridoxine (B6)'
+#      suggested[:drug] = 'Pyridoxine (B6)'
 #      suggested[:code] = 'Pyridoxine'
 #      suggested[:sorting] = 'T_2'
 #      suggested[:dose_exact] = case
 #                                 when weight < 30 then 25
 #                                 else 50
 #                               end
-#      suggested[:dose_rounded] = suggested[:dose_exact]
+#      suggested[:dose] = suggested[:dose_exact]
 #      suggested[:interval] = 24    # daily = q24 hours
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 30
@@ -1781,10 +1788,10 @@ puts "edit - params=#{params}"
 #    if selected.include?('Rifampacin')
 #      suggested = Hash.new
 #      suggested[:comment] = ''
-#      suggested[:name] = 'Rifampacin'
+#      suggested[:drug] = 'Rifampacin'
 #      suggested[:code] = 'Rifampacin'
 #      suggested[:sorting] = 'T_3'
-#      suggested[:dose_rounded] = 2 * inh_dose_rounded  # keep 2:1 ratio so fixed-dose combinations can be used
+#      suggested[:dose] = 2 * inh_dose_rounded  # keep 2:1 ratio so fixed-dose combinations can be used
 #      suggested[:interval] = 24    # daily = q24 hours
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 30
@@ -1795,11 +1802,11 @@ puts "edit - params=#{params}"
 #    if selected.include?('Pyrazinamide')
 #      suggested = Hash.new
 #      suggested[:comment] = ''
-#      suggested[:code] = suggested[:name] = 'Pyrazinamide'
+#      suggested[:code] = suggested[:drug] = 'Pyrazinamide'
 #      suggested[:sorting] = 'T_4'
 #      exact = wt * 25    # 25 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = (5.333 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
+#      suggested[:dose] = (5.333 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
 #      suggested[:interval] = 24    # daily = q24 hours
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 30
@@ -1810,12 +1817,12 @@ puts "edit - params=#{params}"
 #    if selected.include?('Ethambutol')
 #      suggested = Hash.new
 #      suggested[:comment] = 'Use cautiously in children due to possible optic neuritis.'
-#      suggested[:name] = 'Ethambutol'
+#      suggested[:drug] = 'Ethambutol'
 #      suggested[:code] = 'Ethambutol'
 #      suggested[:sorting] = 'T_5'
 #      exact = wt * 13    # 13 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = (3.667 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
+#      suggested[:dose] = (3.667 * inh_dose_rounded).round  # keep ratio so fixed-dose combinations can be used
 #      suggested[:interval] = 24    # daily = q24 hours
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 30
@@ -1829,11 +1836,11 @@ puts "edit - params=#{params}"
 #    if selected.include?('Paracetamol')
 #      suggested = Hash.new
 #      suggested[:comment] = ''
-#      suggested[:code] = suggested[:name] = 'Paracetamol'
+#      suggested[:code] = suggested[:drug] = 'Paracetamol'
 #      suggested[:sorting] = 'Z_2'
 #      exact = wt * 15    # 25 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when wt < 12 then exact
 #                                   when wt.between?(12, 25) then 250
 #                                   when wt > 25 then 500
@@ -1842,7 +1849,7 @@ puts "edit - params=#{params}"
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 7
 #      suggested[:liquid] = 24
-#      suggested[:use_liquid] = suggested[:dose_rounded] < 250
+#      suggested[:use_liquid] = suggested[:dose] < 250
 #      suggested_return << suggested  # add completed hash to the list of suggestions
 #    end
 #
@@ -1851,11 +1858,11 @@ puts "edit - params=#{params}"
 #      suggested = Hash.new
 #      suggested[:comment] = 'These doses are starting doses for tinea capitis or tinea corporis. Higher doses may be required. Suggested duration: 2-4 weeks for t. corporis, 4-8 weeks for t. capitis. Take with meals, ideally a fatty meal.'
 #      suggested[:instructions] = "Give with a meal, a food with fat or oil if possible."
-#      suggested[:code] = suggested[:name] = 'Griseofulvin'
+#      suggested[:code] = suggested[:drug] = 'Griseofulvin'
 #      suggested[:sorting] = 'Z_4'
 #      exact = wt * 20    # 25 mg/kg/dose
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when wt < 12 then exact
 #                                   when wt.between?(12, 17) then 250
 #                                   when wt.between?(17.000001, 25) then 500
@@ -1871,10 +1878,10 @@ puts "edit - params=#{params}"
 #    if selected.include?('Albendazole')
 #      suggested = Hash.new
 #      suggested[:comment] = 'For children > 2 years. For strongyloides, use 400 mg x 3 days.'
-#      suggested[:code] = suggested[:name] = 'Albendazole'
+#      suggested[:code] = suggested[:drug] = 'Albendazole'
 #      suggested[:sorting] = 'Z_6'
 #      suggested[:dose_exact] = 400
-#      suggested[:dose_rounded] = 400
+#      suggested[:dose] = 400
 #      suggested[:interval] = 24
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 1
@@ -1885,11 +1892,11 @@ puts "edit - params=#{params}"
 #    if selected.include?('Flagyl_amoeba')
 #      suggested = Hash.new
 #      suggested[:comment] = 'This is the suggested dosing for treatment of amoeba infections'
-#      suggested[:code] = suggested[:name] = 'Flagyl'
+#      suggested[:code] = suggested[:drug] = 'Flagyl'
 #      suggested[:sorting] = 'Z_6'
 #      exact = wt * 15
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when wt < 12 then round_to(exact+10, 20)
 #                                   when wt.between?(12, 17) then 200
 #                                   when wt.between?(17.0001, 24) then 300
@@ -1901,18 +1908,18 @@ puts "edit - params=#{params}"
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 10
 #      suggested[:liquid] = 40
-#      suggested[:use_liquid] = suggested[:dose_rounded] < 200
+#      suggested[:use_liquid] = suggested[:dose] < 200
 #      suggested_return << suggested  # add completed hash to the list of suggestions
 #    end
 #
 #    if selected.include?('Flagyl_giardia')
 #      suggested = Hash.new
 #      suggested[:comment] = 'This is the suggested dosing for treatment of giardia infections'
-#      suggested[:code] = suggested[:name] = 'Flagyl'
+#      suggested[:code] = suggested[:drug] = 'Flagyl'
 #      suggested[:sorting] = 'Z_6'
 #      exact = wt * 6
 #      suggested[:dose_exact] = exact
-#      suggested[:dose_rounded] = case       # rounding
+#      suggested[:dose] = case       # rounding
 #                                   when exact < 90 then round_to(exact+10, 20)
 #                                   when exact.between?(90.001, 120) then 100
 #                                   when exact.between?(120.001, 180) then round_to(exact, 40)
@@ -1923,7 +1930,7 @@ puts "edit - params=#{params}"
 #      suggested[:unit] = 'mg'
 #      suggested[:duration] = 7
 #      suggested[:liquid] = 40
-#      suggested[:use_liquid] = (suggested[:dose_rounded].modulo 100) > 0  # i.e. use liquid if dose not a multiple of 100
+#      suggested[:use_liquid] = (suggested[:dose].modulo 100) > 0  # i.e. use liquid if dose not a multiple of 100
 #      suggested_return << suggested  # add completed hash to the list of suggestions
 #    end
 #

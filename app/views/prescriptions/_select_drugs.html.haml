@@ -1,0 +1,6 @@
+%fieldset.span2
+  %legend= drug_class[:class]
+  - drug_class[:drugs].each do |drug|
+    = f.check_box(drug)
+    = f.label drug, drug, class: 'drug_select'
+    %br

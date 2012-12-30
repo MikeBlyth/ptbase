@@ -1,0 +1,11 @@
+/ FORM FOR SELECTING ITEMS TO BE INCLUDED IN A PRESCRIPTION
+/ @select_drugs is an array of elements like {class: 'Anti-TB', drugs: %w{ Isoniazid Pyridoxine Rifampacin ...}}
+
+%h2= "New prescription for #{@patient.name_id}"
+%p Select the drugs you want to include from the following list, and in the next screen you will have a chance to adjust details for each drug.
+= form_for :selected, method: :get, url: new_prescription_path(patient_id: @patient.id) do |form|
+  = hidden_field_tag(:patient_id, @patient.id)
+  #drugs.row-fluid
+    = render partial: 'select_drugs', collection: @select_drugs, as: :drug_class, locals: {f: form}
+  #footer.row-fluid
+    = form.submit "Continue"

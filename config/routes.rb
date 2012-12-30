@@ -16,6 +16,8 @@ Ptbase::Application.routes.draw do
 
   resources :admissions do as_routes end
 
+  match '/prescriptions/select', :to => 'prescriptions#select'
+
   resources :prescriptions do as_routes end
 
   match '/patients/:patient_id/prescriptions/new', :to => 'prescriptions#new'

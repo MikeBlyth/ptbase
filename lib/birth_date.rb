@@ -23,6 +23,7 @@ class Time
   def age_years
     age_seconds/1.year
   end
+  alias :age_in_years :age_years
 
   def age_human
     Time.time_human self.age_seconds

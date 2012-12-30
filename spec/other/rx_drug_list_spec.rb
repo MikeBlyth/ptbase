@@ -76,7 +76,7 @@ describe RxDrugList do
       itemB = FactoryGirl.create(:prescription_item, drug: 'BBB', :prescription => new_prescription)
       list.add_item(itemB)
 # puts list.formatted
-      list.formatted[0].should eq "#{item.drug} #{item[:dose]} #{item[:units]} #{item[:route]} q#{item[:interval]}h x #{item[:duration]} days."
-      list.formatted[1].should eq "#{itemB.drug} #{itemB[:dose]} #{itemB[:units]} #{itemB[:route]} q#{itemB[:interval]}h x #{itemB[:duration]} days."
+      list.formatted[0].should eq "#{item.drug} #{item[:dose]} #{item[:unit]} #{item[:route]} q#{item[:interval]}h x #{item[:duration]} days."
+      list.formatted[1].should eq "#{itemB.drug} #{itemB[:dose]} #{itemB[:unit]} #{itemB[:route]} q#{itemB[:interval]}h x #{itemB[:duration]} days."
     end
 end

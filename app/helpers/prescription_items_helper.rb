@@ -27,7 +27,7 @@ module PrescriptionItemsHelper
   end
 
   def formatted_prescription_item(p)
-    "#{p.drug} #{p.dose} #{p.units} #{p.route} every #{p.interval} hours for #{p.duration} days."
+    "#{p.drug} #{p.dose} #{p.unit} #{p.route} every #{p.interval} hours for #{p.duration} days."
   end
 
 
@@ -38,7 +38,7 @@ module PrescriptionItemsHelper
       (content_tag(:span, "#{index}", class: "rx_item_num") +
         rx_field(item, item_id, 'drug', id_base) +
         rx_field(item, item_id, 'dose', id_base) +
-        rx_field(item, item_id, 'units', id_base) +
+        rx_field(item, item_id, 'unit', id_base) +
         rx_field(item, item_id, 'route', id_base) +
         rx_field(item, item_id, 'interval', id_base) +
         rx_field(item, item_id, 'duration', id_base) +

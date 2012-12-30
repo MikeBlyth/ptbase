@@ -55,9 +55,9 @@ recent_prescription = Prescription.create(patient: audu, date: Date.yesterday, p
                                    confirmed: true)
 
 PrescriptionItem.delete_all
-PrescriptionItem.create(prescription: prescription, drug: 'ampicillin', dose: '250 mg', units: 'tab',
+PrescriptionItem.create(prescription: prescription, drug: 'ampicillin', dose: '250 mg', unit: 'tab',
                         route: 'po', interval: 6, duration: 6)
-PrescriptionItem.create(prescription: recent_prescription, drug: 'amoxacillin', dose: '500 mg', units: 'tab',
+PrescriptionItem.create(prescription: recent_prescription, drug: 'amoxacillin', dose: '500 mg', unit: 'tab',
                         route: 'po', interval: 8, duration: 6)
 
 Problem.delete_all

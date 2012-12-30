@@ -136,7 +136,7 @@ FactoryGirl.define do
     prescription
     sequence(:drug) {|n| %w(ampicillin penicillin amoxycillin doxycycline)[(n-1).modulo(4)]}
     dose '250 mg'
-    units 'tab'
+    unit 'tab'
     route 'po'
     interval 6
     duration 6

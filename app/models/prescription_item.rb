@@ -6,7 +6,7 @@
 #  drug               :string(255)
 #  prescription_id    :integer
 #  dose               :float
-#  units              :string(255)
+#  unit              :string(255)
 #  route              :string(255)
 #  interval           :integer
 #  use_liquid         :boolean
@@ -23,7 +23,7 @@ require 'forwardable'
 
 class PrescriptionItem < ActiveRecord::Base
   attr_accessible :dose, :drug, :duration, :filled, :interval, :liquid, :prescription, :prescription_id,
-                  :other_description, :other_instructions, :route, :units, :use_liquid
+                  :other_description, :other_instructions, :route, :unit, :use_liquid
   belongs_to :prescription
   validates_presence_of :drug, :interval, :duration #, :prescription_id
   validate :valid_interval

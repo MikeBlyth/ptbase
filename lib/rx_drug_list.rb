@@ -26,7 +26,7 @@ class RxDrugList < Hash
 
   def formatted
     self.map do |drug, item|
-      "#{drug} #{item[:dose]} #{item[:units]} #{item[:route]} q#{item[:interval]}h x #{item[:duration]} days."
+      "#{drug} #{item[:dose]} #{item[:unit]} #{item[:route]} q#{item[:interval]}h x #{item[:duration]} days."
     end
   end
 end

@@ -51,7 +51,7 @@ puts "Filled values = #{filled_values}"
 
     select(provider.name)
 puts "Filled values = #{filled_values}"
-    item_params = {drug: 'DrugX', dose: 'as needed', interval: 6, duration: 5, units: 'cap',
+    item_params = {drug: 'DrugX', dose: 'as needed', interval: 6, duration: 5, unit: 'cap',
             route: 'sub-lingual'}
     within('#prescription-items fieldset:first-child') do
       fill_in 'Drug', with: item_params[:drug]
@@ -59,7 +59,7 @@ puts "Filled values = #{filled_values}"
       fill_in 'Route', with: item_params[:route]
       fill_in 'Interval', with: item_params[:interval]
       fill_in 'Duration', with: item_params[:duration]
-      fill_in 'Units', with: item_params[:units]
+      fill_in 'Unit', with: item_params[:unit]
     end
     click_button 'Update'
 #save_and_open_page

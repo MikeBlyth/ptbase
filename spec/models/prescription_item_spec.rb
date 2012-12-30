@@ -6,7 +6,7 @@
 #  drug               :string(255)
 #  prescription_id    :integer
 #  dose               :float
-#  units              :string(255)
+#  unit              :string(255)
 #  route              :string(255)
 #  interval           :integer
 #  use_liquid         :boolean

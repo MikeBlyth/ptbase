@@ -24,6 +24,7 @@ puts "@doses = #{@doses}"
   end
 
   def get_selected_drugs(params)
+    return [] if params[:selected].nil?
     params[:selected].select {|k,v| v == '1'}.map {|k,v| k}
   end
 
@@ -92,9 +93,8 @@ puts "edit - params=#{params}"
     age = patient.age_years
     @weight = latest_parameters[:weight][:value]
     @height = latest_parameters[:height][:value]
-    @bsa_pt = latest_parameters[:bsa][:value]      # just to let us have flexibility of using these names for same vars
-    wt, ht = @weight, @height
-    weight, height = @weight, @height
+    bsa_pt = latest_parameters[:bsa][:value]      # just to let us have flexibility of using these names for same vars
+    wt = weight = @weight
     return [] if wt.nil?
     suggested_return = []
 
@@ -157,7 +157,7 @@ puts "edit - params=#{params}"
       suggested[:dose_exact] = exact
       suggested[:dose] = case       # rounding
                                    when exact.between?(0,45) then round_to(exact,10)
-                                   when exact.between?(45.0001,150) then round_to(exact, 25)
+                                   when exact.between?(45,150) then round_to(exact, 25)
                                    when exact > 150 then 150
                                  end
       suggested[:interval] = 12  # q 12 hours
@@ -178,7 +178,7 @@ puts "edit - params=#{params}"
       suggested[:dose_exact] = exact
       suggested[:dose] = case       # rounding
                                    when exact.between?(0,130) then round_to(exact,10)
-                                   when exact.between?(130.0001,170) then 150
+                                   when exact.between?(130,170) then 150
                                    when exact.between?(170,220) then round_to(exact,10)
                                    when exact > 220 then 300
                                  end
@@ -239,7 +239,7 @@ puts "edit - params=#{params}"
       rounded = suggested[:dose] = case       # rounding
                                              when exact.between?(0,80) then round_to(exact,10)
                                              when exact.between?(80,115) then 100
-                                             when exact.between?(115.01,149.99) then round_to(exact,10)
+                                             when exact.between?(115,149.99) then round_to(exact,10)
                                              when exact >= 150 then 200
                                            end
       suggested[:interval] = 24    # daily = q24 hours
@@ -269,7 +269,7 @@ puts "edit - params=#{params}"
       rounded = suggested[:dose] = case       # rounding
                                              when exact.between?(0,80) then round_to(exact,10)
                                              when exact.between?(80,110) then 100
-                                             when exact.between?(110.001,140) then round_to(exact,10)
+                                             when exact.between?(110,140) then round_to(exact,10)
                                              when exact > 140 then 200
                                            end
       suggested[:interval] = 12  # q 12 hours
@@ -397,7 +397,7 @@ puts "edit - params=#{params}"
       suggested[:dose] = case       # rounding
                                    when exact < 40 then round_to(exact, 10)
                                    when exact.between?(40, 60) then 50
-                                   when exact.between?(60.001, 120) then 100
+                                   when exact.between?(60, 120) then 100
                                    when exact.between?(120, 170) then 150
                                    when exact > 170  then 200
                                  end
@@ -587,9 +587,9 @@ puts "edit - params=#{params}"
       suggested[:dose_exact] = exact
       suggested[:dose] = case       # rounding
                                    when wt.between?(5,10) then 0.5
-                                   when wt.between?(10.001,20) then 1
-                                   when wt.between?(20.001, 30) then 1.5
-                                   when wt.between?(30.001, 45) then 2
+                                   when wt.between?(10,20) then 1
+                                   when wt.between?(20, 30) then 1.5
+                                   when wt.between?(30, 45) then 2
                                    when wt > 45 then 3
                                  end
       suggested[:interval] = 0     # 0 means 'stat'
@@ -725,7 +725,7 @@ puts "edit - params=#{params}"
       suggested[:dose] = case       # rounding
                                    when wt < 12 then exact
                                    when wt.between?(12, 17) then 250
-                                   when wt.between?(17.000001, 25) then 500
+                                   when wt.between?(17, 25) then 500
                                    when wt > 25 then 500
                                  end
       suggested[:interval] = 24
@@ -759,9 +759,9 @@ puts "edit - params=#{params}"
       suggested[:dose] = case       # rounding
                                    when wt < 12 then round_to(exact+10, 20)
                                    when wt.between?(12, 17) then 200
-                                   when wt.between?(17.0001, 24) then 300
-                                   when wt.between?(24.0001, 34) then 400
-                                   when wt.between?(34.0001, 42) then 500
+                                   when wt.between?(17, 24) then 300
+                                   when wt.between?(24, 34) then 400
+                                   when wt.between?(34, 42) then 500
                                    when wt > 42 then 600
                                  end
       suggested[:interval] = 8
@@ -781,9 +781,9 @@ puts "edit - params=#{params}"
       suggested[:dose_exact] = exact
       suggested[:dose] = case       # rounding
                                    when exact < 90 then round_to(exact+10, 20)
-                                   when exact.between?(90.001, 120) then 100
-                                   when exact.between?(120.001, 180) then round_to(exact, 40)
-                                   when exact.between?(180.001, 240) then 200
+                                   when exact.between?(90, 120) then 100
+                                   when exact.between?(120, 180) then round_to(exact, 40)
+                                   when exact.between?(180, 240) then 200
                                    when exact > 240 then 300
                                  end
       suggested[:interval] = 8
@@ -799,6 +799,14 @@ puts "edit - params=#{params}"
     # . . . do other drugs
     # Other
     return suggested_return
+  end
+
+  def round_to(x,inc)  # intelligent rounding for dosing, more intelligence hopefully to come
+    if x > (inc * 1.5)  # don't round unless at least 1.5 times the rounding factor
+      (x.to_f/inc).round * inc
+    else
+      x
+    end
   end
 
   ########## FROM ORIGINAL APP ################
@@ -1002,7 +1010,7 @@ puts "edit - params=#{params}"
 #      items << PrescriptionItem.new(
 #          :drug => params[key+';name'],     # may want to change this to something more unique
 #          :dose => params[key+';quant'],    # find the different parameters for this drug among the params hash
-#          :units => params[key+';unit'],
+#          :unit => params[key+';unit'],
 #          :interval => params[key+';interval'].to_i,
 #          :duration => params[key+';duration'],
 #          :other_description => params[key+';description'],
@@ -1155,7 +1163,7 @@ puts "edit - params=#{params}"
 #                            :liquid => p.liquid,
 #                            :use_liquid => p.use_liquid,
 #                            :duration => p.duration,
-#                            :units => p.units,
+#                            :unit => p.unit,
 #                            :interval => p.interval,
 #                            :other_description => p.other_description,
 #                            :other_instructions => p.other_instructions,
@@ -1210,7 +1218,7 @@ puts "edit - params=#{params}"
 #      doses <<   {:name => item.drug,
 #                  :dose_rounded => item.dose,
 #                  :interval => item.interval,
-#                  :unit => item.units,
+#                  :unit => item.unit,
 #                  :use_liquid => item.use_liquid,
 #                  :liquid => item.liquid,
 #                  :duration => item.duration,
@@ -1960,7 +1968,7 @@ puts "edit - params=#{params}"
 #  # or update one prescription item. The key of the outer hash (1, 2, 3 ...) is not used here
 #  #  {
 #  #   1 => {:id => 27, :dose = 25, ... },
-#  #   2 => {:id => '', :drug=>'amoxil', :dose => '25', :units => 'mg' ...}, ... }
+#  #   2 => {:id => '', :drug=>'amoxil', :dose => '25', :unit => 'mg' ...}, ... }
 #  #   ...
 #  #  }
 #  def update_items(prescription, items_hash)

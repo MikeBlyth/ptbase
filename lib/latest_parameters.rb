@@ -54,6 +54,7 @@ class LatestParameters < Hash
         age: self[:patient].age_on_date_in_years(weight_date)
     }
 
+    self[:bsa] = {:value => body_surface_area(anthro_inputs)}
     self[:pct_expected_ht] = {:value => pct_expected_height(anthro_inputs) || '?'}
     self[:pct_expected_wt] = {:value => pct_expected_weight(anthro_inputs) || '?'}
     self[:pct_expected_wt_for_ht] = {:value => pct_expected_weight_for_height(anthro_inputs) || '?'}

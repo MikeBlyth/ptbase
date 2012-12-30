@@ -18,6 +18,7 @@ class PrescriptionsController < ApplicationController
     @selected = get_selected_drugs(params)  # need to use empty array if no drugs already selected
     @preselect = @selected.any?  # means user has preselected drugs, so we'll "tick" each one's box on prescr. form
     @doses = suggested_doses(@selected)
+puts "@doses = #{@doses}"
   end
 
   def get_selected_drugs(params)
@@ -80,9 +81,13 @@ puts "edit - params=#{params}"
     # The array will be ordered in the order that the individual drug-dose-hashes are added.
     # If there are any drug names in selected, then only those will be included in the suggestions
     patient = @patient
+    latest_parameters = patient.latest_parameters
     age = patient.age_years
-    weight, height, bsa_pt = @weight, @height, @bsa      # just to let us have flexibility of using these names for same vars
-    wt, ht = weight, height
+    @weight = latest_parameters[:weight][:value]
+    @height = latest_parameters[:height][:value]
+    @bsa_pt = latest_parameters[:bsa][:value]      # just to let us have flexibility of using these names for same vars
+    wt, ht = @weight, @height
+    weight, height = @weight, @height
     return [] if wt.nil?
     suggested_return = []
 
@@ -786,8 +791,6 @@ puts "edit - params=#{params}"
 
     # . . . do other drugs
     # Other
-    add_blank_items(suggested_return, 2)
-
     return suggested_return
   end
 

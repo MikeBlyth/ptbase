@@ -18,6 +18,7 @@
 
 require 'forwardable'
 require 'anthropometrics'
+require 'latest_parameters'
 require 'birth_date'
 include Anthropometrics
 

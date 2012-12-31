@@ -18,7 +18,11 @@ end
 
 class NilClass
   def any?
-    not blank?
+    false
+  end
+
+  def empty?
+    true
   end
 end
 

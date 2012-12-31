@@ -1,5 +1,5 @@
 %h4 Current Drugs
-- if not current_drugs.empty?
+- if current_drugs.any?
   .current_drug
     %p
       Currently (#{Date.today}) taking these drugs (as known to this system)

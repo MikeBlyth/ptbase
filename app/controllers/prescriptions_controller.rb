@@ -71,6 +71,7 @@ puts "edit - params=#{params}"
   end
 
   # select which drugs to be presented on new prescription form -- so we don't have to see everything at once
+  # ToDo - bring these into a model or somehow make them accessible and not hard coded
   def select
     @patient = Patient.find(params[:patient_id])
     @select_drugs = [
@@ -83,6 +84,7 @@ puts "edit - params=#{params}"
     ]
   end
 
+  #ToDo - move this into a separate module
   def suggested_doses(selected={}, patient)
     # return an array of suggested doses based on patient's height and weight, in form like
     # [ {:name => 'Lamivudine', :dose_rounded => 60, :dose_exact => 57, :unit => "mg", :interval => 12 }, ...

@@ -24,6 +24,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem 'gruff'
 gem 'haml'
 gem 'hpricot'
 gem 'thin', :platforms => :ruby

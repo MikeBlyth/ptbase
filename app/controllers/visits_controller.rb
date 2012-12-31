@@ -46,6 +46,11 @@ class VisitsController < ApplicationController
     @dx_fields.each { |dx| dx.name = 'dx_' + dx.name }   # prepend 'dx_' to each field name
   end
 
+  def make_growthchart
+    patient = Patient.find params[:patient_id]
+    growth_chart_filename = GrowthChart.new(patient)
+    send_file growth_chart_filename, :type => 'image/png', :disposition => 'inline'
+  end
 
   ########### FROM ORIGINAL APP #########################
 #  helper :sparklines

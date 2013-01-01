@@ -45,6 +45,20 @@ module AbstractChart
       simple_hash
     end
 
+    def self.merge_as_hash(series_array)
+      all_series_hash = {}
+      x_names = series_array.map{|s| s.x_name}.uniq
+      raise "Cannot merge series with different x axes (#{x_names})" if x_names.count > 1
+      x_name = x_names.first
+      series_array.each {|s| all_series_hash[s.y_name] = s.to_simple_hash}
+      x_points = all_series_hash.map {|k,v| v.keys}.flatten.uniq
+      x_points.map do |x|
+        xhash = {x_name => x}
+        all_series_hash.each {|y_name, point_hash| xhash[y_name] = point_hash[x] if point_hash[x] }
+        xhash
+      end
+    end
+
     def to_merged_hash(other_series)
       raise "Cannot merge series with different x axes ('#@x_name' and '#{other_series.x_name}')" unless @x_name == other_series.x_name
       self_hash = self.to_simple_hash

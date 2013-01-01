@@ -1,30 +1,34 @@
-class GrowthChart
+class GrowthChart < AbstractChart
   include GrowthChartRefLines
-  attr_accessor :chart_data
+  include NamesHelper
 
   DEFAULT_WIDTH = 600
   THUMB_WIDTH = 200
 
   def initialize(patient, options={})
     @patient = patient
-    if options[:thumb]
-        @size = THUMB_WIDTH
-        suffix = '_thumb'
-    else
-        @size = DEFAULT_WIDTH
-        suffix = ''
-    end
-    @chart_data = {}
-    generate_chart
-    return @filename
+    params = {title: make_title(), subtitle: make_subtitle(), series: make_series(), options: options}
+    super(params)
   end
 
+  def make_title
+    @patient.name_id
+  end
+
+  def make_subtitle
+    "DOB: #{@patient.birth_date}; Chart Date: #{Date.today}"
+  end
+
+  def make_series
+    wt_ht_data = get_weight_height_points
+
+  end
   ### GET THE ACTUAL DATA FROM THE PATIENT VISITS
   def get_weight_height_points
-    @patient.ptvisits.select {|visit| plottable_wt_ht?(visit)}.each do |visit|
-      age = patient.age_on_date_in_years(visit.date)
-      @chart_data[age] ||= {}
-      @chart_data[age].merge!({weight: visit.weight, height: visit.height})
+    @patient.ptvisits.select {|visit| plottable_wt_ht?(visit)}.map do |visit|
+      {age: patient.age_on_date_in_years(visit.date),
+       weight: visit.weight,
+       height: visit.height}
     end
   end
 

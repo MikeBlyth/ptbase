@@ -60,11 +60,16 @@ class Patient < ActiveRecord::Base
     name_id
   end
 
+  # ToDo - Seems this should be in helpers, but it's needed by GrowthChart too, -- where is best location?
+  def name_id
+    return self.name + " [#{self.ident}]"
+  end
+
+  # ToDo - ** What is this for!?
   %w(pepfar residence phone caregiver).each do |attr|
     define_method attr do
       "*#{attr}*"
     end
-
   end
 
   ## Demographics

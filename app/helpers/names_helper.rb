@@ -5,10 +5,6 @@ module NamesHelper
     return (first_name || '') + initial + ' ' + (last_name || '')
   end
 
-  def name_id
-    return self.name + " [#{self.ident}]"
-  end
-
   def name_last_first
     "#{last_name}, #{first_name}"
   end

@@ -54,6 +54,12 @@ describe AbstractChart do
       series.y_axis.should == {'name'  => :weight, 'units' =>  "kg", 'label' =>  "Weight"}
     end
 
+    it 'initializes axes with default axis labels' do
+      series = DataSeries.new(x_name: :age, y_name: :body_weight, x_units: "Years", y_units: "kg" )
+      series.x_axis.should == {'name' => :age, 'units' => "Years", 'label' => "Age"}
+      series.y_axis.should == {'name'  => :body_weight, 'units' =>  "kg", 'label' =>  "Body weight"}
+    end
+
   end
 
 end

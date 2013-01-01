@@ -25,7 +25,7 @@ module AbstractChart
       @y_name = params[:y_name]
       data = params[:data]
       @x_axis = Axis.new(name: @x_name, units: params[:x_units], label: params[:x_label] || @x_name.to_s.humanize )
-      @y_axis = Axis.new(name: @y_name, units: params[:y_units], label: params[:y_label] || @x_name.to_s.humanize )
+      @y_axis = Axis.new(name: @y_name, units: params[:y_units], label: params[:y_label] || @y_name.to_s.humanize )
       @data = []
       add_data(data)
     end

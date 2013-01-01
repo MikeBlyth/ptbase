@@ -60,6 +60,13 @@ describe AbstractChart do
       series.y_axis.should == {'name'  => :body_weight, 'units' =>  "kg", 'label' =>  "Body weight"}
     end
 
+    it 'generates array of hashes {x_name: x, y_name: y}' do
+      series = DataSeries.new x_name: 'x-name', y_name: 'y-name', data: [[0,2],[1,4]]
+      series.to_hash_array.should == [{'x-name' => 0, 'y-name' => 2}, {'x-name' => 1, 'y-name' => 4}]
+    end
   end
 
+  describe 'processing' do
+
+  end
 end

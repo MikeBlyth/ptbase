@@ -13,7 +13,7 @@ class Time
   end
 
   def age_months
-    age_seconds/1.month
+    age_seconds/(30.45 * 1.day) # Rails otherwise says  1 month = 30 days
   end
 
   def age_weeks

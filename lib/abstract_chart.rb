@@ -1,8 +1,13 @@
-module AbstractChart < HashWithIndifferentAccess
+module AbstractChart
 
-  class Chart
-    def initialize(params)
+  class Chart < HashWithIndifferentAccess
+    def initialize(params={})
+      params[:series] ||= []
       super
+    end
+
+    def add_series(data_series)
+      self[:series] << data_series
     end
   end
 
@@ -10,29 +15,36 @@ module AbstractChart < HashWithIndifferentAccess
     def initialize(axis_params)
       super
     end
+
   end
 
   class DataSeries
+    attr_accessor :x_name, :y_name, :data, :x_axis, :y_axis
     def initialize(params)
-      x_name = params[:x_name]
-      y_name = params[:y_name]
-      raw_data = params[:data]
-      @x_axis = Axis.new(name: x_name, units: params[:x_units], label: params[:x_label] )
-      @y_axis = Axis.new(name: y_name, units: params[:y_units], label: params[:y_label] )
+      @x_name = params[:x_name]
+      @y_name = params[:y_name]
+      data = params[:data]
+      @x_axis = Axis.new(name: @x_name, units: params[:x_units], label: params[:x_label] || @x_name.to_s.humanize )
+      @y_axis = Axis.new(name: @y_name, units: params[:y_units], label: params[:y_label] || @x_name.to_s.humanize )
       @data = []
-      add_data(raw_data) if raw_data
+      add_data(data)
     end
 
     def add_data(data)
       return if data.nil?
-      @data << (data.is_a? Hash ? data_from_array_of_hashes(data) : data )
+      if data[0].is_a? Hash
+        @data +=  data_from_array_of_hashes(data)
+      else
+        @data += data
+      end
     end
 
+  private
+
     def data_from_array_of_hashes(data)
-      x_name = data[:select_x]
-      y_name = data[:select_y]
-      data[:points].map do |data_point|
-        [data_point[x_name], data_point[y_name]]
+#binding.pry
+      data.map do |data_point|
+        [data_point[@x_name], data_point[@y_name]]
       end
     end
 

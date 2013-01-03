@@ -9,6 +9,10 @@ module AbstractChart
     def add_series(data_series)
       self[:series] << data_series
     end
+
+    def data_for_morris
+      DataSeries.merge_as_hash(self[:series])
+    end
   end
 
   class Axis < HashWithIndifferentAccess
@@ -51,9 +55,10 @@ module AbstractChart
       raise "Cannot merge series with different x axes (#{x_names})" if x_names.count > 1
       x_name = x_names.first
       series_array.each {|s| all_series_hash[s.y_name] = s.to_simple_hash}
-      x_points = all_series_hash.map {|k,v| v.keys}.flatten.uniq
-      x_points.map do |x|
+      x_points = all_series_hash.map {|k,v| v.keys}.flatten.uniq.sort
+      x_points.map do |x|    # Make a data point hash for each x value
         xhash = {x_name => x}
+        # Add each existing y value, giving, e.g., {..., 'weight'=>3.5, 'height'=>60, 'cd4'=>1400}
         all_series_hash.each {|y_name, point_hash| xhash[y_name] = point_hash[x] if point_hash[x] }
         xhash
       end

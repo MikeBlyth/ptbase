@@ -64,6 +64,14 @@ describe AbstractChart do
       series = DataSeries.new x_name: 'x-name', y_name: 'y-name', data: [[0,2],[1,4]]
       series.to_hash_array.should == [{'x-name' => 0, 'y-name' => 2}, {'x-name' => 1, 'y-name' => 4}]
     end
+
+    it 'merges collection of series into hash array' do
+      series_1 = DataSeries.new x_name: 'age', y_name: 'height', data: [[0, 50],[1, 80], [0.5, 65]]
+      series_2 = DataSeries.new x_name: 'age', y_name: 'weight', data: [[0, 3.0],[1, 10], [0.75, 8]]
+      merged = DataSeries.merge_as_hash [series_1, series_2]
+      merged.should == [{'age' => 0, 'height' =>50, 'weight' =>3.0}, {'age' =>0.5, 'height' =>65},
+                        {'age' =>0.75, 'weight' =>8}, {'age' =>1, 'height' =>80, 'weight' =>10}]
+    end
   end
 
   describe 'processing' do

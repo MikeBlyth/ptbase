@@ -1,0 +1,68 @@
+<style>
+    #chart_container {
+        position: relative;
+        display: inline-block;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    #chart {
+        display: inline-block;
+        margin-left: 40px;
+    }
+    #y_axis {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+    }
+    #legend {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 0 0 10px;
+    }
+
+</style>
+<div id="chart_container">
+    <div id="y_axis"></div>
+    <div id="chart"></div>
+</div>
+<div id="legend"></div>
+
+<script>
+    var palette = new Rickshaw.Color.Palette();
+
+    var graph = new Rickshaw.Graph( {
+        element: document.querySelector("#chart"),
+        renderer: 'line',
+        width: 580,
+        height: 250,
+        series: [
+        {
+            name: "Weight",
+            data: [ { x: 1262304000, y: 1 }, { x: 1293840000, y: 10 }, { x: 1325376000, y: 12} ],
+            color: palette.color()
+        },
+        {
+            name: "Height",
+            data: [ { x: 1262304000, y: 20}, { x: 1293840000, y: 70 }, { x: 1325376000, y: 85} ],
+            color: palette.color()
+        }
+        ]
+
+    } );
+
+    var axes = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+    var y_axis = new Rickshaw.Graph.Axis.Y( {
+        graph: graph,
+        orientation: 'left',
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        element: document.getElementById('y_axis')
+    } );
+
+    var legend = new Rickshaw.Graph.Legend( {
+        element: document.querySelector('#legend'),
+        graph: graph
+    } );
+
+    graph.render();
+
+</script>

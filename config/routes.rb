@@ -8,6 +8,8 @@ Ptbase::Application.routes.draw do
 
   resources :health_data do as_routes end
 
+  match '/growth_chart/:patient_id', to: 'patients#growth_chart'
+
   resources :providers do as_routes end
 
   resources :photos do as_routes end

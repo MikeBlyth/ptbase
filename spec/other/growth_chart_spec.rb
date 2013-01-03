@@ -101,5 +101,17 @@ describe GrowthChart do
       ref.data.should == CD4PCT_SEVERE
     end
 
+    it 'makes data for morris graphing package' do
+      @chart.add_all_series
+      @chart.add_std_anthro_series
+      @chart.add_series @chart.cd4_moderate_series
+      @chart.add_series @chart.cd4_severe_series
+      @chart.add_series @chart.cd4pct_severe_series
+#puts "Growth chart data = #{@chart.data_for_morris }"
+      data = @chart.data_for_morris
+      data.should include({:age=>1, :weight50=>10.2, :height50=>76.2, :cd4_mod=>1000, :cd4_severe=>750, :cd4pct_severe=>20})
+      data.select {|p| p[:weight] == @visit_1.weight and p[:height] == @visit_1.height}.should_not be_empty
+    end
+
   end
 end

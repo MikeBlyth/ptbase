@@ -13,8 +13,6 @@ class GrowthChart < AbstractChart::Chart
   end
 
   def add_all_series
-    visit_data = get_visit_data
-    lab_data = get_lab_data
     add_series weight_series
     add_series height_series
     add_series cd4_series

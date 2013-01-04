@@ -3,8 +3,11 @@ include AbstractChart
 
 describe AbstractChart do
   let(:height_data) {[[0, 50],[1, 80], [0.5, 65]] }
-  let(:weight_data_hash) {[{'age'=>0, 'weight'=>3}, {'age'=>1, 'weight'=>10},{'age'=>2, 'weight'=>12}]}
   let(:weight_data) {[[0, 3],[1, 10], [2, 12]] }
+  let(:weight_data_hash) {[{'age'=>0, 'weight'=>3}, {'age'=>1, 'weight'=>10},{'age'=>2, 'weight'=>12}]}
+  let(:height_data_hash) {[{'age'=>0, 'height'=>50}, {'age'=>0.5, 'height'=>65}, {'age'=>1, 'height'=>80}]}
+  let(:ht_wt_data_hash) {[{'age'=>0, 'height'=>50, 'weight'=>3}, {'age'=>0.5, 'height'=>65},
+                          {'age'=>1, 'height'=>80, 'weight'=>10}, {'age'=>2, 'weight'=>12}]}
 
   describe 'Chart' do
 
@@ -47,7 +50,7 @@ describe AbstractChart do
       series = DataSeries.new x_name: 'x-name', y_name: 'y-name'
       series[:x_name].should eq 'x-name'
       series[:y_name].should eq 'y-name'
-      series[:data].should be_nil
+      series[:data].should == []
     end
 
     it 'adds data from x/y array' do
@@ -57,17 +60,22 @@ describe AbstractChart do
       series[:data].should eq new_data
     end
 
-    #it 'adds data from array of hashes' do
-    #  series = DataSeries.new x_name: :x_name, y_name: :y_name
-    #  new_data = [{x_name: 0, y_name: 0, something: 1}, {x_name: 1, y_name: 1, something: 2} ]
-    #  series.add_data(new_data)
-    #  series[:data]should eq [[0,0],[1,1]]
-    #end
+    it 'adds data from array of hashes' do
+      series = DataSeries.new x_name: 'age', y_name: 'weight'
+      series.add_data(weight_data_hash)
+      series[:data].should eq weight_data
+    end
 
-    it 'adds data on initialization' do
+    it 'adds xy data on initialization' do
       new_data = [[0,0],[1,1]]
       series = DataSeries.new x_name: :x_name, y_name: :y_name, data: new_data
       series[:data].should eq [[0,0],[1,1]]
+    end
+
+    it 'adds xy data on initialization' do
+      new_data = [{age: 0, weight: 3}, {age: 1, weight: 10}]
+      series = DataSeries.new x_name: :age, y_name: :weight, data: new_data
+      series[:data].should eq [[0,3],[1,10]]
     end
 
     #it 'initializes axes' do
@@ -90,10 +98,9 @@ describe AbstractChart do
 
     it 'merges collection of series into hash array' do
       series_1 = DataSeries.new x_name: 'age', y_name: 'height', data: height_data
-      series_2 = DataSeries.new x_name: 'age', y_name: 'weight', data: [[0, 3.0],[1, 10], [0.75, 8]]
+      series_2 = DataSeries.new x_name: 'age', y_name: 'weight', data: weight_data
       merged = DataSeries.merge_as_hash [series_1, series_2]
-      merged.should == [{'age' => 0, 'height' =>50, 'weight' =>3.0}, {'age' =>0.5, 'height' =>65},
-                        {'age' =>0.75, 'weight' =>8}, {'age' =>1, 'height' =>80, 'weight' =>10}]
+      merged.should == ht_wt_data_hash
     end
 
     it 'generates data series for highchart' do

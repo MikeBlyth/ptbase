@@ -6,7 +6,7 @@ module AbstractChart
     end
 
     def add_series(data_series)
-      self[:series] == (self[:series] || []) <<  data_series
+      self[:series] = (self[:series] || []) <<  data_series
     end
 
     def data_for_morris
@@ -23,52 +23,62 @@ module AbstractChart
 
   class DataArray < Array
     attr_accessor :x_name, :y_name
-    def initialize(params)     # DataArray.new(x_name: :age, y_name: :weight, data: [[0,3], [1, 10]])
+    def initialize(params={})     # DataArray.new(x_name: :age, y_name: :weight, data: [[0,3], [1, 10]])
+#binding.pry
       @x_name = params[:x_name] || :x
       @y_name = params[:y_name] || :y
-      super(params[:data])
+      data = normalize(params[:data])
+      super(data || [])
     end
 
-    def normalize
-      self
+    # Convert hash array to xy array, extracting the x and y as specified by x_name and y_name
+    # Omit points where y is nil
+    # Given x_name = 'age' and y_name = 'weight',
+    #   [{age: 0, other: 52, weight: 3}, {age: 0.5, other: 70}, {age: 1, other: 80, weight: 10}] ==> [[0,3], [1,10]]
+    def normalize(data)
+      return data unless data and data[0].is_a? Hash
+      data.map do |data_point|
+        x_value = value_w_indifferent_key(data_point, @x_name)
+        y_value = value_w_indifferent_key(data_point, @y_name)
+#        puts "data_point=#{data_point}, x_name=#@x_name, y_name=#@y_name, x=#{data_point[@x_name]}, y=#{y_value}"
+        [x_value, y_value] if y_value
+      end.compact
     end
 
-    def to_simple_hash  # e.g. [ [0,3], [1,10]] -> {0=>3, 1=>10}
-      simple_hash = {}
-      self.each {|point| simple_hash[point[0]] = point[1]}
-      {@y_name => simple_hash}
+    # Is there a better way to do this? Use dup? Something else?
+    def +(data)
+      DataArray.new(x_name: @x_name, y_name: @y_name, data: super(normalize(data)))
     end
 
-    def to_labeled_hash
+    def to_simple_hash  # e.g. [ [0,3], [1,10]] -> {'weight' => {0=>3, 1=>10} }
+      val_hash = {}
+      self.each {|point| val_hash[point[0]] = point[1]}
+      {@y_name => val_hash}
+    end
+
+    def to_labeled_hash # e.g. [ [0,3], [1,10]] -> {:age => 3, :weight => 10}
       self.map {|xy| {@x_name => xy[0], @y_name => xy[1]}}
     end
 
-  end
-
-  class DataHashArray < Array
-    def normalize(x_name, y_name)
-      self.map do |data_point|
-        y_value = data_point[y_name]
-        [data_point[x_name], y_value] if y_value
-      end.compact
+  private
+    def value_w_indifferent_key(hash,key)
+      hash[key.to_s] || hash[key.to_sym]
     end
   end
 
+
   class DataSeries < HashWithIndifferentAccess
     def initialize(params)
+      params[:data] = DataArray.new(params)
       super
       #self[:data] ||= []
       #self[:x_axis] ||= Axis.new(name: self[:x_name], units: params[:x_units], label: params[:x_label] || self[:x_name].to_s.humanize )
       #self[:y_axis] ||= Axis.new(name: self[:y_name], units: params[:y_units], label: params[:y_label] || self[:y_name].to_s.humanize )
     end
 
-    def normalize(data) # convert to [ [x,y], [x2,y2] ...] form
-      return nil if data.nil?
-    end
-
     def add_data(data)
       return if data.nil?
-      self[:data] = (self[:data] || []) +- normalize(data)
+      self[:data] += data
     end
 
     def to_highchart(options={})

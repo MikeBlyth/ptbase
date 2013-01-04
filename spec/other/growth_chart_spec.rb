@@ -28,43 +28,42 @@ describe GrowthChart do
 
     it 'creates weight series' do
       wt_series = @chart.weight_series
-      puts "wt_series=#{wt_series}"
       point_match(wt_series[:data][0], [0,3])
       point_match(wt_series[:data][1], [0.5,8])
-      wt_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      wt_series.y_axis.should == {"name"=>:weight, "units"=>"kg", "label"=>"Weight"}
-      wt_series.x_name.should == :age
-      wt_series.y_name.should == :weight
+      #wt_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
+      #wt_series.y_axis.should == {"name"=>:weight, "units"=>"kg", "label"=>"Weight"}
+      wt_series[:x_name].should == :age
+      wt_series[:y_name].should == :weight
     end
 
     it 'creates height series' do
       ht_series = @chart.height_series
       point_match(ht_series[:data][0], [0,54])
       point_match(ht_series[:data][1], [0.5,74])
-      ht_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      ht_series.y_axis.should == {"name"=>:height, "units"=>"cm", "label"=>"Height"}
-      ht_series.x_name.should == :age
-      ht_series.y_name.should == :height
+      #ht_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
+      #ht_series.y_axis.should == {"name"=>:height, "units"=>"cm", "label"=>"Height"}
+      ht_series[:x_name].should == :age
+      ht_series[:y_name].should == :height
     end
 
     it 'creates cd4 series' do
       cd4_series = @chart.cd4_series
       point_match(cd4_series[:data][0], [0.5,1000])
       point_match(cd4_series[:data][1], [1.0,300])
-      cd4_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      cd4_series.y_axis.should == {"name"=>:cd4, "units"=>"", "label"=>"CD4"}
-      cd4_series.x_name.should == :age
-      cd4_series.y_name.should == :cd4
+      #cd4_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
+      #cd4_series.y_axis.should == {"name"=>:cd4, "units"=>"", "label"=>"CD4"}
+      cd4_series[:x_name].should == :age
+      cd4_series[:y_name].should == :cd4
     end
 
     it 'creates cd4pct series' do
       cd4pct_series = @chart.cd4pct_series
       point_match(cd4pct_series[:data][0], [0.5, 30])
       point_match(cd4pct_series[:data][1], [1.0, 15])
-      cd4pct_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      cd4pct_series.y_axis.should == {"name"=>:cd4pct, "units"=>"%", "label"=>"CD4%"}
-      cd4pct_series.x_name.should == :age
-      cd4pct_series.y_name.should == :cd4pct
+      #cd4pct_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
+      #cd4pct_series.y_axis.should == {"name"=>:cd4pct, "units"=>"%", "label"=>"CD4%"}
+      cd4pct_series[:x_name].should == :age
+      cd4pct_series[:y_name].should == :cd4pct
     end
 
   end

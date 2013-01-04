@@ -1,50 +1,90 @@
 Hichart
-<div id="container" style="width: 50%; height: 400px"></div>
+<div id="container" style="width: 30%; height: 400px"></div>
 
 <script>
 var chart1; // globally available
+
+function requestData() {
+    $.ajax({
+        url: 'patient/97/chart_data',
+        success: function(data) {
+            var series = chart.series[0],
+                    shift = series.data.length > 20; // shift if the series is longer than 20
+
+            // add the point
+            chart.series[0].addPoint(point, true, shift);
+
+            // call it again after one second
+            setTimeout(requestData, 1000);
+        },
+        cache: false
+    });
+}
+
 $(document).ready(function() {
+    var height_color = '#66ff66' ;
+    var weight_color = '#6666ff' ;
       chart1 = new Highcharts.Chart({
          chart: {
             renderTo: 'container',
             type: 'line'
          },
          title: {
-            text: 'Growth Chart'
+            text: ''
          },
          xAxis: {
              title: {text: 'Age (years)'},
-             max: 3
+             max: 3.0,
+             showLastLabel: true,
+             tickInterval: 1
          },
           yAxis: [{
               title: {
-                  text: 'Height'
+                  text: 'Height (cm)'
               },
-              min: 0
+              min: 0,
+              max:120,
+              showFirstLabel: false,
+              tickInterval: 20
           },
             {
               title: {
-                  text: 'Weight'
+                  text: 'Weight (kg)'
               },
-              opposite: true
+              min: 1,
+              max: 25,
+              opposite: true,
+              showFirstLabel: false,
+              tickInterval: 5
             }
                   ],
          series: [
              {
                  name: 'Height',
+                 color: height_color,
                  data: [[0, 50], [0.5, 60], [1, 65], [2, 70], [3, 75]]
              },
              {
                  name: 'Ht 50%ile',
-                 dashStyle: 'shortdash',
-                 data: [ [0,50], [0.25,61], [0.5,68], [0.75, 72.5], [1, 76.2], [1.5,82.5], [3, 97.5],
-                     [4,103], [6,116], [10,137.5], [12,149.5], [15,168], [18,176.5], [100,176.5] ]
+                 color:height_color,
+                 dashStyle: 'shortdot',
+                 data: [ [0,50], [0.25,61], [0.5,68], [0.75, 72.5], [1, 76.2], [1.5,82.5], [3, 97.5]
+                      ]
              },
              {
-            name: 'Weight',
-            yAxis: 1,
-            data: [[0, 3.1], [0.25, 6], [0.5, 8], [1, 10], [2, 12], [3, 14]]
-         }]
+                name: 'Weight',
+                 color: weight_color,
+                yAxis: 1,
+                data: [[0, 3.1], [0.25, 6], [0.5, 8], [1, 10], [2, 10], [3, 9]]
+             },
+             {
+                 name: 'Wt 50%ile',
+                 color: weight_color,
+                 dashStyle: 'shortdot',
+                 yAxis: 1,
+                 data: [ [0,3.0], [0.25,6.0], [0.5,7.6], [0.75, 9.2], [1, 10.2], [1.5,11.5], [3, 14.7] ]
+             }
+         ]
       });
    });
 </script>

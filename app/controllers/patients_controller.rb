@@ -37,4 +37,15 @@ class PatientsController < ApplicationController
     @chart_data = chart.data_for_morris
     render 'growth_chart_highchart'
   end
+
+  def chart_data
+    @patient = Patient.find params[:patient_id]
+    chart = GrowthChart.new(@patient)
+    chart.add_all_series
+    chart.add_std_anthro_series
+    chart.add_series chart.cd4_moderate_series
+    chart.add_series chart.cd4_severe_series
+    chart.add_series chart.cd4pct_severe_series
+    render :json => chart.data_for_highchart
+  end
 end

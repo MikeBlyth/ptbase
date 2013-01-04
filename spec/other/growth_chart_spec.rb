@@ -28,8 +28,9 @@ describe GrowthChart do
 
     it 'creates weight series' do
       wt_series = @chart.weight_series
-      point_match(wt_series.data[0], [0,3])
-      point_match(wt_series.data[1], [0.5,8])
+      puts "wt_series=#{wt_series}"
+      point_match(wt_series[:data][0], [0,3])
+      point_match(wt_series[:data][1], [0.5,8])
       wt_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
       wt_series.y_axis.should == {"name"=>:weight, "units"=>"kg", "label"=>"Weight"}
       wt_series.x_name.should == :age
@@ -38,8 +39,8 @@ describe GrowthChart do
 
     it 'creates height series' do
       ht_series = @chart.height_series
-      point_match(ht_series.data[0], [0,54])
-      point_match(ht_series.data[1], [0.5,74])
+      point_match(ht_series[:data][0], [0,54])
+      point_match(ht_series[:data][1], [0.5,74])
       ht_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
       ht_series.y_axis.should == {"name"=>:height, "units"=>"cm", "label"=>"Height"}
       ht_series.x_name.should == :age
@@ -48,8 +49,8 @@ describe GrowthChart do
 
     it 'creates cd4 series' do
       cd4_series = @chart.cd4_series
-      point_match(cd4_series.data[0], [0.5,1000])
-      point_match(cd4_series.data[1], [1.0,300])
+      point_match(cd4_series[:data][0], [0.5,1000])
+      point_match(cd4_series[:data][1], [1.0,300])
       cd4_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
       cd4_series.y_axis.should == {"name"=>:cd4, "units"=>"", "label"=>"CD4"}
       cd4_series.x_name.should == :age
@@ -58,8 +59,8 @@ describe GrowthChart do
 
     it 'creates cd4pct series' do
       cd4pct_series = @chart.cd4pct_series
-      point_match(cd4pct_series.data[0], [0.5, 30])
-      point_match(cd4pct_series.data[1], [1.0, 15])
+      point_match(cd4pct_series[:data][0], [0.5, 30])
+      point_match(cd4pct_series[:data][1], [1.0, 15])
       cd4pct_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
       cd4pct_series.y_axis.should == {"name"=>:cd4pct, "units"=>"%", "label"=>"CD4%"}
       cd4pct_series.x_name.should == :age
@@ -72,33 +73,33 @@ describe GrowthChart do
 
     it 'creates 50% weight reference curve' do
       ref = @chart.weight50_series
-      ref.data.should == PERCENTILE_WT_50_MALE
+      ref[:data].should == PERCENTILE_WT_50_MALE
       @patient.sex = 'F'
       ref = @chart.weight50_series
-      ref.data.should == PERCENTILE_WT_50_FEMALE
+      ref[:data].should == PERCENTILE_WT_50_FEMALE
     end
 
     it 'creates 50% height reference curve' do
       ref = @chart.height50_series
-      ref.data.should == PERCENTILE_HT_50_MALE
+      ref[:data].should == PERCENTILE_HT_50_MALE
       @patient.sex = 'F'
       ref = @chart.height50_series
-      ref.data.should == PERCENTILE_HT_50_FEMALE
+      ref[:data].should == PERCENTILE_HT_50_FEMALE
     end
 
     it 'creates CD4 moderate reference curve' do
       ref = @chart.cd4_moderate_series
-      ref.data.should == CD4_MODERATE
+      ref[:data].should == CD4_MODERATE
     end
 
     it 'creates CD4 severe reference curve' do
       ref = @chart.cd4_severe_series
-      ref.data.should == CD4_SEVERE
+      ref[:data].should == CD4_SEVERE
     end
 
     it 'creates CD4% severe reference curve' do
       ref = @chart.cd4pct_severe_series
-      ref.data.should == CD4PCT_SEVERE
+      ref[:data].should == CD4PCT_SEVERE
     end
 
     it 'makes data for morris graphing package' do
@@ -107,7 +108,7 @@ describe GrowthChart do
       @chart.add_series @chart.cd4_moderate_series
       @chart.add_series @chart.cd4_severe_series
       @chart.add_series @chart.cd4pct_severe_series
-#puts "Growth chart data = #{@chart.data_for_morris }"
+#puts "Growth chart data = #{@chart[:data]_for_morris }"
       data = @chart.data_for_morris
       data.should include({:age=>1, :weight50=>10.2, :height50=>76.2, :cd4_mod=>1000, :cd4_severe=>750, :cd4pct_severe=>20})
       data.select {|p| p[:weight] == @visit_1.weight and p[:height] == @visit_1.height}.should_not be_empty

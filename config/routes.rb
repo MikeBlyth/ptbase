@@ -9,6 +9,7 @@ Ptbase::Application.routes.draw do
   resources :health_data do as_routes end
 
   match '/growth_chart/:patient_id', to: 'patients#growth_chart'
+  match 'patients/:patient_id/chart_data', to: 'patients#chart_data'
 
   resources :providers do as_routes end
 

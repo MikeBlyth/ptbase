@@ -1,60 +1,93 @@
 module AbstractChart
 
   class Chart < HashWithIndifferentAccess
-    def initialize(params={})
-      params[:series] ||= []
+    def initialize(params=nil)
       super
     end
 
     def add_series(data_series)
-      self[:series] << data_series
+      self[:series] == (self[:series] || []) <<  data_series
     end
 
     def data_for_morris
       DataSeries.merge_as_hash(self[:series])
     end
+
+    def data_for_highchart
+      self[:series].map {|s| s.to_highchart}
+    end
   end
 
   class Axis < HashWithIndifferentAccess
-    def initialize(axis_params)
-      super
+  end
+
+  class DataArray < Array
+    attr_accessor :x_name, :y_name
+    def initialize(params)     # DataArray.new(x_name: :age, y_name: :weight, data: [[0,3], [1, 10]])
+      @x_name = params[:x_name] || :x
+      @y_name = params[:y_name] || :y
+      super(params[:data])
+    end
+
+    def normalize
+      self
+    end
+
+    def to_simple_hash  # e.g. [ [0,3], [1,10]] -> {0=>3, 1=>10}
+      simple_hash = {}
+      self.each {|point| simple_hash[point[0]] = point[1]}
+      {@y_name => simple_hash}
+    end
+
+    def to_labeled_hash
+      self.map {|xy| {@x_name => xy[0], @y_name => xy[1]}}
     end
 
   end
 
-  class DataSeries
-    attr_accessor :x_name, :y_name, :data, :x_axis, :y_axis
+  class DataHashArray < Array
+    def normalize(x_name, y_name)
+      self.map do |data_point|
+        y_value = data_point[y_name]
+        [data_point[x_name], y_value] if y_value
+      end.compact
+    end
+  end
+
+  class DataSeries < HashWithIndifferentAccess
     def initialize(params)
-      @x_name = params[:x_name]
-      @y_name = params[:y_name]
-      data = params[:data]
-      @x_axis = Axis.new(name: @x_name, units: params[:x_units], label: params[:x_label] || @x_name.to_s.humanize )
-      @y_axis = Axis.new(name: @y_name, units: params[:y_units], label: params[:y_label] || @y_name.to_s.humanize )
-      @data = []
-      add_data(data)
+      super
+      #self[:data] ||= []
+      #self[:x_axis] ||= Axis.new(name: self[:x_name], units: params[:x_units], label: params[:x_label] || self[:x_name].to_s.humanize )
+      #self[:y_axis] ||= Axis.new(name: self[:y_name], units: params[:y_units], label: params[:y_label] || self[:y_name].to_s.humanize )
+    end
+
+    def normalize(data) # convert to [ [x,y], [x2,y2] ...] form
+      return nil if data.nil?
     end
 
     def add_data(data)
       return if data.nil?
-      if data[0].is_a? Hash
-        @data +=  data_from_array_of_hashes(data)
-      else
-        @data += data
-      end
+      self[:data] = (self[:data] || []) +- normalize(data)
     end
 
-    def to_simple_hash
-      simple_hash = {}
-      data.each {|point| simple_hash[point[0]] = point[1]}
-      simple_hash
+    def to_highchart(options={})
+      reject_attributes = %w(x_axis y_axis x_name y_name x_label)
+      self[:name] = self[:x_label]
+      self.reject {|k,v| reject_attributes.include? k}.merge(options)
     end
 
+    # Take one or more DataSeries and return an array of hashes with one hash per x_value, e.g.
+    # weights = DataSeries.new(x_name: age, y_name: weight, data: [[0,3], [1,10]])
+    # heights = DataSeries.new(x_name: age, y_name: height, data: [[0, 52], [1,80]])
+    # DataSeries.merge_as_hash([weights, heights]) #=>
+    #    [{age: 0, weight: 3, height: 52}, {age: 1, weight: 10, height: 80}]
     def self.merge_as_hash(series_array)
       all_series_hash = {}
-      x_names = series_array.map{|s| s.x_name}.uniq
+      x_names = series_array.map{|s| s[:x_name]}.uniq
       raise "Cannot merge series with different x axes (#{x_names})" if x_names.count > 1
-      x_name = x_names.first
-      series_array.each {|s| all_series_hash[s.y_name] = s.to_simple_hash}
+      x_name = x_names.first  # the common x_axis
+      series_array.each {|s| all_series_hash.merge! s[:data].to_simple_hash} # e.g. { weight: {0=>3, 1=>10}, height: {0=>52, 1=>80} }
       x_points = all_series_hash.map {|k,v| v.keys}.flatten.uniq.sort
       x_points.map do |x|    # Make a data point hash for each x value
         xhash = {x_name => x}
@@ -65,12 +98,12 @@ module AbstractChart
     end
 
     def to_merged_hash(other_series)
-      raise "Cannot merge series with different x axes ('#@x_name' and '#{other_series.x_name}')" unless @x_name == other_series.x_name
+      raise "Cannot merge series with different x axes ('#self[:x_name]' and '#{other_series.x_name}')" unless self[:x_name] == other_series.x_name
       self_hash = self.to_simple_hash
       other_hash = other_series.to_simple_hash
       x_points = (self_hash.keys + other_hash.keys).uniq.sort
       x_points.map do |x|
-        xhash = {@x_name => x}
+        xhash = {self[:x_name] => x}
         xhash[self.y_name] = self_hash[x] if self_hash[x]
         xhash[other_series.y_name] = other_hash[x] if other_hash[x]
         xhash
@@ -78,14 +111,14 @@ module AbstractChart
     end
 
     def to_hash_array
-      data.map {|d| {@x_name => d[0], @y_name => d[1]}}
+      self[:data].map {|d| {self[:x_name] => d[0], self[:y_name] => d[1]}}
     end
   private
 
     def data_from_array_of_hashes(data)
 #binding.pry
-      data.map do |data_point|
-        [data_point[@x_name], data_point[@y_name]]
+      self[:data].map do |data_point|
+        [data_point[self[:x_name]], data_point[self[:y_name]]]
       end
     end
 

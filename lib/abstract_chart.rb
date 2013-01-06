@@ -1,6 +1,6 @@
 module AbstractChart
 
-  class Chart < HashWithIndifferentAccess
+  class Chart < DelegateClass(Hash)
     def initialize(params=nil)
       super
     end
@@ -18,13 +18,24 @@ module AbstractChart
     end
   end
 
-  class Axis < HashWithIndifferentAccess
+  class Axis < DelegateClass(Hash)
+    def render(options={})
+      attrs = options[:attrs] || self.keys   # I.e. everything
+      excluded = options[:exclude] || [:something]
+      self[:id] = options[:id] if options[:id]
+      rendered = self.select{|k,v| attrs.include?(k) && !excluded.include?(k)}
+      rendered.merge!(options[:extra]) if options[:extra]
+      rendered
+    end
+
+    def render_highchart(options={})
+      self.render(options).merge!(title: {text: self[:label]}) unless options[:title]
+    end
   end
 
   class DataArray < Array
     attr_accessor :x_name, :y_name
     def initialize(params={})     # DataArray.new(x_name: :age, y_name: :weight, data: [[0,3], [1, 10]])
-#binding.pry
       @x_name = params[:x_name] || :x
       @y_name = params[:y_name] || :y
       data = normalize(params[:data])
@@ -67,7 +78,7 @@ module AbstractChart
   end
 
 
-  class DataSeries < HashWithIndifferentAccess
+  class DataSeries < DelegateClass(Hash)
     def initialize(params)
       params[:data] = DataArray.new(params)
       super
@@ -82,7 +93,7 @@ module AbstractChart
     end
 
     def to_highchart(options={})
-      reject_attributes = %w(x_axis y_axis x_name y_name x_label)
+      reject_attributes = [:x_axis, :y_axis, :x_name, :y_name, :x_label]
       self[:name] = self[:x_label]
       self.reject {|k,v| reject_attributes.include? k}.merge(options)
     end
@@ -94,6 +105,7 @@ module AbstractChart
     #    [{age: 0, weight: 3, height: 52}, {age: 1, weight: 10, height: 80}]
     def self.merge_as_hash(series_array)
       all_series_hash = {}
+#binding.pry
       x_names = series_array.map{|s| s[:x_name]}.uniq
       raise "Cannot merge series with different x axes (#{x_names})" if x_names.count > 1
       x_name = x_names.first  # the common x_axis
@@ -134,7 +146,7 @@ module AbstractChart
 
   end
 
-  class Annotation < HashWithIndifferentAccess
+  class Annotation < Hash
     def initialize(params)
       super
     end

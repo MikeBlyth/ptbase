@@ -16,7 +16,7 @@ feature "Prescriptions" do
                                     warnings: true,
                                     exclude: [:filled],
     )
-puts "Filled values = #{filled_values}"
+#puts "Filled values = #{filled_values}"
     select(provider.name)
     item_params = {drug: 'DrugX', interval: 6, duration: 5}
     within('#prescription-items fieldset:first-child') do
@@ -50,7 +50,7 @@ puts "Filled values = #{filled_values}"
     )
 
     select(provider.name)
-puts "Filled values = #{filled_values}"
+#puts "Filled values = #{filled_values}"
     item_params = {drug: 'DrugX', dose: 'as needed', interval: 6, duration: 5, unit: 'cap',
             route: 'sub-lingual'}
     within('#prescription-items fieldset:first-child') do

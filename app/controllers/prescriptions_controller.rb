@@ -16,7 +16,7 @@ class PrescriptionsController < ApplicationController
     @selected = get_selected_drugs(params)  # need to use empty array if no drugs already selected
     @preselect = @selected.any?  # means user has preselected drugs, so we'll "tick" each one's box on prescr. form
     @doses = suggested_doses(@selected, @patient)
-puts "@doses = #{@doses}"
+#puts "@doses = #{@doses}"
     puts "Make= #{make_items_from_suggested(@doses, @patient) }"
     @prescription.items << make_items_from_suggested(@doses, @patient)
     blank_prescription_item_count = 1
@@ -35,13 +35,13 @@ puts "@doses = #{@doses}"
   end
 
   def edit
-puts "edit - params=#{params}"
+#puts "edit - params=#{params}"
     @prescription = Prescription.find(params[:id])
     @patient = @prescription.patient
   end
 
   def create
-    puts "Create - params=#{params}"
+#    puts "Create - params=#{params}"
 #    binding.pry
     rx_attributes = params[:prescription]
     rx = Prescription.new rx_attributes
@@ -56,7 +56,7 @@ puts "edit - params=#{params}"
   end
 
   def update
-    puts "update - params=#{params}"
+#    puts "update - params=#{params}"
     rx = Prescription.find params[:id]
 #    binding.pry
     rx_attributes = params[:prescription]

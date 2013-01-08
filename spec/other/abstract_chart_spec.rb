@@ -12,8 +12,31 @@ describe AbstractChart do
   describe 'Chart' do
 
     it 'initializes from hash' do
-      c = Chart.new title: 'Test title'
-      c[:title].should eq 'Test title'
+      c = Chart.new title: 'Title'
+      c[:title].should eq 'Title'
+    end
+
+    it 'renders axes to HighChart' do
+      c = Chart.new
+      ax = Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
+      ay_1 = Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
+      ay_2 = Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
+      c.add_axis ax
+      c.add_axis ay_1
+      c.add_axis ay_2
+      rendered = c.render_axes_to_highchart
+      rendered[:yAxis].should == [ay_1, ay_2]
+      rendered[:xAxis].should == [ax]
+    end
+
+    it 'renders series to HighChart' do
+      c = Chart.new
+      s_1 = DataSeries.new({name: :weight, x_name: :age, y_name: :weight, data: [[0,3], [1,10]]})
+      s_2 = DataSeries.new({name: :height, x_name: :age, y_name: :height, data: [[0,52], [1,80]]})
+      c.add_series s_1
+      c.add_series s_2
+      rendered = c.render_series_to_highchart
+      rendered.should == {series: [s_1.to_highchart, s_2.to_highchart]}
     end
   end
 
@@ -22,12 +45,17 @@ describe AbstractChart do
 
     it 'initializes from hash' do
       a = Axis.new({label: 'Weight', min: 0, max: 30, color: :red })
-      a.should == {label: 'Weight', min: 0, max: 30, color: :red }
+      a.should == {label: 'Weight', min: 0, max: 30, color: :red, orientation: :y }
     end
 
     it 'renders all attributes by default' do
       a = Axis.new(axis_params)
       a.render.should == axis_params
+    end
+
+    it 'renders to Highchart format' do
+      a = Axis.new(axis_params)
+      a.render_highchart.should == axis_params.merge({orientation: :y, title: {text: 'Weight'}})
     end
   end
 

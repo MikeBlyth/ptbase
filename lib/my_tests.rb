@@ -55,3 +55,15 @@ class AxisForwardable
     @data[:title] = {text: params[:label]}
   end
 end
+
+require 'abstract_chart'
+include AbstractChart
+
+c = Chart.new
+ax = Axis.new({orientation: :x, name: :age, min: 0, max: 18})
+ay = Axis.new({orientation: :y, name: :weight, min: 0, max: 100})
+az = Axis.new({orientation: :y, name: :height, min: 40, max: 180})
+c.add_axis ax
+c.add_axis ay
+c.add_axis az
+puts c.render_axes_to_highchart

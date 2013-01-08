@@ -25,18 +25,41 @@ describe AbstractChart do
       c.add_axis ay_1
       c.add_axis ay_2
       rendered = c.render_axes_to_highchart
-      rendered[:yAxis].should == [ay_1, ay_2]
-      rendered[:xAxis].should == [ax]
+      rendered.should == {xAxis: [ax], yAxis: [ay_1, ay_2]}.to_json
+    end
+
+    it 'finds index of a y_axis' do
+      c = Chart.new
+      c.add_axis Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
+      c.add_axis  Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
+      c.add_axis Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
+      c.y_axis_index({y_name: :height}).should == {:yAxis => 1}
     end
 
     it 'renders series to HighChart' do
       c = Chart.new
+      c.add_axis Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
+      c.add_axis  Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
+      c.add_axis Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
       s_1 = DataSeries.new({name: :weight, x_name: :age, y_name: :weight, data: [[0,3], [1,10]]})
       s_2 = DataSeries.new({name: :height, x_name: :age, y_name: :height, data: [[0,52], [1,80]]})
       c.add_series s_1
       c.add_series s_2
       rendered = c.render_series_to_highchart
-      rendered.should == {series: [s_1.to_highchart, s_2.to_highchart]}
+      rendered.should == {series: [s_1.to_highchart.merge({yAxis: 0}), s_2.to_highchart.merge({yAxis: 1})]}.to_json
+    end
+
+    it 'renders entire chart as JS for HighChart' do
+      c = Chart.new title: 'Growth Chart'
+      c.add_axis Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
+      c.add_axis  Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
+      c.add_axis Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
+      s_1 = DataSeries.new({name: :weight, x_name: :age, y_name: :weight, data: [[0,3], [1,10]]})
+      s_2 = DataSeries.new({name: :height, x_name: :age, y_name: :height, data: [[0,52], [1,80]]})
+      c.add_series s_1
+      c.add_series s_2
+      rendered = c.render_to_highchart
+      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart({\n     chart: {\n        renderTo: 'chart',\n        type: 'line'\n     },\n     title: {\n        text: 'Growth Chart'\n     },\n     {\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}]},\n     {\"series\":[{\"name\":null,\"data\":[[0,3],[1,10]],\"yAxis\":0},{\"name\":null,\"data\":[[0,52],[1,80]],\"yAxis\":1}]}\n  })\n})\n"
     end
   end
 

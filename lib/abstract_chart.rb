@@ -20,11 +20,15 @@ module AbstractChart
     def render_axes_to_highchart
       {xAxis: self[:axes].select{|a| a[:orientation] == :x}.map {|a| a.render_highchart},
        yAxis: self[:axes].select{|a| a[:orientation] == :y}.map {|a| a.render_highchart}
-      }
+      }.to_json
     end
 
     def render_series_to_highchart
-      {series: self[:series].map {|s| s.to_highchart}}
+      {series: self[:series].map {|s| s.to_highchart.merge(y_axis_index(s))}}.to_json
+    end
+
+    def y_axis_index(hash)
+      {yAxis: self[:axes].select {|a| a[:orientation] == :y}.find_index {|a| a[:name] == hash[:y_name]}  }
     end
 
     def data_for_morris
@@ -36,71 +40,16 @@ module AbstractChart
 $(document).ready(function() {
   chart1 = new Highcharts.Chart({
      chart: {
-        renderTo: #{self[:div]},
-        type: #{self[:type]}
+        renderTo: '#{self[:div]}',
+        type: '#{self[:type]}'
      },
      title: {
-        text: #{self[:title]}
+        text: '#{self[:title]}'
      },
-     #{@render_axes_to_highchart},
+     #{render_axes_to_highchart},
      #{render_series_to_highchart}
   })
 })
-      xAxis: {
-         title: {text: 'Age (years)'},
-         max: 3.0,
-         showLastLabel: true,
-         tickInterval: 1
-     },
-      yAxis: [{
-          title: {
-              text: 'Height (cm)'
-          },
-          min: 0,
-          max:120,
-          showFirstLabel: false,
-          tickInterval: 20
-      },
-        {
-          title: {
-              text: 'Weight (kg)'
-          },
-          min: 1,
-          max: 25,
-          opposite: true,
-          showFirstLabel: false,
-          tickInterval: 5
-        }
-              ],
-     series: [
-         {
-             name: 'Height',
-             color: height_color,
-             data: [[0, 50], [0.5, 60], [1, 65], [2, 70], [3, 75]]
-         },
-         {
-             name: 'Ht 50%ile',
-             color:height_color,
-             dashStyle: 'shortdot',
-             data: [ [0,50], [0.25,61], [0.5,68], [0.75, 72.5], [1, 76.2], [1.5,82.5], [3, 97.5]
-                  ]
-         },
-         {
-            name: 'Weight',
-             color: weight_color,
-            yAxis: 1,
-            data: [[0, 3.1], [0.25, 6], [0.5, 8], [1, 10], [2, 10], [3, 9]]
-         },
-         {
-             name: 'Wt 50%ile',
-             color: weight_color,
-             dashStyle: 'shortdot',
-             yAxis: 1,
-             data: [ [0,3.0], [0.25,6.0], [0.5,7.6], [0.75, 9.2], [1, 10.2], [1.5,11.5], [3, 14.7] ]
-         }
-     ]
-  });
-   });
 HIGHCHART
     end
 

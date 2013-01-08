@@ -33,7 +33,7 @@ describe AbstractChart do
       c.add_axis Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
       c.add_axis  Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
       c.add_axis Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
-      c.y_axis_index({y_name: :height}).should == {:yAxis => 1}
+      c.y_axis_index({y_axis: :height}).should == {:yAxis => 1}
     end
 
     it 'renders series to HighChart' do
@@ -41,8 +41,8 @@ describe AbstractChart do
       c.add_axis Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
       c.add_axis  Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
       c.add_axis Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
-      s_1 = DataSeries.new({name: :weight, x_name: :age, y_name: :weight, data: [[0,3], [1,10]]})
-      s_2 = DataSeries.new({name: :height, x_name: :age, y_name: :height, data: [[0,52], [1,80]]})
+      s_1 = DataSeries.new({name: :weight, x_name: :age, y_axis: :weight, data: [[0,3], [1,10]]})
+      s_2 = DataSeries.new({name: :height, x_name: :age, y_axis: :height, data: [[0,52], [1,80]]})
       c.add_series s_1
       c.add_series s_2
       rendered = c.render_series_to_highchart
@@ -54,12 +54,13 @@ describe AbstractChart do
       c.add_axis Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})
       c.add_axis  Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})
       c.add_axis Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})
-      s_1 = DataSeries.new({name: :weight, x_name: :age, y_name: :weight, data: [[0,3], [1,10]]})
-      s_2 = DataSeries.new({name: :height, x_name: :age, y_name: :height, data: [[0,52], [1,80]]})
+      s_1 = DataSeries.new({name: :weight, x_name: :age, y_axis: :weight, data: [[0,3], [1,10]]})
+      s_2 = DataSeries.new({name: :height, x_name: :age, y_axis: :height, data: [[0,52], [1,80]]})
       c.add_series s_1
       c.add_series s_2
       rendered = c.render_to_highchart
-      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart({\n     chart: {\n        renderTo: 'chart',\n        type: 'line'\n     },\n     title: {\n        text: 'Growth Chart'\n     },\n     {\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}]},\n     {\"series\":[{\"name\":null,\"data\":[[0,3],[1,10]],\"yAxis\":0},{\"name\":null,\"data\":[[0,52],[1,80]],\"yAxis\":1}]}\n  })\n})\n"
+      puts "rendered = #{rendered}"
+      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart({\n     chart: {\n        renderTo: 'chart',\n        type: 'line'\n     },\n     title: {\n        text: 'Growth Chart'\n     },\n     {\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}]},\n     {\"series\":[{\"name\":\"weight\",\"y_axis\":\"weight\",\"data\":[[0,3],[1,10]],\"yAxis\":0},{\"name\":\"height\",\"y_axis\":\"height\",\"data\":[[0,52],[1,80]],\"yAxis\":1}]}\n  })\n})\n"
     end
   end
 
@@ -83,11 +84,11 @@ describe AbstractChart do
   end
 
   describe 'DataArray' do
-    let(:data) {DataArray.new(:x_name => :age, :y_name => :weight, :data => weight_data) }
+    let(:data) {DataArray.new(:x_name => :age, :y_axis => :weight, :data => weight_data) }
 
     it 'initializes from hash' do
       data.x_name.should == :age
-      data.y_name.should == :weight
+      data.y_axis.should == :weight
       data.should == weight_data
     end
 
@@ -104,65 +105,66 @@ describe AbstractChart do
   describe 'DataSeries' do
 
     it 'initializes from hash' do
-      series = DataSeries.new x_name: 'x-name', y_name: 'y-name'
+      series = DataSeries.new x_name: 'x-name', y_axis: 'y-name'
       series[:x_name].should eq 'x-name'
-      series[:y_name].should eq 'y-name'
+      series[:y_axis].should eq 'y-name'
       series[:data].should == []
     end
 
     it 'adds data from x/y array' do
-      series = DataSeries.new x_name: 'x-name', y_name: 'y-name'
+      series = DataSeries.new x_name: 'x-name', y_axis: 'y-name'
       new_data = [[0,0],[1,1]]
       series.add_data(new_data)
       series[:data].should eq new_data
     end
 
     it 'adds data from array of hashes' do
-      series = DataSeries.new x_name: :age, y_name: :weight
+      series = DataSeries.new x_name: :age, y_axis: :weight
       series.add_data(weight_data_hash)
       series[:data].should eq weight_data
     end
 
     it 'adds xy data on initialization' do
       new_data = [[0,0],[1,1]]
-      series = DataSeries.new x_name: :x_name, y_name: :y_name, data: new_data
+      series = DataSeries.new x_name: :x_name, y_axis: :y_axis, data: new_data
       series[:data].should eq [[0,0],[1,1]]
     end
 
     it 'adds xy data on initialization' do
       new_data = [{age: 0, weight: 3}, {age: 1, weight: 10}]
-      series = DataSeries.new x_name: :age, y_name: :weight, data: new_data
+      series = DataSeries.new x_name: :age, y_axis: :weight, data: new_data
       series[:data].should eq [[0,3],[1,10]]
     end
 
     #it 'initializes axes' do
-    #  series = DataSeries.new(x_name: :age, y_name: :weight, x_label: "Age", y_label: "Weight",
+    #  series = DataSeries.new(x_name: :age, y_axis: :weight, x_label: "Age", y_label: "Weight",
     #                          x_units: "Years", y_units: "kg" )
     #  series[:x_axis].should == {:name => :age, :units => "Years", :label => "Age"}
     #  series[:y_axis].should == {:name  => :weight, :units =>  "kg", :label =>  "Weight"}
     #end
     #
     #it 'initializes axes with default axis labels' do
-    #  series = DataSeries.new(x_name: :age, y_name: :body_weight, x_units: "Years", y_units: "kg" )
+    #  series = DataSeries.new(x_name: :age, y_axis: :body_weight, x_units: "Years", y_units: "kg" )
     #  series[:x_axis].should == {:name => :age, :units => "Years", :label => "Age"}
     #  series[:y_axis].should == {:name  => :body_weight, :units =>  "kg", :label =>  "Body weight"}
     #end
 
-    it 'generates array of hashes {x_name: x, y_name: y}' do
-      series = DataSeries.new x_name: 'x-name', y_name: 'y-name', data: [[0,2],[1,4]]
+    it 'generates array of hashes {x_name: x, y_axis: y}' do
+      series = DataSeries.new x_name: 'x-name', y_axis: 'y-name', data: [[0,2],[1,4]]
       series.to_hash_array.should == [{'x-name' => 0, 'y-name' => 2}, {'x-name' => 1, 'y-name' => 4}]
     end
 
     it 'merges collection of series into hash array' do
-      series_1 = DataSeries.new x_name: :age, y_name: :height, data: height_data
-      series_2 = DataSeries.new x_name: :age, y_name: :weight, data: weight_data
+      series_1 = DataSeries.new x_name: :age, y_axis: :height, data: height_data
+      series_2 = DataSeries.new x_name: :age, y_axis: :weight, data: weight_data
       merged = DataSeries.merge_as_hash [series_1, series_2]
       merged.should == ht_wt_data_hash
     end
 
     it 'generates data series for highchart' do
-      series = DataSeries.new x_name: :age, y_name: :height, data: height_data, x_label: 'Age'
-      series.to_highchart(color: :red).should == {:name => 'Age', :data =>  height_data, :color => :red}
+      series = DataSeries.new x_name: :age, y_axis: :height, data: height_data, y_label: 'Height'
+      series.to_highchart(color: :red).should == {:name => 'Height', :data =>  height_data,
+                                                  :y_axis => :height, :color => :red}
     end
   end
 

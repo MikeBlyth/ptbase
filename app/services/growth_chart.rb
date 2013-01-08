@@ -28,19 +28,19 @@ class GrowthChart < AbstractChart::Chart
   end
 
   def weight_series
-    AbstractChart::DataSeries.new(x_name: :age, y_name: :weight, x_units: 'Years', y_units: 'kg', data: visit_data)
+    AbstractChart::DataSeries.new(x_name: :age, y_axis: :weight,  y_label: 'Weight (kg)', data: visit_data)
   end
 
   def height_series
-    AbstractChart::DataSeries.new(x_name: :age, y_name: :height, x_units: 'Years', y_units: 'cm', data: visit_data)
+    AbstractChart::DataSeries.new(x_name: :age, y_axis: :height, y_label: 'Height (cm)', data: visit_data)
   end
 
   def cd4_series
-    AbstractChart::DataSeries.new(x_name: :age, y_name: :cd4, x_units: 'Years', y_units: '', data: lab_data, y_label: 'CD4')
+    AbstractChart::DataSeries.new(x_name: :age, y_axis: :cd4, data: lab_data, y_label: 'CD4')
   end
 
   def cd4pct_series
-    AbstractChart::DataSeries.new(x_name: :age, y_name: :cd4pct, x_units: 'Years', y_units: '%', data: lab_data,  y_label: 'CD4%')
+    AbstractChart::DataSeries.new(x_name: :age, y_axis: :cd4pct, data: lab_data,  y_label: 'CD4%')
   end
 
   ### GET THE ACTUAL DATA FROM THE PATIENT VISITS
@@ -79,29 +79,24 @@ class GrowthChart < AbstractChart::Chart
 
   def weight50_series
     standards = (@patient.sex == "M") ? PERCENTILE_WT_50_MALE : PERCENTILE_WT_50_FEMALE
-    AbstractChart::DataSeries.new(y_name: :weight50, x_name: :age, y_units: 'kg', x_units: 'Years', y_label: 'Weight 50%ile',
-                                  data: standards)
+    AbstractChart::DataSeries.new(y_axis: :weight, x_name: :age, y_label: 'Weight 50%ile', data: standards)
   end
 
   def height50_series
     standards = (@patient.sex == "M") ? PERCENTILE_HT_50_MALE : PERCENTILE_HT_50_FEMALE
-    AbstractChart::DataSeries.new(y_name: :height50, x_name: :age, y_units: 'cm', x_units: 'Years', y_label: 'Height 50%ile',
-                                  data: standards)
+    AbstractChart::DataSeries.new(y_axis: :height, x_name: :age, y_label: 'Height 50%ile', data: standards)
   end
 
   def cd4_moderate_series
-    AbstractChart::DataSeries.new(y_name: :cd4_mod, x_name: :age, y_units: '', x_units: 'Years', y_label: 'CD4 Moderate',
-                    data: CD4_MODERATE)
+    AbstractChart::DataSeries.new(y_axis: :cd4, x_name: :age, y_label: 'CD4 Moderate', data: CD4_MODERATE)
   end
 
   def cd4_severe_series
-    AbstractChart::DataSeries.new(y_name: :cd4_severe, x_name: :age, y_units: '', x_units: 'Years', y_label: 'CD4 Severe',
-                    data: CD4_SEVERE)
+    AbstractChart::DataSeries.new(y_axis: :cd4, x_name: :age, y_label: 'CD4 Severe', data: CD4_SEVERE)
   end
 
   def cd4pct_severe_series
-    AbstractChart::DataSeries.new(y_name: :cd4pct_severe, x_name: :age, y_units: '', x_units: 'Years', y_label: 'CD4% Severe',
-                    data: CD4PCT_SEVERE)
+    AbstractChart::DataSeries.new(y_axis: :cd4pct, x_name: :age, y_label: 'CD4% Severe',data: CD4PCT_SEVERE)
   end
 
   def axis_limits(patient_age)

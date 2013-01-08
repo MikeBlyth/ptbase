@@ -12,6 +12,7 @@ puts "PREFORK"
   # This section needed since JS drivers for RSpec/Capybara don't handle transactions
 
   # This file is copied to spec/ when you run 'rails generate rspec:install'
+puts "ENV"
   ENV["RAILS_ENV"] ||= 'test'
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
@@ -22,6 +23,7 @@ puts "PREFORK"
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| puts "Requiring #{f}"; require f}
 
+puts "RSpec.configure"
   RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation
     config.use_transactional_fixtures = false
@@ -54,10 +56,14 @@ Spork.each_run do
   ActiveSupport::Dependencies.clear
   ActiveRecord::Base.instantiate_observers
 
+puts "FactoryGirl.reload"
   FactoryGirl.reload
 
+puts "load routes.rb"
   load "#{Rails.root}/config/routes.rb"
-  Dir["#{Rails.root}/app/**/*.rb"].each { |f| load f }
+puts "load all app files"
+ # Dir["#{Rails.root}/app/**/*.rb"].each { |f| load f }
+puts "END OF SPORK EACH RUN"
 end
 
 # --- Instructions ---

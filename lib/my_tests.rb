@@ -67,3 +67,7 @@ c.add_axis ax
 c.add_axis ay
 c.add_axis az
 puts c.render_axes_to_highchart
+
+chart1 = new Highcharts.Chart(
+                 {"chart":{"renderTo":"growth_chart","type":"line"},"title":{"text":"Mohammed Audu [P002]"},"xAxis":[{"name":"age","min":0,"max":18, "title":{"text":"Age"}}],"yAxis":[{"name":"weight","min":0,"max":100,"title":{"text":"Wt"}}],"series":[{"data":[[8.575062742413872,30.0],[7.871435090120921,40.0]],"name":"Weight (kg)","yAxis":0}]}
+)

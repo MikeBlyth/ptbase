@@ -20,11 +20,15 @@ module AbstractChart
     def render_axes_to_highchart
       {xAxis: self[:axes].select{|a| a[:orientation] == :x}.map {|a| a.render_highchart},
        yAxis: self[:axes].select{|a| a[:orientation] == :y}.map {|a| a.render_highchart}
-      }.to_json
+      }
     end
 
     def render_series_to_highchart
-      {series: self[:series].map {|s| s.to_highchart.merge(y_axis_index(s))}}.to_json
+      {series: self[:series].map {|s| s.to_highchart.merge(y_axis_index(s))}}
+    end
+
+    def chart_base
+      {chart: {renderTo: self[:div], type: self[:type]}, title: {text: self[:title]}}
     end
 
     def y_axis_index(series)
@@ -38,17 +42,9 @@ module AbstractChart
     def render_to_highchart
 <<HIGHCHART
 $(document).ready(function() {
-  chart1 = new Highcharts.Chart({
-     chart: {
-        renderTo: '#{self[:div]}',
-        type: '#{self[:type]}'
-     },
-     title: {
-        text: '#{self[:title]}'
-     },
-     #{render_axes_to_highchart},
-     #{render_series_to_highchart}
-  })
+  chart1 = new Highcharts.Chart(
+     #{chart_base.merge(render_axes_to_highchart).merge(render_series_to_highchart).to_json}
+  )
 })
 HIGHCHART
     end

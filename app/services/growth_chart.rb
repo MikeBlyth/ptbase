@@ -8,7 +8,7 @@ class GrowthChart < AbstractChart::Chart
 
   def initialize(patient, options={})
     @patient = patient
-    params = {title: make_title(), subtitle: make_subtitle(), options: options}
+    params = {title: make_title(), subtitle: make_subtitle(), div: 'growth_chart', options: options}
     super(params)
   end
 
@@ -17,6 +17,14 @@ class GrowthChart < AbstractChart::Chart
     add_series height_series
     add_series cd4_series
     add_series cd4pct_series
+  end
+
+  def add_all_axes
+    add_axis AbstractChart::Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age"})
+    add_axis AbstractChart::Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt"})
+    add_axis AbstractChart::Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht"})
+    add_axis AbstractChart::Axis.new({orientation: :y, name: :cd4, min: 0, max: 2000, label: "CD4"})
+    add_axis AbstractChart::Axis.new({orientation: :y, name: :cd4pct, min: 0, max: 70, label: "CD4 %"})
   end
 
   def make_title

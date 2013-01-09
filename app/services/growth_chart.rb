@@ -8,21 +8,27 @@ class GrowthChart < AbstractChart::Chart
 
   def initialize(patient, options={})
     @patient = patient
+    @series = specified_non_empty_series(options)
     super({title: make_title(), subtitle: make_subtitle(),
            chart_type: :line, div: 'growth_chart', options: options})
+    conditional_add_series(:cd4, :cd4_moderate, :cd4_severe)
+    conditional_add_series(:cd4pct, :cd4pct_severe)
   end
 
-  def add_all_series
-    add_non_empty_series(:weight, :height, :cd4, :cd4pct, :weight50, :height50)
+  def specified_non_empty_series(options)
+    include = (options[:include_series] || [:weight, :height, :cd4, :cd4pct, :weight50, :height50] ) -
+              (options[:exclude_series] || [])
+    series_from_names(include)
   end
 
-  def add_non_empty_series(*series_names)
-    series_names.each do |name|
+  def series_from_names(names)
+    names.map do |name|
       s = self.send "#{name}_series"
-      add_series s unless s.empty?
-    end
+      s.empty? ? nil : s
+    end.compact
   end
 
+    # Add all axes here that might be needed.Unneeded ones will not be rendered anyway.
   def add_all_axes
     add_axis AbstractChart::Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age"})
     add_axis AbstractChart::Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt"})
@@ -35,24 +41,37 @@ class GrowthChart < AbstractChart::Chart
     @patient.name_id
   end
 
+  def series_names
+
+  end
+
   def make_subtitle
     "DOB: #{@patient.birth_date}; Chart Date: #{Date.today}"
   end
 
+  # If a series exists with y_name=first argument (independent), then add series named in dependent
+  def conditional_add_series(independent, *dependent)
+    unless @series.find {|s| s[:y_name].to_s == independent.to_s}
+      dependent = []
+    end
+    series_from_names(dependent)
+  end
+
+
   def weight_series
-    AbstractChart::DataSeries.new(x_name: :age, y_axis: :weight,  y_label: 'Weight (kg)', data: visit_data)
+    AbstractChart::DataSeries.new(name: :weight, x_name: :age, y_axis: :weight,  y_label: 'Weight (kg)', data: visit_data)
   end
 
   def height_series
-    AbstractChart::DataSeries.new(x_name: :age, y_axis: :height, y_label: 'Height (cm)', data: visit_data)
+    AbstractChart::DataSeries.new(name: :height, x_name: :age, y_axis: :height, y_label: 'Height (cm)', data: visit_data)
   end
 
   def cd4_series
-    AbstractChart::DataSeries.new(x_name: :age, y_axis: :cd4, data: lab_data, y_label: 'CD4')
+    AbstractChart::DataSeries.new(name: :cd4, x_name: :age, y_axis: :cd4, data: lab_data, y_label: 'CD4')
   end
 
   def cd4pct_series
-    AbstractChart::DataSeries.new(x_name: :age, y_axis: :cd4pct, data: lab_data,  y_label: 'CD4%')
+    AbstractChart::DataSeries.new(name: :cd4pct, x_name: :age, y_axis: :cd4pct, data: lab_data,  y_label: 'CD4%')
   end
 
   ### GET THE ACTUAL DATA FROM THE PATIENT VISITS
@@ -91,24 +110,24 @@ class GrowthChart < AbstractChart::Chart
 
   def weight50_series
     standards = (@patient.sex == "M") ? PERCENTILE_WT_50_MALE : PERCENTILE_WT_50_FEMALE
-    AbstractChart::DataSeries.new(y_axis: :weight, x_name: :age, y_label: 'Weight 50%ile', data: standards)
+    AbstractChart::DataSeries.new(name: :weight50, y_axis: :weight, x_name: :age, y_label: 'Weight 50%ile', data: standards)
   end
 
   def height50_series
     standards = (@patient.sex == "M") ? PERCENTILE_HT_50_MALE : PERCENTILE_HT_50_FEMALE
-    AbstractChart::DataSeries.new(y_axis: :height, x_name: :age, y_label: 'Height 50%ile', data: standards)
+    AbstractChart::DataSeries.new(name: :height50, y_axis: :height, x_name: :age, y_label: 'Height 50%ile', data: standards)
   end
 
   def cd4_moderate_series
-    AbstractChart::DataSeries.new(y_axis: :cd4, x_name: :age, y_label: 'CD4 Moderate', data: CD4_MODERATE)
+    AbstractChart::DataSeries.new(name: :cd4_moderate, y_axis: :cd4, x_name: :age, y_label: 'CD4 Moderate', data: CD4_MODERATE)
   end
 
   def cd4_severe_series
-    AbstractChart::DataSeries.new(y_axis: :cd4, x_name: :age, y_label: 'CD4 Severe', data: CD4_SEVERE)
+    AbstractChart::DataSeries.new(name: :cd4_severe, y_axis: :cd4, x_name: :age, y_label: 'CD4 Severe', data: CD4_SEVERE)
   end
 
   def cd4pct_severe_series
-    AbstractChart::DataSeries.new(y_axis: :cd4pct, x_name: :age, y_label: 'CD4% Severe',data: CD4PCT_SEVERE)
+    AbstractChart::DataSeries.new(name: :cd4pct_severe, y_axis: :cd4pct, x_name: :age, y_label: 'CD4% Severe',data: CD4PCT_SEVERE)
   end
 
   def axis_limits(patient_age)

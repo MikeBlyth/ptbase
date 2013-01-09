@@ -75,7 +75,7 @@ module AbstractChart
     end
 
     def data_for_morris
-      DataSeries.merge_as_hash(self[:series])
+      DataSeries.merge_as_hash(@series)
     end
 
     def render_to_highchart
@@ -185,7 +185,7 @@ HIGHCHART
 
     def to_highchart(options={})
       reject_attributes = [:x_axis, :x_name, :x_label, :y_label]
-      self[:name] ||= (self[:y_label] || self[:y_axis]).to_s.humanize
+      self[:name] = (self[:y_label] || self[:name]).to_s.humanize
       self.reject {|k,v| reject_attributes.include? k}.merge(options)
     end
 

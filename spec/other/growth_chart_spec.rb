@@ -20,7 +20,7 @@ describe GrowthChart do
   describe 'initialization' do
 
     it 'initializes from hash' do
-      @chart[:title].should match @patient.name
+      @chart.title.should match @patient.name
     end
   end
 
@@ -30,8 +30,6 @@ describe GrowthChart do
       wt_series = @chart.weight_series
       point_match(wt_series[:data][0], [0,3])
       point_match(wt_series[:data][1], [0.5,8])
-      #wt_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      #wt_series.y_axis.should == {"name"=>:weight, "units"=>"kg", "label"=>"Weight"}
       wt_series[:x_name].should == :age
       wt_series[:y_axis].should == :weight
     end
@@ -102,11 +100,6 @@ describe GrowthChart do
     end
 
     it 'makes data for morris graphing package' do
-      @chart.add_all_series
-      @chart.add_std_anthro_series
-      @chart.add_series @chart.cd4_moderate_series
-      @chart.add_series @chart.cd4_severe_series
-      @chart.add_series @chart.cd4pct_severe_series
 #puts "Growth chart data = #{@chart[:data]_for_morris }"
       data = @chart.data_for_morris
       data.should include({:age=>1, 'Weight 50%ile'=>10.2, 'Height 50%ile'=>76.2, 'CD4 Moderate'=>1000,
@@ -115,12 +108,6 @@ describe GrowthChart do
     end
 
     it 'makes data for Highchart graphing package' do
-      @chart.add_all_series
-      @chart.add_all_axes
-      @chart.add_std_anthro_series
-      @chart.add_series @chart.cd4_moderate_series
-      @chart.add_series @chart.cd4_severe_series
-      @chart.add_series @chart.cd4pct_severe_series
       puts @chart.render_to_highchart
     end
 

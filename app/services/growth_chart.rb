@@ -8,8 +8,8 @@ class GrowthChart < AbstractChart::Chart
 
   def initialize(patient, options={})
     @patient = patient
-    params = {title: make_title(), subtitle: make_subtitle(), div: 'growth_chart', options: options}
-    super(params)
+    super({title: make_title(), subtitle: make_subtitle(),
+           chart_type: :line, div: 'growth_chart', options: options})
   end
 
   def add_all_series

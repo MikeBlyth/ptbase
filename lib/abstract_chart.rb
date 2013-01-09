@@ -2,39 +2,76 @@ require 'forwardable'
 
 module AbstractChart
 
-  class Chart < DelegateClass(Hash)
+  class Chart
+    attr_accessor :axes, :series, :options, :title, :chart_type, :div
+
     def initialize(params={})
-      params[:type] ||= :line
-      params[:div] ||= params[:name] || 'chart'
-      params[:axes] ||= []
-      params[:series] ||= []
-      super
+      @chart_type = params[:chart_type] ||= :line
+      @div = params[:div] ||=  'chart-div'
+      @title = params[:title] || 'Title'
+      @axes = params[:axes] || []
+      @series = params[:series] ||= []
+      @options = params[:options] || {}
     end
 
-    def add_series(data_series)
-      self[:series] <<  data_series unless self[:series].include? data_series
+    def add_series(*data_series)
+      @series += data_series
     end
 
-    def add_axis(axis)
-      self[:axes] <<  axis unless self[:axes].include? axis
+    def add_axis(*axis)
+      @axes += axis
     end
 
     def render_axes_to_highchart
-      {xAxis: self[:axes].select{|a| a[:orientation] == :x}.map {|a| a.render_highchart},
-       yAxis: self[:axes].select{|a| a[:orientation] == :y}.map {|a| a.render_highchart}
+      {xAxis: selected_x_axes.map {|a| a.render_highchart},
+       yAxis: selected_y_axes.map {|a| a.render_highchart}
       }
     end
 
-    def render_series_to_highchart
-      {series: self[:series].map {|s| s.to_highchart.merge(y_axis_index(s))}}
+    def selected_x_axes
+      @selected_x_axes ||= selected(x_axes)
     end
 
-    def chart_base
-      {chart: {renderTo: self[:div], type: self[:type]}, title: {text: self[:title]}}
+    def selected_y_axes
+      @selected_y_axes ||= referenced_y_axes
+    end
+
+    def x_axes
+      @axes.select {|axis| axis[:orientation] == :x}
+    end
+
+    def y_axes
+      @axes.select {|axis| axis[:orientation] == :y}
+    end
+
+    def selected(elements)
+#binding.pry
+      elements.select {|e| !e[:ignore] && !(e[:auto_hide] && e.empty?)}
+    end
+
+    def referenced_y_axes
+      y_axes.select {|axis| referenced_y_axis_names.include? axis[:name]}
+    end
+
+    # the y_axis names referenced by selected series
+    def referenced_y_axis_names
+      selected_series.map {|s| s[:y_axis]}.compact
+    end
+
+    def selected_series
+      @selected_series ||= selected(@series)
+    end
+
+    def render_series_to_highchart
+      {series: selected_series.map {|s| s.to_highchart.merge(y_axis_index(s))}}
     end
 
     def y_axis_index(series)
-      {yAxis: self[:axes].select {|a| a[:orientation] == :y}.find_index {|a| a[:name] == series[:y_axis]}  }
+      {yAxis: selected_y_axes.find_index {|a| a[:name] == series[:y_axis]}  }
+    end
+
+    def chart_base
+      {chart: {renderTo: @div, type: @chart_type}, title: {text: @title}}
     end
 
     def data_for_morris
@@ -128,6 +165,8 @@ HIGHCHART
 
     def initialize(params)
       params[:data] = DataArray.new(params)
+      raise "Missing y axis name for DataSeries #{params}" if params[:y_axis].nil?
+      params[:auto_hide] = !(params[:auto_hide] == false)
       super
     end
 

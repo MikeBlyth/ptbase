@@ -13,52 +13,53 @@ describe AbstractChart do
   let(:height_axis) {Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})}
   let(:weight_series) {DataSeries.new({x_name: :age, y_axis: :weight, data: weight_data})}
   let(:height_series) {DataSeries.new({x_name: :age, y_axis: :height, data: height_data})}
+  let(:chart_full) do
+    c = Chart.new title: 'Title', chart_type: :line, options: {hide: false}
+    c.add_axis(age_axis, weight_axis, height_axis)
+    c.add_series(weight_series, height_series)
+    c
+  end
+
   describe 'Chart' do
 
-    it 'initializes from hash' do
-      c = Chart.new title: 'Title'
-      c[:title].should eq 'Title'
+    it 'initializes' do
+      chart_full.title.should eq 'Title'
+      chart_full.chart_type.should eq :line
+      chart_full.options.should == {:hide => false}
     end
 
     it 'renders axes to HighChart' do
-      c = Chart.new
-      c.add_axis age_axis
-      c.add_axis weight_axis
-      c.add_axis height_axis
-      rendered = c.render_axes_to_highchart
-      rendered.should == {xAxis: [age_axis], yAxis: [weight_axis, height_axis]}.to_json
+      rendered = chart_full.render_axes_to_highchart
+      rendered.should == {xAxis: [age_axis], yAxis: [weight_axis, height_axis]}
     end
 
     it 'finds index of a y_axis' do
-      c = Chart.new
-      c.add_axis age_axis
-      c.add_axis weight_axis
-      c.add_axis height_axis
-      c.y_axis_index({y_axis: :height}).should == {:yAxis => 1}
+      chart_full.y_axis_index({y_axis: :height}).should == {:yAxis => 1} # NB:
+         # This depends on adding height_axis as the second y axis during table construction!
     end
 
     it 'renders series to HighChart' do
-      c = Chart.new
-      c.add_axis age_axis
-      c.add_axis weight_axis
-      c.add_axis height_axis
-      c.add_series weight_series
-      c.add_series height_series
-      rendered = c.render_series_to_highchart
+      rendered = chart_full.render_series_to_highchart
       rendered.should == {series: [weight_series.to_highchart.merge({yAxis: 0}),
-                                   height_series.to_highchart.merge({yAxis: 1})]}.to_json
+                                   height_series.to_highchart.merge({yAxis: 1})]}
+    end
+
+    it 'does not render a series without data' do
+      weight_series[:data] = []
+      chart_full.render_to_highchart.should_not match 'weight'
+    end
+
+    it 'does not render an axis not required by a series' do
+      # This is currently identical to previous test, since either the axis or series, if present, would
+      # be detected by "match 'weight'"
+      #weight_series[:data] = []
+      #chart_full.render_to_highchart.should_not match 'weight'
     end
 
     it 'renders entire chart as JS for HighChart' do
-      c = Chart.new title: 'Growth Chart'
-      c.add_axis age_axis
-      c.add_axis weight_axis
-      c.add_axis height_axis
-      c.add_series weight_series
-      c.add_series height_series
-      rendered = c.render_to_highchart
+      rendered = chart_full.render_to_highchart
       puts "rendered = #{rendered}"
-      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart({\n     chart: {\n        renderTo: 'chart',\n        type: 'line'\n     },\n     title: {\n        text: 'Growth Chart'\n     },\n     {\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}]},\n     {\"series\":[{\"y_axis\":\"weight\",\"data\":[[0,3],[1,10],[2,12]],\"name\":\"Weight\",\"yAxis\":0},{\"y_axis\":\"height\",\"data\":[[0,50],[1,80],[0.5,65]],\"name\":\"Height\",\"yAxis\":1}]}\n  })\n})\n"
+      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart(\n     {\"chart\":{\"renderTo\":\"chart-div\",\"type\":\"line\"},\"title\":{\"text\":\"Title\"},\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}],\"series\":[{\"y_axis\":\"weight\",\"data\":[[0,3],[1,10],[2,12]],\"auto_hide\":true,\"name\":\"Weight\",\"yAxis\":0},{\"y_axis\":\"height\",\"data\":[[0,50],[1,80],[0.5,65]],\"auto_hide\":true,\"name\":\"Height\",\"yAxis\":1}]}\n  )\n})\n"
     end
   end
 
@@ -66,8 +67,8 @@ describe AbstractChart do
     let(:axis_params) {{:label => 'Weight', :min => 0, :max => 30, :color => :red }}
 
     it 'initializes from hash' do
-      a = Axis.new({label: 'Weight', min: 0, max: 30, color: :red })
-      a.should == {label: 'Weight', min: 0, max: 30, color: :red, orientation: :y }
+      a = Axis.new({label: 'Weight', name: 'weight', min: 0, max: 30, color: :red })
+      a.should == {label: 'Weight', name: 'weight', min: 0, max: 30, color: :red, orientation: :y }
     end
 
     it 'renders all attributes by default' do
@@ -149,7 +150,7 @@ describe AbstractChart do
     it 'generates data series for highchart' do
       series = height_series
       series.to_highchart(color: :red).should == {:name => 'Height', :data =>  height_data,
-                                                  :y_axis => :height, :color => :red}
+                                                  :y_axis => :height, :auto_hide=>true, :color => :red}
     end
   end
 

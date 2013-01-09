@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module AbstractChart
 
   class Chart < DelegateClass(Hash)
@@ -123,6 +125,7 @@ HIGHCHART
 
 
   class DataSeries < DelegateClass(Hash)
+
     def initialize(params)
       params[:data] = DataArray.new(params)
       super
@@ -131,6 +134,14 @@ HIGHCHART
     def add_data(data)
       return if data.nil?
       self[:data] += data
+    end
+
+    def any?
+      self[:data].any?
+    end
+
+    def empty?
+      self[:data].empty?
     end
 
     def to_highchart(options={})

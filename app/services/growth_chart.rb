@@ -13,10 +13,14 @@ class GrowthChart < AbstractChart::Chart
   end
 
   def add_all_series
-    add_series weight_series
-    add_series height_series
-    add_series cd4_series
-    add_series cd4pct_series
+    add_non_empty_series(:weight, :height, :cd4, :cd4pct, :weight50, :height50)
+  end
+
+  def add_non_empty_series(*series_names)
+    series_names.each do |name|
+      s = self.send "#{name}_series"
+      add_series s unless s.empty?
+    end
   end
 
   def add_all_axes

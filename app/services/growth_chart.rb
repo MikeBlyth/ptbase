@@ -1,5 +1,20 @@
 require 'abstract_chart'
 
+# Highchart Line Formatting Options
+# Line Styles
+  #Solid
+  #ShortDash
+  #ShortDot
+  #ShortDashDot
+  #ShortDashDotDot
+  #Dot
+  #Dash
+  #LongDash
+  #DashDot
+  #LongDashDot
+  #LongDashDotDot
+# lineWidth: Number
+
 class GrowthChart < AbstractChart::Chart
   include GrowthChartRefLines
   include NamesHelper
@@ -8,11 +23,18 @@ class GrowthChart < AbstractChart::Chart
 
   def initialize(patient, options={})
     @patient = patient
+    base_options = {plotOptions: { series: {animation: false,
+                                            lineWidth: 1.0,
+                                            shadow: false,
+                                           }
+                                 },
+                    }
     super({title: make_title(), subtitle: make_subtitle(),
            series: specified_non_empty_series(options),
-           chart_type: :line, div: 'growth_chart', options: options})
+           chart_type: :line, div: 'growth_chart', options: base_options.merge(options)})
     add_conditional_series(:cd4, :cd4_moderate, :cd4_severe)
     add_conditional_series(:cd4pct, :cd4pct_severe)
+    add_all_axes
   end
 
   def specified_non_empty_series(options)
@@ -33,8 +55,8 @@ class GrowthChart < AbstractChart::Chart
     add_axis AbstractChart::Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age"})
     add_axis AbstractChart::Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt"})
     add_axis AbstractChart::Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht"})
-    add_axis AbstractChart::Axis.new({orientation: :y, name: :cd4, min: 0, max: 2000, label: "CD4"})
-    add_axis AbstractChart::Axis.new({orientation: :y, name: :cd4pct, min: 0, max: 70, label: "CD4 %"})
+    add_axis AbstractChart::Axis.new({orientation: :y, name: :cd4, min: 0, max: 2000, label: "CD4", opposite: true})
+    add_axis AbstractChart::Axis.new({orientation: :y, name: :cd4pct, min: 0, max: 70, label: "CD4 %", opposite: true})
   end
 
   def make_title
@@ -106,24 +128,34 @@ class GrowthChart < AbstractChart::Chart
 
   def weight50_series
     standards = (@patient.sex == "M") ? PERCENTILE_WT_50_MALE : PERCENTILE_WT_50_FEMALE
-    AbstractChart::DataSeries.new(name: :weight50, y_axis: :weight, x_name: :age, y_label: 'Weight 50%ile', data: standards)
+    AbstractChart::DataSeries.new(name: :weight50, y_axis: :weight, x_name: :age,
+                                  dashStyle: 'shortdot', marker: {enabled: false} ,
+                                  y_label: 'Weight 50%ile', data: standards)
   end
 
   def height50_series
     standards = (@patient.sex == "M") ? PERCENTILE_HT_50_MALE : PERCENTILE_HT_50_FEMALE
-    AbstractChart::DataSeries.new(name: :height50, y_axis: :height, x_name: :age, y_label: 'Height 50%ile', data: standards)
+    AbstractChart::DataSeries.new(name: :height50, y_axis: :height, x_name: :age,
+                                  dashStyle: 'shortdot', marker: {enabled: false} ,
+                                  y_label: 'Height 50%ile', data: standards)
   end
 
   def cd4_moderate_series
-    AbstractChart::DataSeries.new(name: :cd4_moderate, y_axis: :cd4, x_name: :age, y_label: 'CD4 Moderate', data: CD4_MODERATE)
+    AbstractChart::DataSeries.new(name: :cd4_moderate, y_axis: :cd4, x_name: :age,
+                                  dashStyle: 'longdot',  marker: {enabled: false} ,
+                                  y_label: 'CD4 Moderate', data: CD4_MODERATE)
   end
 
   def cd4_severe_series
-    AbstractChart::DataSeries.new(name: :cd4_severe, y_axis: :cd4, x_name: :age, y_label: 'CD4 Severe', data: CD4_SEVERE)
+    AbstractChart::DataSeries.new(name: :cd4_severe, y_axis: :cd4, x_name: :age,
+                                  dashStyle: 'shortdash', marker: {enabled: false} ,
+                                  y_label: 'CD4 Severe', data: CD4_SEVERE)
   end
 
   def cd4pct_severe_series
-    AbstractChart::DataSeries.new(name: :cd4pct_severe, y_axis: :cd4pct, x_name: :age, y_label: 'CD4% Severe',data: CD4PCT_SEVERE)
+    AbstractChart::DataSeries.new(name: :cd4pct_severe, y_axis: :cd4pct, x_name: :age,
+                                  dashStyle: 'shortdot', marker: {enabled: false} ,
+                                  y_label: 'CD4% Severe',data: CD4PCT_SEVERE)
   end
 
   def axis_limits(patient_age)

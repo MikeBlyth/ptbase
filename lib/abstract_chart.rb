@@ -9,6 +9,7 @@ module AbstractChart
       @chart_type = params[:chart_type] ||= :line
       @div = params[:div] ||=  'chart-div'
       @title = params[:title] || 'Title'
+      @subtitle = params[:subtitle] || ''
       @axes = params[:axes] || []
       @series = params[:series] ||= []
       @options = params[:options] || {}
@@ -63,7 +64,7 @@ module AbstractChart
     end
 
     def render_series_to_highchart
-      {series: selected_series.map {|s| s.to_highchart.merge(y_axis_index(s))}}
+      {series: selected_series.map {|s| s.sort.to_highchart.merge(y_axis_index(s))}}
     end
 
     def y_axis_index(series)
@@ -71,7 +72,7 @@ module AbstractChart
     end
 
     def chart_base
-      {chart: {renderTo: @div, type: @chart_type}, title: {text: @title}}
+      {chart: {renderTo: @div, type: @chart_type}, title: {text: @title}, subtitle: {text: @subtitle}}
     end
 
     def data_for_morris
@@ -83,7 +84,8 @@ module AbstractChart
 <<HIGHCHART
 $(document).ready(function() {
   chart1 = new Highcharts.Chart(
-     #{chart_base.merge(render_axes_to_highchart).merge(render_series_to_highchart).to_json}
+     #{chart_base.merge(@options).
+          merge(render_axes_to_highchart).merge(render_series_to_highchart).to_json}
   )
 })
 HIGHCHART
@@ -140,6 +142,11 @@ HIGHCHART
       end.compact
     end
 
+    # Sort data on x-value (x-axis)
+    def <=>(x,y)
+      x[0] <=> y[0]
+    end
+
     # Is there a better way to do this? Use dup? Something else?
     def +(data)
       DataArray.new(x_name: @x_name, y_axis: @y_axis, data: super(normalize(data)))
@@ -182,6 +189,11 @@ HIGHCHART
 
     def empty?
       self[:data].empty?
+    end
+
+    def sort
+      self[:data].sort!
+      self
     end
 
     def to_highchart(options={})

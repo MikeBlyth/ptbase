@@ -124,7 +124,7 @@ class Visit < ActiveRecord::Base
   attr_protected
   validates_presence_of :date, :patient_id
   validate :not_future
-  validate :next_visit_future
+ # validate :next_visit_future
   validates :weight, numericality: {greater_than: 0}, allow_nil: true
   validates :weight, numericality: {less_than: 300}, allow_nil: true
   validates :height, numericality: {greater_than: 0}, allow_nil: true

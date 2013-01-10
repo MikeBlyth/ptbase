@@ -102,13 +102,14 @@ describe GrowthChart do
     it 'makes data for morris graphing package' do
 #puts "Growth chart data = #{@chart[:data]_for_morris }"
       data = @chart.data_for_morris
-      data.should include({:age=>1, 'Weight 50%ile'=>10.2, 'Height 50%ile'=>76.2, 'CD4 Moderate'=>1000,
-                           'CD4 Severe'=>750, 'CD4% Severe'=>20})
+      data.should include({:age=>1, 'Weight 50%ile'=>10.2, 'Height 50%ile'=>76.2, 'CD4 Moderate'=>1500,
+                           'CD4 Severe'=>1500, 'CD4% Severe'=>25})
       data.select {|p| p['Weight (kg)'] == @visit_1.weight and p['Height (cm)'] == @visit_1.height}.should_not be_empty
     end
 
     it 'makes data for Highchart graphing package' do
       rendered = @chart.render_to_highchart
+      puts rendered
     end
 
   end

@@ -19,6 +19,6 @@
 // NEXT LINES ARE FOR RICKSHAW/D3 GRAPHING
 // require d3
 // require rickshaw
-// NEXT LINES ARE FOR HIGHCHARTS GRAPHING
+// NEXT LINE IS FOR HIGHCHARTS GRAPHING
 //= require highcharts
 // require_tree .

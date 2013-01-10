@@ -5,8 +5,8 @@
 #  id                 :integer          not null, primary key
 #  drug               :string(255)
 #  prescription_id    :integer
-#  dose               :float
-#  unit              :string(255)
+#  dose               :string(255)
+#  unit               :string(255)
 #  route              :string(255)
 #  interval           :integer
 #  use_liquid         :boolean

@@ -13,5 +13,5 @@
   #disch-data
     = form.input :discharge_date, as: :string
     = form.input :weight_discharge
-    = form.input :discharge_status, collection: %w(recovered improved AMA still_ill transferred died unknown)
+    = form.input :discharge_status, collection: Admission::DISCHARGE_STATUSES
   = form.button :submit

@@ -4,7 +4,7 @@
 #
 #  id         :integer          not null, primary key
 #  drug_id    :integer
-#  form       :string(255)
+#  xform      :string(255)
 #  strength   :string(255)
 #  mult       :float
 #  quantity   :string(255)
@@ -26,7 +26,7 @@ describe DrugPrep do
       drug_prep.should be_valid
     end
 
-    it { should validate_presence_of(:form)}
+    it { should validate_presence_of(:xform)}
 
     it { should validate_presence_of(:drug_id)}
   end

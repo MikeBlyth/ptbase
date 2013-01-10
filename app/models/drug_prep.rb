@@ -4,7 +4,7 @@
 #
 #  id         :integer          not null, primary key
 #  drug_id    :integer
-#  form       :string(255)
+#  xform      :string(255)
 #  strength   :string(255)
 #  mult       :float
 #  quantity   :string(255)
@@ -16,7 +16,11 @@
 #
 
 class DrugPrep < ActiveRecord::Base
-  attr_accessible :buy_price, :form, :mult, :quantity, :stock, :strength, :synonyms, :drug_id
+  attr_accessible :buy_price, :xform, :mult, :quantity, :stock, :strength, :synonyms, :drug_id
   belongs_to :drug
-  validates_presence_of :form, :drug_id
+  validates_presence_of :xform, :drug_id
+
+  def to_label
+    "#{xform} #{strength}"
+  end
 end

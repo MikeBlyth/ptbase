@@ -30,6 +30,8 @@ class Admission < ActiveRecord::Base
   validate :not_future
   validate :validate_all
 
+  DISCHARGE_STATUSES = %w(recovered improved AMA still_ill transferred died unknown)
+
   def to_label
     date
   end

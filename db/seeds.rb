@@ -23,8 +23,8 @@ amox = Drug.create(name: 'amoxycillin', drug_class: 'antibiotic', drug_subclass:
 Drug.create(name: 'artemether', drug_class: 'antimalarial', synonyms: 'Larither')
 
 DrugPrep.delete_all
-DrugPrep.create(drug_id: amox.id, form: 'tablet', strength: '250 mg')
-DrugPrep.create(drug_id: amox.id, form: 'suspension', strength: '250 mg/5 ml', synonyms: 'liquid')
+DrugPrep.create(drug_id: amox.id, xform: 'tablet', strength: '250 mg')
+DrugPrep.create(drug_id: amox.id, xform: 'suspension', strength: '250 mg/5 ml', synonyms: 'liquid')
 
 HealthData.delete_all
 HealthData.create(patient: audu, hiv_status: 'P', maternal_hiv_status: 'P' )

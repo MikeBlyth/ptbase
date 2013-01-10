@@ -18,7 +18,7 @@ FactoryGirl.define do
   end
 
   factory :drug_prep do
-    form 'tablet'
+    xform 'tablet'
     strength '250 mg'
     drug
   end

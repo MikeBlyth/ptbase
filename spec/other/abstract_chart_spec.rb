@@ -11,8 +11,8 @@ describe AbstractChart do
   let(:age_axis) {Axis.new({orientation: :x, name: :age, min: 0, max: 18, label: "Age", title: {text: 'Age'}})}
   let(:weight_axis) {Axis.new({orientation: :y, name: :weight, min: 0, max: 100, label: "Wt", title: {text: 'Wt'}})}
   let(:height_axis) {Axis.new({orientation: :y, name: :height, min: 40, max: 180, label: "Ht", title: {text: 'Ht'}})}
-  let(:weight_series) {DataSeries.new({x_name: :age, y_axis: :weight, data: weight_data})}
-  let(:height_series) {DataSeries.new({x_name: :age, y_axis: :height, data: height_data})}
+  let(:weight_series) {DataSeries.new({name: :weight, x_name: :age, y_axis: :weight, data: weight_data})}
+  let(:height_series) {DataSeries.new({name: :height, x_name: :age, y_axis: :height, data: height_data})}
   let(:chart_full) do
     c = Chart.new title: 'Title', chart_type: :line, options: {hide: false}
     c.add_axis(age_axis, weight_axis, height_axis)
@@ -59,7 +59,7 @@ describe AbstractChart do
     it 'renders entire chart as JS for HighChart' do
       rendered = chart_full.render_to_highchart
       puts "rendered = #{rendered}"
-      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart(\n     {\"chart\":{\"renderTo\":\"chart-div\",\"type\":\"line\"},\"title\":{\"text\":\"Title\"},\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}],\"series\":[{\"y_axis\":\"weight\",\"data\":[[0,3],[1,10],[2,12]],\"auto_hide\":true,\"name\":\"Weight\",\"yAxis\":0},{\"y_axis\":\"height\",\"data\":[[0,50],[1,80],[0.5,65]],\"auto_hide\":true,\"name\":\"Height\",\"yAxis\":1}]}\n  )\n})\n"
+      rendered.should == "$(document).ready(function() {\n  chart1 = new Highcharts.Chart(\n     {\"chart\":{\"renderTo\":\"chart-div\",\"type\":\"line\"},\"title\":{\"text\":\"Title\"},\"xAxis\":[{\"orientation\":\"x\",\"name\":\"age\",\"min\":0,\"max\":18,\"label\":\"Age\",\"title\":{\"text\":\"Age\"}}],\"yAxis\":[{\"orientation\":\"y\",\"name\":\"weight\",\"min\":0,\"max\":100,\"label\":\"Wt\",\"title\":{\"text\":\"Wt\"}},{\"orientation\":\"y\",\"name\":\"height\",\"min\":40,\"max\":180,\"label\":\"Ht\",\"title\":{\"text\":\"Ht\"}}],\"series\":[{\"name\":\"Weight\",\"y_axis\":\"weight\",\"data\":[[0,3],[1,10],[2,12]],\"auto_hide\":true,\"yAxis\":0},{\"name\":\"Height\",\"y_axis\":\"height\",\"data\":[[0,50],[1,80],[0.5,65]],\"auto_hide\":true,\"yAxis\":1}]}\n  )\n})\n"
     end
   end
 

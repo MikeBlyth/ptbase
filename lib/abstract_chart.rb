@@ -75,6 +75,7 @@ module AbstractChart
     end
 
     def data_for_morris
+#binding.pry
       DataSeries.merge_as_hash(@series)
     end
 
@@ -196,7 +197,6 @@ HIGHCHART
     #    [{age: 0, weight: 3, height: 52}, {age: 1, weight: 10, height: 80}]
     def self.merge_as_hash(series_array)
       all_series_hash = {}
-#binding.pry
       x_names = series_array.map{|s| s[:x_name]}.uniq
       raise "Cannot merge series with different x axes (#{x_names})" if x_names.count > 1
       x_name = x_names.first  # the common x_axis

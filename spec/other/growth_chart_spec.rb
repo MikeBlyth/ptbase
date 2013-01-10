@@ -108,7 +108,7 @@ describe GrowthChart do
     end
 
     it 'makes data for Highchart graphing package' do
-      puts @chart.render_to_highchart
+      rendered = @chart.render_to_highchart
     end
 
   end

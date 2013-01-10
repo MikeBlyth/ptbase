@@ -8,11 +8,11 @@ class GrowthChart < AbstractChart::Chart
 
   def initialize(patient, options={})
     @patient = patient
-    @series = specified_non_empty_series(options)
     super({title: make_title(), subtitle: make_subtitle(),
+           series: specified_non_empty_series(options),
            chart_type: :line, div: 'growth_chart', options: options})
-    conditional_add_series(:cd4, :cd4_moderate, :cd4_severe)
-    conditional_add_series(:cd4pct, :cd4pct_severe)
+    add_conditional_series(:cd4, :cd4_moderate, :cd4_severe)
+    add_conditional_series(:cd4pct, :cd4pct_severe)
   end
 
   def specified_non_empty_series(options)
@@ -41,20 +41,16 @@ class GrowthChart < AbstractChart::Chart
     @patient.name_id
   end
 
-  def series_names
-
-  end
-
   def make_subtitle
     "DOB: #{@patient.birth_date}; Chart Date: #{Date.today}"
   end
 
   # If a series exists with y_name=first argument (independent), then add series named in dependent
-  def conditional_add_series(independent, *dependent)
-    unless @series.find {|s| s[:y_name].to_s == independent.to_s}
+  def add_conditional_series(independent, *dependent)
+    unless @series.find {|s| s[:name].to_s == independent.to_s}
       dependent = []
     end
-    series_from_names(dependent)
+    series_from_names(dependent).each {|s| add_series s}
   end
 
 

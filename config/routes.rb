@@ -1,5 +1,11 @@
 Ptbase::Application.routes.draw do
 
+  resources :lab_results do as_routes end
+
+  resources :lab_groups do as_routes end
+
+  resources :lab_services do as_routes end
+
   resources :lab_requests do as_routes end
 
   resources :icd9s do as_routes end

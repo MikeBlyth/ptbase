@@ -29,13 +29,13 @@ class Patient < ActiveRecord::Base
 
   has_one  :health_data, dependent: :delete
   has_many :visits
-  has_many :labs, dependent: :delete_all
   has_many :lab_requests
+  has_many :lab_results, through: :lab_requests
   has_many :problems, dependent: :delete_all
   has_many :admissions
   has_one :immunization, dependent: :delete
   has_many :prescriptions
-#  has_many :prescription_items, through: :prescriptions
+  has_many :prescription_items, through: :prescriptions
   has_many :photos, dependent: :delete_all
   has_many :visits
 

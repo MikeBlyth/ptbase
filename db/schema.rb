@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130110205707) do
+ActiveRecord::Schema.define(:version => 20130112144119) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -117,18 +117,44 @@ ActiveRecord::Schema.define(:version => 20130110205707) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "lab_groups", :force => true do |t|
+    t.string   "name"
+    t.string   "abbrev"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "lab_requests", :force => true do |t|
+    t.integer  "provider_id"
     t.integer  "patient_id"
+    t.string   "comments"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "lab_results", :force => true do |t|
+    t.integer  "lab_request_id"
+    t.integer  "lab_service_id"
+    t.string   "result"
     t.datetime "date"
-    t.boolean  "hct"
-    t.boolean  "fbc"
-    t.boolean  "malaria"
-    t.boolean  "hiv_rapid"
-    t.boolean  "urinalysis"
-    t.boolean  "blood_glucose"
-    t.boolean  "cd4"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.string   "status"
+    t.boolean  "abnormal"
+    t.boolean  "panic"
+    t.string   "comments"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  create_table "lab_services", :force => true do |t|
+    t.string   "name"
+    t.string   "abbrev"
+    t.string   "unit"
+    t.string   "normal_range"
+    t.integer  "lab_group_id"
+    t.float    "cost"
+    t.string   "comments"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "labs", :force => true do |t|

@@ -42,6 +42,42 @@ Immunization.create(patient: audu, bcg: birth+2.weeks, opv1: birth+6.weeks, opv2
 Lab.delete_all
 Lab.create(patient: audu, date: audu.birth_date+5.months, hct: 34)
 
+LabGroup.delete_all
+heme = LabGroup.create (name: 'Hematology', abbrev: 'heme')
+ser_chem = LabGroup.create (name: 'Serum Chemistry', abbrev: 'ser-chem')
+csf_chem = LabGroup.create (name: 'CSF chem', abbrev: 'csf-chem')
+ur_chem = LabGroup.create (name: 'Urine Chemistry', abbrev: 'ur-chem')
+serology = LabGroup.create (name: 'Serology', abbrev: 'serology')
+bact = LabGroup.create (name: 'Bacteriology', abbrev: 'bact')
+vir = LabGroup.create (name: 'Virology', abbrev: 'viro')
+
+LabService.delete_all
+hct = LabService.create(name: 'Hematocrit', abbrev: 'hct', cost: 700, lab_group: heme)
+LabService.create(name: 'Blood white cell count', abbrev: 'wbc', cost: 700, lab_group: heme)
+LabService.create(name: 'Blood neutrophil count', abbrev: 'neut', cost: 700, lab_group: heme)
+LabService.create(name: 'Blood lymphocyte count', abbrev: 'lymph', cost: 700, lab_group: heme)
+LabService.create(name: 'Blood band cell count', abbrev: 'bands', cost: 700, lab_group: heme)
+LabService.create(name: 'Platelet count', abbrev: 'plat', cost: 700, lab_group: heme)
+LabService.create(name: 'Malaria smear', abbrev: 'MPS', cost: 700, lab_group: heme)
+cd4 = LabService.create(name: 'CD4 count', abbrev: 'CD4', cost: 700, lab_group: heme)
+cd4pct = LabService.create(name: 'CD4 percent', abbrev: 'CD4%', cost: 700, lab_group: heme)
+
+LabService.create(name: 'Urinalysis', abbrev: 'UA', cost: 700, lab_group: ser_chem)
+LabService.create(name: 'Sodium, serum', abbrev: 'Na+', cost: 700, lab_group: ser_chem)
+LabService.create(name: 'Potassium, serum', abbrev: 'K+', cost: 700, lab_group: ser_chem)
+LabService.create(name: 'Calcium, serum', abbrev: 'Ca+', cost: 700, lab_group: ser_chem)
+LabService.create(name: 'Bicarbonate, serum', abbrev: 'Bicarb', cost: 700, lab_group: ser_chem)
+
+LabRequest.delete_all
+audu_lab_1 = LabRequest.create(patient: audu, date: audu.birth_date+5.months)
+audu_lab_2 = LabRequest.create(patient: audu, date: Date.today - 1.year)
+
+LabResult.delete_all
+LabResult.create(lab_request: audu_lab_1, lab_service: cd4, result: '1500')
+LabResult.create(lab_request: audu_lab_1, lab_service: hct, result: '35')
+LabResult.create(lab_request: audu_lab_2, lab_service: cd4, result: '450')
+LabResult.create(lab_request: audu_lab_2, lab_service: hct, result: '28')
+
 Photo.delete_all
 Photo.create(patient: audu, date: audu.birth_date+5.months)
 
@@ -70,3 +106,4 @@ Visit.delete_all
 audu.visits.create(patient_id: audu.id, date: '2011-07-30', dx: 'pneumonia')
 audu.visits.create(patient_id: audu.id, date: '2012-04-12', dx: 'malaria', dx2: 'gastroenteritis',
     weight: 30, meds: 'artequine')
+

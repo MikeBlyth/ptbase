@@ -15,8 +15,7 @@
 #
 
 class LabService < ActiveRecord::Base
-  attr_accessible :abbrev, :comments, :cost, :name
+  attr_accessible :abbrev, :comments, :cost, :name, :lab_group, :lab_group_id
   belongs_to :lab_group
-  has_many :lab_requests
-  has_many :lab_results, through: :lab_requests
+  has_many :lab_results
 end

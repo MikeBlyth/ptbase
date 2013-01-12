@@ -103,7 +103,7 @@ class GrowthChart < AbstractChart::Chart
   end
 
   def lab_data
-    @lab_data ||= @patient.labs.select {|lab| plottable_lab_values?(lab)}.map do |lab|
+    @lab_data ||= @patient.lab_results.select {|lab| plottable_lab_values?(lab)}.map do |lab|
       {age: patient.age_on_date_in_years(lab.date),
        cd4: lab.cd4,
        cd4pct: lab.cd4pct}

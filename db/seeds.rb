@@ -43,13 +43,13 @@ Lab.delete_all
 Lab.create(patient: audu, date: audu.birth_date+5.months, hct: 34)
 
 LabGroup.delete_all
-heme = LabGroup.create (name: 'Hematology', abbrev: 'heme')
-ser_chem = LabGroup.create (name: 'Serum Chemistry', abbrev: 'ser-chem')
-csf_chem = LabGroup.create (name: 'CSF chem', abbrev: 'csf-chem')
-ur_chem = LabGroup.create (name: 'Urine Chemistry', abbrev: 'ur-chem')
-serology = LabGroup.create (name: 'Serology', abbrev: 'serology')
-bact = LabGroup.create (name: 'Bacteriology', abbrev: 'bact')
-vir = LabGroup.create (name: 'Virology', abbrev: 'viro')
+heme = LabGroup.create(name: 'Hematology', abbrev: 'heme')
+ser_chem = LabGroup.create(name: 'Serum Chemistry', abbrev: 'ser-chem')
+csf_chem = LabGroup.create(name: 'CSF chem', abbrev: 'csf-chem')
+ur_chem = LabGroup.create(name: 'Urine Chemistry', abbrev: 'ur-chem')
+serology = LabGroup.create(name: 'Serology', abbrev: 'serology')
+bact = LabGroup.create(name: 'Bacteriology', abbrev: 'bact')
+vir = LabGroup.create(name: 'Virology', abbrev: 'viro')
 
 LabService.delete_all
 hct = LabService.create(name: 'Hematocrit', abbrev: 'hct', cost: 700, lab_group: heme)
@@ -69,8 +69,12 @@ LabService.create(name: 'Calcium, serum', abbrev: 'Ca+', cost: 700, lab_group: s
 LabService.create(name: 'Bicarbonate, serum', abbrev: 'Bicarb', cost: 700, lab_group: ser_chem)
 
 LabRequest.delete_all
-audu_lab_1 = LabRequest.create(patient: audu, date: audu.birth_date+5.months)
-audu_lab_2 = LabRequest.create(patient: audu, date: Date.today - 1.year)
+audu_lab_1 = LabRequest.create(patient: audu)
+audu_lab_1.created_at = audu.birth_date+5.months
+audu_lab_1.save
+audu_lab_2 = LabRequest.create(patient: audu)
+audu_lab_1.created_at = Date.today - 1.year
+audu_lab_1.save
 
 LabResult.delete_all
 LabResult.create(lab_request: audu_lab_1, lab_service: cd4, result: '1500')

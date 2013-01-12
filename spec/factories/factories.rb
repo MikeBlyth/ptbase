@@ -83,6 +83,35 @@ FactoryGirl.define do
 
   end
 
+  factory :lab_group do
+    sequence(:name) {|n| "Lab Group #{n}"}
+    sequence(:abbrev) {|n| "LabGrp_#{n}"}
+  end
+
+  factory :lab_service do
+    sequence(:name) {|n| "Lab Service #{n}"}
+    sequence(:abbrev) {|n| "lab_#{n}"}
+    unit 'mMol'
+    lab_group
+    #association :lab_group, strategy: :build
+    #after(:build) do |lab_service|
+    #  lab_service.lab_group = LabGroup.first || LabGroup.create(name: 'Lab Group', abbrev: 'LabGrp')
+    #end
+  end
+
+  factory :lab_request do
+    #date {Date.yesterday}
+    patient
+    provider
+  end
+
+  factory :lab_result do
+    lab_service
+    result '50'
+    lab_request
+    date {Date.today}
+  end
+
   factory :patient do
     sequence(:last_name) {|n| "LastNameA_#{n}" }
     sequence(:first_name) {|n| "First_#{n}" }

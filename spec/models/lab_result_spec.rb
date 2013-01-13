@@ -11,12 +11,23 @@ describe LabResult do
   describe 'get_selected_labs_by_date' do
 
     it 'selects labs for the given patient only' do
-      lab_result = FactoryGirl.create_list(:lab_result, 2).first
+      lab_result = FactoryGirl.create_list(:lab_result, 2, result: '50').first
       lab_svc = lab_result.lab_service.abbrev
       patient = lab_result.patient
       selected = LabResult.get_selected_labs_by_date(patient, nil, lab_svc)
-      selected.first.lab_service.should eq lab_result.lab_service
+      select_first = selected.first
+      select_first.lab_service.should eq lab_result.lab_service
+      select_first.date.should eq lab_result.date
+      select_first.result.should eq 50.0
       selected.count.should eq 1
+    end
+
+    it 'converts result to float when possible' do
+      lab_result = FactoryGirl.create(:lab_result, result: '50')
+      selected = LabResult.get_selected_labs_by_date(lab_result.patient)
+      puts LabResult.first.inspect
+      puts selected[0].inspect
+      selected[0].result.should eq 50.0
     end
 
     it 'selects labs for the given date range only' do
@@ -38,7 +49,20 @@ describe LabResult do
       selected = LabResult.get_selected_labs_by_date(patient, 30, lab_svc.abbrev)
       selected.first.lab_service.should eq lab_svc
       selected.count.should eq 1
-      puts "Selected labs with abbrev #{lab_svc.abbrev} from #{LabResult.all}, returning #{selected.all}"
+#      puts "Selected labs with abbrev #{lab_svc.abbrev} from #{LabResult.all}, returning #{selected.all}"
+    end
+
+    it 'finds by sym or string' do
+      patient = FactoryGirl.create(:patient)
+      lab_request = FactoryGirl.create(:lab_request, patient: patient)
+      lab_results = FactoryGirl.create_list(:lab_result, 2, lab_request: lab_request)
+      lab_svc = lab_results.first.lab_service
+      selected = LabResult.get_selected_labs_by_date(patient, 30,
+                                lab_results[0].lab_service.abbrev.to_s,
+                                lab_results[1].lab_service.abbrev.to_sym)
+      selected.count.should eq 2
+      selected[0].lab_service.should eq lab_results[0].lab_service
+      selected[1].lab_service.should  eq lab_results[1].lab_service
     end
 
     it 'returns all lab types when none specified' do

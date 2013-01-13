@@ -18,4 +18,5 @@ class LabService < ActiveRecord::Base
   attr_accessible :abbrev, :comments, :cost, :name, :lab_group, :lab_group_id
   belongs_to :lab_group
   has_many :lab_results
+  validates_presence_of :name, :abbrev
 end

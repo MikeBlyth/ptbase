@@ -12,4 +12,5 @@
 class LabGroup < ActiveRecord::Base
   attr_accessible :abbrev, :name
   has_many :lab_services
+  validates_presence_of :name, :abbrev
 end

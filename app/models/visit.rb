@@ -182,6 +182,11 @@ class Visit < ActiveRecord::Base
     date
   end
 
+  # Default sort order will be on date
+  def <=>(x,y)
+    x.date <=> y.date
+  end
+
   private
   def next_visit_future
     errors.add(:next_visit, 'date cannot be in the past') if next_visit && (next_visit < DateTime.now)

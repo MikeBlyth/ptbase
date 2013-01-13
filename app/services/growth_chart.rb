@@ -94,6 +94,7 @@ class GrowthChart < AbstractChart::Chart
 
   ### GET THE ACTUAL DATA FROM THE PATIENT VISITS
   # ToDo - use a proper db query ("where...") instead of plottable_wt_ht? and plottable_lab_values
+  # Return array [{age 0.5, weight: 5, height; 60}, {age: 0.9 ...}]
   def visit_data
     @visit_data ||= @patient.visits.select {|visit| plottable_wt_ht?(visit)}.map do |visit|
       {age: patient.age_on_date_in_years(visit.date),
@@ -102,23 +103,20 @@ class GrowthChart < AbstractChart::Chart
     end
   end
 
+  # Return array [{age 0.5, cd4: 1500, cd4pct: 20}, {age: 0.9 ...}]
   def lab_data
-    @lab_data ||= @patient.lab_results.select {|lab| plottable_lab_values?(lab)}.map do |lab|
-      {age: patient.age_on_date_in_years(lab.date),
-       cd4: lab.cd4,
-       cd4pct: lab.cd4pct}
-    end
+    @lab_data ||= LabResult.get_selected_labs_by_date(@patient, nil, 'cd4', 'cd4pct').
+        select {|lab| lab.result.any?}.
+        map do |lab|
+        {age: patient.age_on_date_in_years(lab.date),
+          lab.lab_service.abbrev => lab.result.to_f
+        }
+    end.select {}
   end
 
   # Return true/false for whether this set of labs has any that should be plotted
   def plottable_wt_ht?(visit)
     visit.weight || visit.height
-  end
-
-  # Return true/false for whether this set of labs has any that should be plotted
-  def plottable_lab_values?(lab)
-    lab.cd4 || lab.cd4pct
-    # add other labs to condition if they're to be plotted also
   end
 
   def add_std_anthro_series

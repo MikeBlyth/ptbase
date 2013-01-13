@@ -39,9 +39,6 @@ Immunization.delete_all
 birth = audu.birth_date
 Immunization.create(patient: audu, bcg: birth+2.weeks, opv1: birth+6.weeks, opv2: birth+10.weeks, dpt1: birth+6.weeks, dpt2: birth+10.weeks)
 
-Lab.delete_all
-Lab.create(patient: audu, date: audu.birth_date+5.months, hct: 34)
-
 LabGroup.delete_all
 heme = LabGroup.create(name: 'Hematology', abbrev: 'heme')
 ser_chem = LabGroup.create(name: 'Serum Chemistry', abbrev: 'ser-chem')

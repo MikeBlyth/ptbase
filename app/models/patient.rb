@@ -84,36 +84,35 @@ class Patient < ActiveRecord::Base
 
 
   def arv_begin
-    most_recent = self.visits.find(:first,
-                                     :conditions => "arv_status = 'B' ",
-                                     :order => "date DESC" )
+    most_recent = self.visits.where(:conditions => "arv_status = 'B' ",
+                                     :order => "date DESC" ).limit(1)
     if most_recent.nil?                # if we didn't find B (Begin), take the oldest C (continue)
-      most_recent = self.visits.find(:first,
-                                       :conditions => "arv_status = 'C' ",
-                                       :order => "date" )
+      most_recent = self.visits.where(:conditions => "arv_status = 'C' ",
+                                       :order => "date" ).limit(1)
 
     end
-    most_recent = most_recent.date unless most_recent.nil?
+    most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def arv_stop
-    most_recent = self.visits.find(:first,
-                                     :conditions => "arv_status = 'X' ",
-                                     :order => "date DESC" )
-    most_recent = most_recent.date unless most_recent.nil?
+    most_recent = self.visits.where(:conditions => "arv_status = 'X'",
+                                     :order => "date DESC" ).limit(1)
+    most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def current_arv_regimen
-    last_vis = self.last_visit
-    return '' if last_vis.nil?
-    return last_vis.arv_reg_str
+    last_visit ? last_visit.arv_reg_str : ''
+  end
+
+  def last_visit
+    @last_visit || self.visits.latest
   end
 
   # TODO: Outdated? See above
   def current_arv_regimen_began    # return date this regimen began, by whatever means we can find or guess
-    visits = self.visits.find(:all, :order => "date DESC") # if this gets to be too slow, could use SQL query to get only the needed columns
+    visits = self.visits.order("date DESC") # if this gets to be too slow, could use SQL query to get only the needed columns
     return '' if visits.nil?
     current_regimen = visits[0].arv_regimen    # this is the latest reported regimen
     return '' if current_regimen.blank?        # nothing reported
@@ -133,24 +132,21 @@ class Patient < ActiveRecord::Base
 
   # TODO: Outdated? See above
   def anti_tb_begin
-    most_recent = self.visits.find(:first,
-                                     :conditions => "anti_tb_status = 'B' ",
-                                     :order => "date DESC" )
+    most_recent = self.visits.where(:conditions => "anti_tb_status = 'B' ",
+                                     :order => "date DESC" ).limit(1)
     if most_recent.nil?                # if we didn't find B (Begin), take the oldest C (continue)
-      most_recent = self.visits.find(:first,
-                                       :conditions => "anti_tb_status = 'C' ",
-                                       :order => "date" )
+      most_recent = self.visits.where(:conditions => "anti_tb_status = 'C' ",
+                                       :order => "date" ).limit(1)
 
     end
-    most_recent = most_recent.date unless most_recent.nil?
+    most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def anti_tb_stop
-    most_recent = self.visits.find(:first,
-                                     :conditions => "anti_tb_status = 'X' ",
-                                     :order => "date DESC" )
-    most_recent = most_recent.date unless most_recent.nil?
+    most_recent = self.visits.where(:conditions => "anti_tb_status = 'X' ",
+                                     :order => "date DESC" ).limit(1)
+    most_recent ? most_recent.date  : nil
   end
 
   # THIS SECTION GETS THE MOST RECENT VALUES OF VARIOUS KINDS FOR A GIVEN PATIENT
@@ -160,8 +156,9 @@ class Patient < ActiveRecord::Base
   end
 
   def update_latest_parameters(selected=nil)
-    @latest_parameters = LatestParameters.new(self).load_from_tables
-
+    @latest_parameters = LatestParameters.new(self).load_from_tables(:weight, :height, :meds,
+                              :hiv_status)
+    @latest_parameters.add_labs(:cd4, :cd4pct, :hct)
     @latest_parameters.add_anthropometrics
 
     #   Reminders about needed labs
@@ -174,9 +171,7 @@ class Patient < ActiveRecord::Base
   end
 
   def next_appt
-    latest_visit = self.visits.latest
-    return nil if latest_visit.nil?
-    return latest_visit.next_visit
+    last_visit ? last_visit.next_visit : nil
   end
 
   ############### OTHER METHODS

@@ -4,11 +4,11 @@ class LatestParameters < Hash
   attr_accessor :from_tables
 
   DEFAULT_PARAMS =  {
-      :cd4 => {:table => Lab, :label => "Latest CD4", :col => "cd4"},
-      :cd4pct => {:table => Lab, :label => "Latest CD4%", :col => "cd4pct", :unit => '%'},
-      :comment_cd4 => {:table => Lab, :label => "CD4 comment", :col => "comment_cd4"},
-      :comment_hct => {:table => Lab, :label => "Hct comment", :col => "comment_hct"},
-      :hct => {:table => Lab, :label => "Latest hct", :col => "hct", :unit => '%'},
+      :CD4 => {:table => LabResult, :label => "Latest CD4", :col => "cd4"},
+      :cd4pct => {:table => LabResult, :label => "Latest CD4%", :col => "cd4pct", :unit => '%'},
+      :comment_cd4 => {:table => LabResult, :label => "CD4 comment", :col => "comment_cd4"},
+      :comment_hct => {:table => LabResult, :label => "Hct comment", :col => "comment_hct"},
+      :hct => {:table => LabResult, :label => "Latest hct", :col => "hct", :unit => '%'},
       :weight => {:table => Visit, :label => "Latest weight", :col => "weight", :unit => ' kg'},
       :height => {:table => Visit, :label => "Latest height", :col => "height", :unit => ' cm'},
       :meds => {:table => Visit, :label => "Latest meds", :col => "meds"},
@@ -28,19 +28,38 @@ class LatestParameters < Hash
   # Should look in the latest visit (see end of this procedure) for height, weight, etc. and
   # only look at other visits (get_last) if they're not recorded in the latest visit.
 
-  def load_from_tables(items=nil)
-    items ||= DEFAULT_PARAMS[keys] # use just a subset of possible items, or all if no subset (items) given
-    # Make hash of the parameters we *want* and where to find them
-    @from_tables.each do |param, param_hash|
-      self[param] = {label: param_hash[:label], col: param_hash[:col], unit: param_hash[:unit]}
-      result = get_last(param_hash[:table], param_hash[:col])
-      if result
-        self[param].merge! result  # add the values, dates passed back by the search for latest parameters
-        # Comment: this copies :table, :label, :col etc. so that we will have, e.g.,
-        # self[:cd4] -> {:value=> 300, :date => '2009-04-04', :table => Lab, :label => "Latest CD4", :col => "cd4", :unit => ''}
-      end
+  def load_from_visits(*items)
+    items = DEFAULT_PARAMS.select {|k,v| v[:table] == Visit}.keys if items.empty?
+    visit_data = self[:patient].visits.select('date,' + items.join(',')).order('date desc')
+    items.each do |item|
+      latest_match = visit_data.find {|v| v.send(item)}    # i.e. find latest visit with non-nil item of interest
+      self[item] = latest_match.send(item) if latest_match
     end
-    return self
+  end
+
+  #def load_from_tables(*items)
+  #  items ||= DEFAULT_PARAMS.keys # use just a subset of possible items, or all if no subset (items) given
+  #  # Make hash of the parameters we *want* and where to find them
+  #  @from_tables.each do |param, param_hash|
+  #    self[param] = {label: param_hash[:label], col: param_hash[:col], unit: param_hash[:unit]}
+  #    result = get_last(param_hash[:table], param_hash[:col])
+  #    if result
+  #      self[param].merge! result  # add the values, dates passed back by the search for latest parameters
+  #      # This copies :table, :label, :col etc. so that we will have, e.g.,
+  #      # self[:cd4] -> {:value=> 300, :date => '2009-04-04', :table => Lab, :label => "Latest CD4", :col => "cd4", :unit => ''}
+  #    end
+  #  end
+  #  return self
+  #end
+
+  def add_labs(*items)
+    items = DEFAULT_PARAMS.select {|k,v| v[:table] == LabResult}.keys if items.empty?
+    results = LabResult.get_selected_labs_by_date(self[:patient], nil, items)  # MUST be sorted by desc date
+puts results
+    items.each do |item|
+      latest_match = results.find {|r| r.lab_service.abbrev.to_s == item.to_s}
+      self[item] = latest_match.result if latest_match
+    end
   end
 
   def add_anthropometrics

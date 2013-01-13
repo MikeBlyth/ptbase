@@ -53,35 +53,35 @@ FactoryGirl.define do
     dpt2 {patient.birth_date.to_date + 6.weeks  }
   end
 
-  factory :lab do
-    date '2009-04-15'
-    patient
-    hct 40
-    wbc 5700
-
-    trait :hi_cd4 do
-      cd4 3000
-      cd4pct 25
-    end
-
-    trait :lo_cd4 do
-      cd4 100
-      cd4pct 8
-    end
-
-    trait :anemic do
-      hct 23
-    end
-
-    trait :hiv_pos do
-      hiv_screen 'positive'
-    end
-
-    trait :hiv_neg do
-      hiv_screen 'negative'
-    end
-
-  end
+  #factory :lab do
+  #  date '2009-04-15'
+  #  patient
+  #  hct 40
+  #  wbc 5700
+  #
+  #  trait :hi_cd4 do
+  #    cd4 3000
+  #    cd4pct 25
+  #  end
+  #
+  #  trait :lo_cd4 do
+  #    cd4 100
+  #    cd4pct 8
+  #  end
+  #
+  #  trait :anemic do
+  #    hct 23
+  #  end
+  #
+  #  trait :hiv_pos do
+  #    hiv_screen 'positive'
+  #  end
+  #
+  #  trait :hiv_neg do
+  #    hiv_screen 'negative'
+  #  end
+  #
+  #end
 
   factory :lab_group do
     sequence(:name) {|n| "Lab Group #{n}"}

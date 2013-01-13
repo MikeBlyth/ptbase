@@ -21,6 +21,7 @@ class LabResult < ActiveRecord::Base
   belongs_to :lab_request
   belongs_to :lab_service
   has_one :patient, through: :lab_request
+  validates_presence_of :lab_request_id, :lab_service_id
 
   # Get selected labs (by abbrevs) for patient covering "days_since" days from present
   # E.g. get_selected_labs_by_date(patient, 45, :CD4, :hct, 'cd4%')
@@ -29,15 +30,18 @@ class LabResult < ActiveRecord::Base
   # If days_since is nil, all specified labs are returned (without a date window)
   # ToDo -- move this off into a query object or something like that?
   def self.get_selected_labs_by_date(patient, days_since=nil, *selected_labs)
-    target_abbrevs = selected_labs.map{|v| "'#{v.to_s.downcase}'"}.join(',') # " 'cd4', 'cd4%' ... "
-    target_labs = LabService.where("LOWER(lab_services.abbrev) IN (#{target_abbrevs})").
-        map {|s| s.id}
     since_date = days_since ?  Date.today - days_since.days : Date.today - 100.years
-    self.joins(:patient, :lab_request).
+    selected = self.joins(:patient, :lab_request).
         where('patients.id = ?', patient.id).
         where('date(lab_results.date) > ?', since_date ).
-        where(:lab_service_id => target_labs).
         select('result, lab_service_id, date')
+    if selected_labs.any?
+      target_abbrevs = selected_labs.map{|v| "'#{v.to_s.downcase}'"}.join(',') # " 'cd4', 'cd4%' ... "
+      target_labs = LabService.where("LOWER(lab_services.abbrev) IN (#{target_abbrevs})").
+          map {|s| s.id}
+      selected = selected.where(:lab_service_id => target_labs)
+    end
+    return selected
   end
 
   def to_s

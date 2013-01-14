@@ -25,4 +25,8 @@ class Provider < ActiveRecord::Base
     name_id
   end
 
+  def name_id
+    "#{last_name}, #{first_name} [#{ident}]"
+  end
+
 end

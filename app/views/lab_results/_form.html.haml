@@ -1,0 +1,10 @@
+lab_results/form
+results = @record
+= simple_fields_for @record do |form|
+  = patient_name_link(@record.patient)
+  = form.input :date, as: :string
+  = form.input :result
+  = form.input :status
+  = form.input :abnormal
+  = form.input :panic
+  = form.input :comments

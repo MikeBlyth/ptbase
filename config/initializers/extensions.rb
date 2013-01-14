@@ -27,6 +27,10 @@ class NilClass
     false
   end
 
+  def to_s(options=nil)
+    ''
+  end
+
   def empty?
     true
   end

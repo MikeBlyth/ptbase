@@ -1,0 +1,7 @@
+lab_requests/form
+= simple_fields_for @record do |form|
+  = patient_name_link(@record.patient)
+  = form.input :date, as: :string
+  = form.input :provider
+  = form.input :lab_results
+  = form.input :comments

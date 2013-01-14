@@ -1,18 +1,20 @@
 require 'anthropometrics'
 
+
+#ToDo -- think about problem of outdated values esp. weight & height. Consumer beware?
 class LatestParameters < Hash
   attr_accessor :from_tables
 
   DEFAULT_PARAMS =  {
-      :cd4 => {:table => LabResult, :label => "Latest CD4", :col => "cd4"},
-      :cd4pct => {:table => LabResult, :label => "Latest CD4%", :col => "cd4pct", :unit => '%'},
-      :comment_cd4 => {:table => LabResult, :label => "CD4 comment", :col => "comment_cd4"},
-      :comment_hct => {:table => LabResult, :label => "Hct comment", :col => "comment_hct"},
-      :hct => {:table => LabResult, :label => "Latest hct", :col => "hct", :unit => '%'},
-      :weight => {:table => Visit, :label => "Latest weight", :col => "weight", :unit => ' kg'},
-      :height => {:table => Visit, :label => "Latest height", :col => "height", :unit => ' cm'},
-      :meds => {:table => Visit, :label => "Latest meds", :col => "meds"},
-      :hiv_stage => {:table => Visit, :label => "HIV stage", :col => "hiv_stage"}
+      :cd4 => {:table => LabResult, :label => "Latest CD4"},
+      :cd4pct => {:table => LabResult, :label => "Latest CD4%", :unit => '%'},
+      :comment_cd4 => {:table => LabResult, :label => "CD4 comment"},
+      :comment_hct => {:table => LabResult, :label => "Hct comment"},
+      :hct => {:table => LabResult, :label => "Latest hct", :unit => '%'},
+      :weight => {:table => Visit, :label => "Latest weight", :unit => ' kg'},
+      :height => {:table => Visit, :label => "Latest height", :unit => ' cm'},
+      :meds => {:table => Visit, :label => "Latest meds"},
+      :hiv_stage => {:table => Visit, :label => "HIV stage"}
   }
 
   def initialize(patient)
@@ -22,7 +24,6 @@ class LatestParameters < Hash
     self[:sex] = patient.sex
     self[:latest_visit] = patient.visits.latest
     load_from_visits
-    load_from_labs
   end
 
   def load_from_visits(*items)
@@ -30,7 +31,7 @@ class LatestParameters < Hash
     visit_data = self[:patient].visits.select('date,' + items.join(',')).order('date desc')
     items.each do |item|
       latest_match = visit_data.find {|v| v.send(item)}    # i.e. find latest visit with non-nil item of interest
-      self[item] = {date: latest_match.date, value: latest_match.send(item)} if latest_match
+      insert_item({item: item, date: latest_match.date, value: latest_match.send(item)}) if latest_match
     end
   end
 
@@ -39,8 +40,14 @@ class LatestParameters < Hash
     results = LabResult.get_selected_labs_by_date(self[:patient], nil, items)  # MUST be sorted by desc date
     items.each do |item|
       latest_match = results.find {|r| r.lab_service.abbrev.to_s == item.to_s}
-      self[item] = {date: latest_match.date, value: latest_match.result} if latest_match
+      insert_item({item: item, date: latest_match.date, value: latest_match.result}) if latest_match
     end
+  end
+
+  # Given {item: :weight, date: Date.today, value: 30.0, something_else: 'Really?'}, insert
+  # self[:weight] = {date: Date.today, value: 30.0, something_else: 'Really?'}
+  def insert_item(item_hash)
+    self[item_hash.delete(:item)] = item_hash #  (Remembering that Hash.delete returns the value of the deleted key)
   end
 
   # ToDo - Add warning, or fail to perform anthropometrics, if dates are not reasonably equal
@@ -86,6 +93,10 @@ class LatestParameters < Hash
       self["comment_#{item}".to_sym] = {:label => "Note", :value => message}
     end
     return self
+  end
+
+  def value(item)
+    self[item] ? self[item][:value] : nil
   end
 
 private

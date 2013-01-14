@@ -84,26 +84,31 @@ class Patient < ActiveRecord::Base
 
 
   def arv_begin
-    most_recent = self.visits.where(:conditions => "arv_status = 'B' ",
-                                     :order => "date DESC" ).limit(1)
-    if most_recent.nil?                # if we didn't find B (Begin), take the oldest C (continue)
-      most_recent = self.visits.where(:conditions => "arv_status = 'C' ",
-                                       :order => "date" ).limit(1)
-
-    end
+    most_recent = self.visits.where(arv_status: ['B', 'C']).order("date ASC" ).first
     most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def arv_stop
-    most_recent = self.visits.where(:conditions => "arv_status = 'X'",
-                                     :order => "date DESC" ).limit(1)
+    most_recent = self.visits.where(arv_status: 'X').order("date DESC" ).first
     most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def current_arv_regimen
     last_visit ? last_visit.arv_reg_str : ''
+  end
+
+  # TODO: Outdated? See above
+  def anti_tb_begin
+    most_recent = self.visits.where(anti_tb_status: ['B', 'C']).order("date ASC" ).first
+    most_recent ? most_recent.date  : nil
+  end
+
+  # TODO: Outdated? See above
+  def anti_tb_stop
+    most_recent = self.visits.where(anti_tb_status: 'X').order("date DESC" ).first
+    most_recent ? most_recent.date  : nil
   end
 
   def last_visit
@@ -131,33 +136,16 @@ class Patient < ActiveRecord::Base
   end
 
   # TODO: Outdated? See above
-  def anti_tb_begin
-    most_recent = self.visits.where(:conditions => "anti_tb_status = 'B' ",
-                                     :order => "date DESC" ).limit(1)
-    if most_recent.nil?                # if we didn't find B (Begin), take the oldest C (continue)
-      most_recent = self.visits.where(:conditions => "anti_tb_status = 'C' ",
-                                       :order => "date" ).limit(1)
-
-    end
-    most_recent ? most_recent.date  : nil
-  end
-
-  # TODO: Outdated? See above
-  def anti_tb_stop
-    most_recent = self.visits.where(:conditions => "anti_tb_status = 'X' ",
-                                     :order => "date DESC" ).limit(1)
-    most_recent ? most_recent.date  : nil
-  end
 
   # THIS SECTION GETS THE MOST RECENT VALUES OF VARIOUS KINDS FOR A GIVEN PATIENT
 
-  def latest_parameters(items=nil)
+  def latest_parameters
     @latest_parameters || update_latest_parameters
   end
 
-  def update_latest_parameters(selected=nil)
-    @latest_parameters = LatestParameters.new(self).load_from_tables(:weight, :height, :meds,
-                              :hiv_status)
+  # ToDo - CD4 & CD4 pct don't need to be added to non-HIV patients
+  def update_latest_parameters
+    @latest_parameters = LatestParameters.new(self)
     @latest_parameters.load_from_labs(:cd4, :cd4pct, :hct)
     @latest_parameters.add_anthropometrics
 

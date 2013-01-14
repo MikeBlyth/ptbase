@@ -93,9 +93,9 @@ class PrescriptionsController < ApplicationController
     # If there are any drug names in selected, then only those will be included in the suggestions
     latest_parameters = patient.latest_parameters
     age = patient.age_years
-    @weight = latest_parameters[:weight][:value]
-    @height = latest_parameters[:height][:value]
-    bsa_pt = latest_parameters[:bsa][:value]      # just to let us have flexibility of using these names for same vars
+    @weight = latest_parameters.value(:weight)
+    @height = latest_parameters.value(:height)
+    bsa_pt = latest_parameters.value(:bsa)     # just to let us have flexibility of using these names for same vars
     wt = weight = @weight
     return [] if wt.nil?
     suggested_return = []

@@ -19,7 +19,6 @@ describe GrowthChart do
     labs_factory.date = Date.today - 6.months
     @labs = labs_factory.add_labs({lab: 'cd4', result: 1000},
                                   {lab: 'cd4pct', result: 30})
-binding.pry
     @chart = GrowthChart.new(@patient)
   end
 
@@ -51,7 +50,8 @@ binding.pry
     end
 
     it 'creates cd4 series' do
-      cd4_series = @chart.cd4_series
+      cd4_series = @chart.cd4_series.sort  # sorting is normally done at rendering time
+      puts "labs = #{LabResult.all}"
       point_match(cd4_series[:data][0], [0.5,1000])
       point_match(cd4_series[:data][1], [1.0,300])
       cd4_series[:x_name].should == :age
@@ -59,7 +59,7 @@ binding.pry
     end
 
     it 'creates cd4pct series' do
-      cd4pct_series = @chart.cd4pct_series
+      cd4pct_series = @chart.cd4pct_series.sort
       point_match(cd4pct_series[:data][0], [0.5, 30])
       point_match(cd4pct_series[:data][1], [1.0, 15])
       cd4pct_series[:x_name].should == :age

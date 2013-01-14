@@ -15,12 +15,13 @@ class LabsFactory
   def add_labs(*labs)
     added = []
     labs.each do |lab|
-      a_date = lab[:date] || @request.date
+      lab[:date] ||= @request.date
       abbrev = lab[:abbrev] || lab[:lab] || lab[:name]
-      request = get_request_for_date(a_date)
+#      request = get_request_for_date(a_date)
       service = get_service_by_abbrev(abbrev)
-      create_options = lab.select {|k,v| ![:date, :abbrev, :lab, :name].include? k}.
+      create_options = lab.select {|k,v| ![:abbrev, :lab, :name].include? k}.
                        merge({lab_request: request, lab_service: service})
+#puts "create_options=#{create_options}"
       added << FactoryGirl.create(:lab_result, create_options)
     end
     return added

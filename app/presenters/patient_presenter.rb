@@ -65,7 +65,7 @@ class PatientPresenter
 
   def show_latest_parameters(*items)
     items ||= [:hct, :cd4, :weight]
-    latest = @patient.latest_parameters(items)
+    latest = @patient.latest_parameters
     result = ''
     # report the latest values of each of the parameters listed in the following array:
     items.each do |item|
@@ -111,9 +111,9 @@ class PatientPresenter
 
   def anthropometric_summary
     latest = @patient.latest_parameters.add_anthropometrics
- #binding.pry
     height, wt_pct, ht_pct, wt_for_ht_pct =
-       [:height, :pct_expected_wt, :pct_expected_ht, :pct_expected_wt_for_ht].map {|item| latest[item][:value] }
+       [:height, :pct_expected_wt, :pct_expected_ht, :pct_expected_wt_for_ht].
+           map {|item| latest[item] ? latest[item][:value] : '?' }
     results = <<-ANTHRO
       Weight is #{wt_pct}% of expected for age.
       Height (#{height} cm) is #{ht_pct}% of expected for age.

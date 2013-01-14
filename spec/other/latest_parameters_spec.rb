@@ -46,6 +46,7 @@ describe LatestParameters do
 
     it 'finds new values when all are present' do
       latest = LatestParameters.new(@patient)
+      latest.load_from_labs(:cd4, :cd4pct, :hct)
       [:weight, :height, :meds,:hiv_stage].each do |param|
         latest[param][:value].to_s.should eq @recent_visit.send(param).to_s
       end
@@ -64,6 +65,7 @@ describe LatestParameters do
 
     it 'finds new values when all are present' do
       latest = LatestParameters.new(@patient)
+      latest.load_from_labs(:cd4, :cd4pct, :hct)
       [:weight, :height, :meds,:hiv_stage].each do |param|
         latest[param][:value].to_s.should eq @recent_visit.send(param).to_s
       end
@@ -147,6 +149,22 @@ describe LatestParameters do
       latest.add_reminder(item: :hct, message: 'Other message for $')
       latest[:comment_hct][:value].should eq 'Other message for hct'
       latest[:comment_hct][:label].should eq "Note"
+    end
+
+  end
+
+  describe 'value function' do
+    before(:each) do
+      @latest = LatestParameters.new(Patient.new)
+      @latest.insert_item({item: 'hct', value: 25, date: Date.today})
+    end
+
+    it 'returns item value when defined' do
+      @latest.value('hct').should eq 25
+    end
+
+    it 'returns nil when item is defined' do
+      @latest.value('something').should be_nil
     end
 
   end

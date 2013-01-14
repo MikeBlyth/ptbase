@@ -105,14 +105,12 @@ class GrowthChart < AbstractChart::Chart
 
   # Return array [{age 0.5, cd4: 1500, cd4pct: 20}, {age: 0.9 ...}]
   def lab_data
-binding.pry
     @lab_data ||= LabResult.get_selected_labs_by_date(@patient, nil, 'cd4', 'cd4pct').
         select {|lab| ! lab.result.nil? }.
         map do |lab|
-        {age: patient.age_on_date_in_years(lab.date),
-          lab.lab_service.abbrev => lab.result.to_f
-        }
-    end.select {}
+          {age: patient.age_on_date_in_years(lab.date),
+          lab.lab_service.abbrev => lab.result.to_f }
+        end
   end
 
   # Return true/false for whether this set of labs has any that should be plotted

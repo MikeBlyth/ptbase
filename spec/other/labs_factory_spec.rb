@@ -43,6 +43,13 @@ describe LabsFactory do
     f.request.date.to_date.should eq Date.today - 1.year
   end
 
+  it 'setting date gives that date to subsequent labs' do
+    f = LabsFactory.new
+    new_date = DateTime.now - 1.year
+    f.date = new_date
+    f.add_labs({lab: :hct}).first.date.should eq new_date
+  end
+
   it 'adds labs' do
     f = LabsFactory.new
     f.add_labs({lab: 'hct'}, {lab: 'cd4'})
@@ -61,6 +68,6 @@ describe LabsFactory do
     f = LabsFactory.new
     some_date = DateTime.now - 1.year
     f.add_labs({lab: 'hct', date: some_date})
-    f.patient.lab_results.last.reload.lab_request.date.should eq some_date
+    f.patient.lab_results.last.reload.date.should eq some_date
   end
 end

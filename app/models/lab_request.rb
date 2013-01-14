@@ -17,5 +17,11 @@ class LabRequest < ActiveRecord::Base
   belongs_to :provider
   has_many :lab_results
   validates_presence_of :provider_id, :patient_id
+  before_validation :default_date
+
+  private
+  def default_date
+    self.date ||= DateTime.now
+  end
 end
 

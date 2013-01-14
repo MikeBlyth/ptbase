@@ -1,6 +1,7 @@
 require "spec_helper"
 require "latest_parameters"
 require "anthropometrics"
+require "#{Rails.root}/spec/factories/labs_factory"
 
 describe LatestParameters do
 
@@ -30,43 +31,44 @@ describe LatestParameters do
       @old = Date.today - 6.months
       @patient = FactoryGirl.create(:patient)
       FactoryGirl.create(:health_data, patient: @patient)
-      @recent_labs = FactoryGirl.create(:lab, :lo_cd4, :anemic, patient: @patient, date: @recent)
-      @old_labs = FactoryGirl.create(:lab, :hi_cd4, patient: @patient, date: @old)
-      @recent_visit = FactoryGirl.create(:visit, date: @old, patient: @patient,
+      labs_factory = LabsFactory.new(patient: @patient, date: @recent)
+      @nominal = {cd4: 300.0, hct: 28.0, cd4pct: 15.0}
+      @recent_labs = labs_factory.add_labs({lab: 'cd4', result: @nominal[:cd4]},
+                                           {lab: 'hct', result: @nominal[:hct]},
+                                           {lab: 'cd4pct', result: @nominal[:cd4pct]})
+      labs_factory.date = @old
+      @old_labs = labs_factory.add_labs({lab: 'cd4', result: 500}, {lab: 'hct', result: 30}, {lab: 'cd4pct', result: 20})
+      @recent_visit = FactoryGirl.create(:visit, date: @recent, patient: @patient,
                                          height: 120, weight: 30, meds: "Meds recent", hiv_stage: 3)
       @old_visit = FactoryGirl.create(:visit, date: @old, patient: @patient,
                                       height: 119, weight: 35, meds: "Meds old", hiv_stage: 1 )
     end
 
     it 'finds new values when all are present' do
-      latest = LatestParameters.new(@patient).load_from_tables
+      latest = LatestParameters.new(@patient)
       [:weight, :height, :meds,:hiv_stage].each do |param|
         latest[param][:value].to_s.should eq @recent_visit.send(param).to_s
       end
       [:cd4, :cd4pct, :hct].each do |param|
-        latest[param][:value].to_s.should eq @recent_labs.send(param).to_s
+        latest[param][:value].should eq @nominal[param]
       end
     end
 
     it 'finds uses latest non-nil when ones in most recent record are missing' do
-      @recent_labs.update_attributes(cd4: nil, hct: nil, cd4pct: nil)
       @recent_visit.update_attributes(weight: nil, height: nil, meds: nil, hiv_stage: nil)
-      latest = LatestParameters.new(@patient).load_from_tables
+      latest = LatestParameters.new(@patient)
       [:weight, :height, :meds,:hiv_stage].each do |param|
         latest[param][:value].to_s.should eq @old_visit.send(param).to_s
-      end
-      [:cd4, :cd4pct, :hct].each do |param|
-        latest[param][:value].to_s.should eq @old_labs.send(param).to_s
       end
     end
 
     it 'finds new values when all are present' do
-      latest = LatestParameters.new(@patient).load_from_tables
+      latest = LatestParameters.new(@patient)
       [:weight, :height, :meds,:hiv_stage].each do |param|
         latest[param][:value].to_s.should eq @recent_visit.send(param).to_s
       end
       [:cd4, :cd4pct, :hct].each do |param|
-        latest[param][:value].to_s.should eq @recent_labs.send(param).to_s
+        latest[param][:value].should eq @nominal[param]
       end
     end
   end
@@ -80,7 +82,7 @@ describe LatestParameters do
 
     it 'adds all measures when required data is present' do
       @visit = FactoryGirl.create(:visit, :recent, patient: @patient, height: 120, weight: 30)
-      latest = LatestParameters.new(@patient).load_from_tables.add_anthropometrics
+      latest = LatestParameters.new(@patient).add_anthropometrics
       latest[:pct_expected_ht][:value].should eq pct_expected_height(age: @patient.age_years,
                                                              sex: @patient.sex, height: @visit.height)
       latest[:pct_expected_wt][:value].should eq pct_expected_weight(age: @patient.age_years,
@@ -96,7 +98,7 @@ describe LatestParameters do
 
       it 'when height is missing' do
         @visit = FactoryGirl.create(:visit, :recent, patient: @patient, height: nil, weight: 30)
-        latest = LatestParameters.new(@patient).load_from_tables.add_anthropometrics
+        latest = LatestParameters.new(@patient).add_anthropometrics
         latest[:pct_expected_ht][:value].should eq missing
         latest[:pct_expected_wt][:value].should eq pct_expected_weight(age: @patient.age_years,
                                                                        sex: @patient.sex, weight: @visit.weight)
@@ -105,7 +107,7 @@ describe LatestParameters do
 
       it 'when weight is missing' do
         @visit = FactoryGirl.create(:visit, :recent, patient: @patient, height: 120, weight: nil)
-        latest = LatestParameters.new(@patient).load_from_tables.add_anthropometrics
+        latest = LatestParameters.new(@patient).add_anthropometrics
         latest[:pct_expected_ht][:value].should eq pct_expected_height(age: @patient.age_years,
                                                                        sex: @patient.sex, height: @visit.height)
         latest[:pct_expected_wt][:value].should eq missing
@@ -120,34 +122,28 @@ describe LatestParameters do
     before(:each) do
       @patient = FactoryGirl.create(:patient)
       FactoryGirl.create(:health_data, patient: @patient)
-      @labs = FactoryGirl.build(:lab, :lo_cd4, :anemic, patient: @patient, date: Date.today - 2.years)
     end
 
-    let(:latest) {LatestParameters.new(@patient).load_from_tables}
+    let(:latest) {LatestParameters.new(@patient)}
 
     it 'adds reminders when no specified lab within time limit' do
-      @labs.save
-      latest[:hct][:value].should_not be_nil
+      latest[:hct] = {date: Date.today-1.year, value: 28}
       latest.add_reminder(item: :hct)
       latest.add_reminder(item: :cd4)
+      latest[:comment_hct].should_not be_nil
+      latest[:comment_cd4].should_not be_nil
       latest[:comment_hct][:value].should eq "patient is due for hct check"
       latest[:comment_hct][:label].should eq "Note"
       latest[:comment_cd4][:value].should eq "patient is due for cd4 check"
     end
 
     it 'does not add reminders when last specified lab is within time limit' do
-      @labs.date = Date.today
-      @labs.save
-      latest[:hct][:value].should_not be_nil
+      latest[:hct] = {date: Date.today, value: 28}
       latest.add_reminder(item: :hct)
-      latest.add_reminder(item: :cd4)
-      latest[:comment_hct][:value].should be_nil
-      latest[:comment_cd4][:value].should be_nil
+      latest[:comment_hct].should be_nil
     end
 
     it 'uses custom message when given' do
-      @labs.save
-      latest[:hct][:value].should_not be_nil
       latest.add_reminder(item: :hct, message: 'Other message for $')
       latest[:comment_hct][:value].should eq 'Other message for hct'
       latest[:comment_hct][:label].should eq "Note"

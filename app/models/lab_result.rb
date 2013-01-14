@@ -35,7 +35,7 @@ class LabResult < ActiveRecord::Base
     selected = self.joins(:patient, :lab_request).
         where('patients.id = ?', patient.id).
         where('date(lab_results.date) > ?', since_date ).
-        select('result, lab_service_id, date').
+        select('result, lab_service_id, lab_results.date').
         order("date desc")
 #puts "Selected names = #{selected_names}"
     selected_labs = selected_names.flatten

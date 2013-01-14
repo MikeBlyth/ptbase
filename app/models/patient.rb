@@ -158,7 +158,7 @@ class Patient < ActiveRecord::Base
   def update_latest_parameters(selected=nil)
     @latest_parameters = LatestParameters.new(self).load_from_tables(:weight, :height, :meds,
                               :hiv_status)
-    @latest_parameters.add_labs(:cd4, :cd4pct, :hct)
+    @latest_parameters.load_from_labs(:cd4, :cd4pct, :hct)
     @latest_parameters.add_anthropometrics
 
     #   Reminders about needed labs

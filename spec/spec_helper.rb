@@ -61,8 +61,9 @@ puts "FactoryGirl.reload"
 
 puts "load routes.rb"
   load "#{Rails.root}/config/routes.rb"
-puts "load all app files"
+ #puts "load all app files"
  # Dir["#{Rails.root}/app/**/*.rb"].each { |f| load f }
+  load "latest_parameters.rb"
 puts "END OF SPORK EACH RUN"
 end
 

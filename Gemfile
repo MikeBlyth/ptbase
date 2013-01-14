@@ -46,6 +46,7 @@ group :test do
   gem "guard-spork"
   gem "guard-rails"  # Restart development server when needed
   gem 'guard-rspec'
+  gem 'database_cleaner'
   gem "guard-annotate"
   gem 'libnotify' # for use with libnotify
   gem 'launchy'

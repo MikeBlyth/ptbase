@@ -1,4 +1,5 @@
 require 'growth_chart'
+require "#{Rails.root}/spec/factories/labs_factory.rb"
 include GrowthChartRefLines
 
 # Use to match data points which have age/time/etc. float values for x (first component)
@@ -12,8 +13,13 @@ describe GrowthChart do
     @patient = FactoryGirl.create(:patient, birth_date: 1.year.ago)
     @visit_1 = FactoryGirl.create(:visit, date: @patient.birth_date, patient: @patient, weight: 3, height: 54)
     @visit_2 = FactoryGirl.create(:visit, date: @patient.birth_date + 6.months, patient: @patient, weight: 8, height: 74)
-    @lab_1 = FactoryGirl.create(:lab, date: 6.months.ago, patient: @patient, cd4: 1000, cd4pct: 30)
-    @lab_1 = FactoryGirl.create(:lab, date: 1.day.ago, patient: @patient, cd4: 300, cd4pct: 15)
+    labs_factory = LabsFactory.new(patient: @patient, date: Date.yesterday)
+    @labs = labs_factory.add_labs({lab: 'cd4', result: 300},
+                                         {lab: 'cd4pct', result: 15})
+    labs_factory.date = Date.today - 6.months
+    @labs = labs_factory.add_labs({lab: 'cd4', result: 1000},
+                                  {lab: 'cd4pct', result: 30})
+binding.pry
     @chart = GrowthChart.new(@patient)
   end
 
@@ -48,8 +54,6 @@ describe GrowthChart do
       cd4_series = @chart.cd4_series
       point_match(cd4_series[:data][0], [0.5,1000])
       point_match(cd4_series[:data][1], [1.0,300])
-      #cd4_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      #cd4_series.y_axis.should == {"name"=>:cd4, "units"=>"", "label"=>"CD4"}
       cd4_series[:x_name].should == :age
       cd4_series[:y_axis].should == :cd4
     end
@@ -58,8 +62,6 @@ describe GrowthChart do
       cd4pct_series = @chart.cd4pct_series
       point_match(cd4pct_series[:data][0], [0.5, 30])
       point_match(cd4pct_series[:data][1], [1.0, 15])
-      #cd4pct_series.x_axis.should == {"name"=>:age, "units"=>"Years", "label"=>"Age"}
-      #cd4pct_series.y_axis.should == {"name"=>:cd4pct, "units"=>"%", "label"=>"CD4%"}
       cd4pct_series[:x_name].should == :age
       cd4pct_series[:y_axis].should == :cd4pct
     end

@@ -19,6 +19,10 @@ class LabRequest < ActiveRecord::Base
   validates_presence_of :provider_id, :patient_id
   before_validation :default_date
 
+  def to_s
+    "Lab requests for #{patient}, #{date}"
+  end
+
   private
   def default_date
     self.date ||= DateTime.now

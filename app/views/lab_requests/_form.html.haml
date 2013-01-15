@@ -1,7 +1,9 @@
-lab_requests/form
+= render 'shared/form_header'
 = simple_fields_for @record do |form|
-  = patient_name_link(@record.patient)
-  = form.input :date, as: :string
-  = form.input :provider
-  = form.input :lab_results
+  - available_labs.each do |group, services|
+    .span3
+      .lab_group= group
+      = render partial: 'lab_results/select', collection: services, as: :service
+  .row-fluid
+  %hr
   = form.input :comments

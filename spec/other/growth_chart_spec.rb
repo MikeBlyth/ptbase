@@ -51,7 +51,7 @@ describe GrowthChart do
 
     it 'creates cd4 series' do
       cd4_series = @chart.cd4_series.sort  # sorting is normally done at rendering time
-      puts "labs = #{LabResult.all}"
+#puts "labs = #{LabResult.all}"
       point_match(cd4_series[:data][0], [0.5,1000])
       point_match(cd4_series[:data][1], [1.0,300])
       cd4_series[:x_name].should == :age

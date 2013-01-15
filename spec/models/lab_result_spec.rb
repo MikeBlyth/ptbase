@@ -4,7 +4,6 @@ describe LabResult do
   let(:lab_result) {FactoryGirl.build(:lab_result)}
 
   describe 'validation' do
-    it { should validate_presence_of(:lab_request_id)}
     it { should validate_presence_of(:lab_service_id)}
   end
 

@@ -21,7 +21,7 @@ class LabResult < ActiveRecord::Base
   belongs_to :lab_request
   belongs_to :lab_service
   has_one :patient, through: :lab_request
-  validates_presence_of :lab_request_id, :lab_service_id
+  validates_presence_of  :lab_service_id
   after_find :numerify_result
 
   # Get selected labs (by abbrevs) for patient covering "days_since" days from present

@@ -21,6 +21,7 @@ class LabResult < ActiveRecord::Base
   belongs_to :lab_request
   belongs_to :lab_service
   has_one :patient, through: :lab_request
+  before_validation :set_default_status
   validates_presence_of  :lab_service_id
   after_find :numerify_result
 
@@ -56,6 +57,10 @@ class LabResult < ActiveRecord::Base
   def numerify_result
     #puts "numerify #{result} (#{result.class}) to #{result ? result.to_f_if_numeric : nil}"
     self.result = result ? result.to_f_if_numeric : nil
+  end
+
+  def set_default_status
+    self.status ||= :pending
   end
 end
 

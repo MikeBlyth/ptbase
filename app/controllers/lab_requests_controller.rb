@@ -18,8 +18,10 @@ class LabRequestsController < ApplicationController
 
   def update
     #   selected_services = params.delete(:services)
+#binding.pry
+    @record = LabRequest.find(params[:id])
     new_params = params[:lab_request]
-    patient_id = new_params.delete(:patient_id)
+    @record.lab_results.where(status: :pending).delete_all
     add_services
     if @record.update_attributes(new_params)
       flash[:notice] = 'Successfully updated'

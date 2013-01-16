@@ -15,7 +15,8 @@ class LabRequest < ActiveRecord::Base
   attr_accessible :date, :hct, :patient_id, :provider_id, :patient, :provider, :lab_results_attributes
   belongs_to :patient
   belongs_to :provider
-  has_many :lab_results
+  has_many :lab_results, :dependent => :delete_all
+  has_many :lab_services, :through => :lab_results
   validates_presence_of :provider_id, :patient_id
   before_validation :default_date
   accepts_nested_attributes_for :lab_results

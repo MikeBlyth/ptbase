@@ -2,42 +2,43 @@
 - present @record do |pt_presenter|
 
   %h2
-    Main Info Page for #{@patient.name_id} {#{@patient.send("pepfar")}}
-  = render "growth_chart_rickshaw"
-  %h3 Demographics
-  .row-fluid
-    .span3
-      %table{:align => "left"}
-        %tr
-          %td.item_h Birthdate:
-          %td= @patient.birth_date
-        %tr
-          %td.item_h Sex:
-          %td= @patient.sex
-    .span5
-      %table{:align => "left"}
-        %tr
-          %td.item_h{:cellpadding => "2"} Residence:
-          %td= @patient.residence
-        %tr
-          %td.item_h Phone2:
-          %td= @patient.phone
-        %tr
-          %td.item_h Caregiver:
-          %td= @patient.caregiver
-        %tr
-          %td.item_h{:valign => "top"} Status:
-          %td= pt_presenter.alive_or_dead
-    .span2
-      = pt_presenter.photo_display(@photo)
-    %br{:clear => "all"}/
-  .row-fluid
-    = render(:partial => 'shared/medinfo', :object => @patient )
-  .row-fluid
-    = render(:partial => 'shared/problem_list', :object => @patient )
-  .row-fluid
+    Main Info Page for #{@patient.name_id}
+  %fieldset
+    %legend Demographics
+    .row-fluid
+      .span3
+        %table{:align => "left"}
+          %tr
+            %td.item_h Birthdate:
+            %td= @patient.birth_date
+          %tr
+            %td.item_h Sex:
+            %td= @patient.sex
+      .span5
+        %table{:align => "left"}
+          %tr
+            %td.item_h{:cellpadding => "2"} Residence:
+            %td= @patient.residence
+          %tr
+            %td.item_h Phone:
+            %td= @patient.phone
+          %tr
+            %td.item_h Caregiver:
+            %td= @patient.caregiver
+          %tr
+            %td.item_h{:valign => "top"} Status:
+            %td= pt_presenter.alive_or_dead
+      .span2
+        = pt_presenter.photo_display(@photo)
+      %br{:clear => "all"}/
+  %fieldset
+    %legend Current medical info
+    .row-fluid
+      = render(:partial => 'shared/medinfo', :object => @patient )
+    .row-fluid
+      = render(:partial => 'shared/problem_list', :object => @patient )
+  .row-fluid.footer_buttons
     = link_to 'Edit patient', {:action => 'edit', :id => @patient}, :class => 'btn'
-  -#= link_to 'Next PEPFAR', {:action => 'show_next', :id => @patient}
-  - if true || authorized_as_admin
-    = link_to "Delete this patient", { :action => "destroy", :id => @patient.id} ,
-      :confirm => 'Are you sure?', :class => 'btn btn-danger'
+    - if true || authorized_as_admin
+      = link_to "Delete this patient", { :action => "destroy", :id => @patient.id} ,
+       :confirm => 'Are you sure?', :class => 'btn btn-danger'

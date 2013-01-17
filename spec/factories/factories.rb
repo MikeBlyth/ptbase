@@ -23,23 +23,6 @@ FactoryGirl.define do
     drug
   end
 
-  factory :health_data do
-    patient
-
-    trait :hiv_pos do
-      hiv_status 'positive'
-    end
-
-    trait :hiv_neg do
-      hiv_status 'negative'
-    end
-
-    trait :maternal_hiv do
-      maternal_hiv_status 'positive'
-    end
-
-  end
-
   factory :icd9 do
     sequence(:icd9) {|n| n.to_s}
     sequence(:description) {|n| "disease #{n}"}
@@ -119,9 +102,18 @@ FactoryGirl.define do
     sex 'M'
     birth_date '2000-1-1'
 
-    factory :patient_with_health_data do
-      health_data
+    trait :hiv_pos do
+      hiv_status 'positive'
     end
+
+    trait :hiv_neg do
+      hiv_status 'negative'
+    end
+
+    trait :maternal_hiv do
+      maternal_hiv_status 'positive'
+    end
+
 
   end
 

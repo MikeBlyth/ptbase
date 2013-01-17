@@ -4,7 +4,7 @@
   %table
     - patient.problems.each do |problem|
       %tr{:valign => "top"}
-        %td= problem.date.strftime('%d-%b-%y')
+        %td= problem.date.strftime('%d-%b-%y')+':'
         %td
           = problem.description
           = '(resolved)' if problem.resolved == 1

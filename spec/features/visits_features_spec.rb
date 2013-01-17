@@ -5,7 +5,7 @@ feature "Visits" do
 
   scenario "creating a new visit" do
     create_logged_in_user
-    patient = FactoryGirl.create(:patient_with_health_data)
+    patient = FactoryGirl.create(:patient)
     pt_id = patient.id
     # This path lets us go directly to new visit form, accomodating AS
     path = "/visits/new?patient_id=#{pt_id}&association=visits&parent_scaffold=patients&patient_id=#{pt_id}"

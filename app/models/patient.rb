@@ -2,21 +2,29 @@
 #
 # Table name: patients
 #
-#  id               :integer          not null, primary key
-#  first_name       :string(255)
-#  last_name        :string(255)
-#  other_names      :string(255)
-#  birth_date       :datetime
-#  death_date       :date
-#  birth_date_exact :boolean
-#  ident            :string(255)
-#  sex              :string(255)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                  :integer          not null, primary key
+#  first_name          :string(255)
+#  last_name           :string(255)
+#  other_names         :string(255)
+#  birth_date          :datetime
+#  death_date          :date
+#  birth_date_exact    :boolean
+#  ident               :string(255)
+#  sex                 :string(255)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  residence           :string(255)
+#  phone               :string(255)
+#  caregiver           :string(255)
+#  hiv_status          :string(255)
+#  maternal_hiv_status :string(255)
+#  allergies           :string(255)
+#  hemoglobin_type     :string(255)
+#  comments            :string(255)
 #
 
 
-require 'forwardable'
+require 'rx_drug_list'
 require 'anthropometrics'
 require 'latest_parameters'
 require 'birth_date'
@@ -25,9 +33,9 @@ include Anthropometrics
 class Patient < ActiveRecord::Base
   include DateValidators
   include NamesHelper
-  attr_accessible :first_name, :ident, :last_name, :other_names
+  attr_accessible :first_name, :ident, :last_name, :other_names, :residence, :phone, :caregiver, :birth_date,
+                  :death_date, :birth_date_exact
 
-  has_one  :health_data, dependent: :delete
   has_many :visits
   has_many :lab_requests
   has_many :lab_results, through: :lab_requests
@@ -45,11 +53,6 @@ class Patient < ActiveRecord::Base
   validates_presence_of :last_name, :ident, :birth_date
   validates_uniqueness_of :ident
   validate :valid_birth_date
-
-  delegate "hiv_status", "maternal_hiv_status", "allergies", "comments",
-           'hiv?', 'hiv_status_word', 'hiv_pos_mother', 'current_drugs', 'current_drugs_formatted',
-           'hemoglobin_type',
-           to: :health_data
 
 ############ NAME METHODS
   def to_s
@@ -79,9 +82,6 @@ class Patient < ActiveRecord::Base
   #[ change today = V ] ],                   
   # ToDo - Clean up this use of single character codes. Should be elsewhere in a constant, class or something.
   # ToDo - Fix so it does not need multiple DB queries
-
-  # ToDo - move to health_data
-
 
   # arv_ and anti_tb_begin and _end return the dates for the LATEST regimen, not the earliest
   # so if someone started arv then stopped and began again later, it is the later date that will be
@@ -173,6 +173,35 @@ class Patient < ActiveRecord::Base
 
   def alive
     not died
+  end
+
+  # Has HIV concern if own status is positive OR (mother's status is positive and own is not Negative)
+  def hiv?
+    return hiv_status == 'positive' ||
+        (hiv_pos_mother && hiv_status != 'negative')
+  end
+
+  def hiv_pos
+    return hiv_status == 'positive'
+  end
+
+  def hiv_pos_mother # see hiv_pos;
+    return self.maternal_hiv_status == 'positive'
+  end
+
+  def current_drugs
+    recent_drugs(6).current
+  end
+
+  def current_drugs_formatted
+    current_drugs.formatted
+  end
+
+  private
+
+  def recent_drugs(since=3)
+    recent_prescriptions = prescriptions.confirmed.valid.where('date >= ?', Date.today-since.months)
+    RxDrugList.new.add_prescriptions(recent_prescriptions)
   end
 
 

@@ -2,15 +2,10 @@
 #
 # Table name: health_data
 #
-#  id                  :integer          not null, primary key
-#  patient_id          :integer
-#  hiv_status          :string(255)
-#  maternal_hiv_status :string(255)
-#  allergies           :string(255)
-#  comments            :string(255)
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  hemoglobin_type     :string(255)
+#  id         :integer          not null, primary key
+#  patient_id :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 
 require 'rx_drug_list'
@@ -31,10 +26,6 @@ class HealthData < ActiveRecord::Base
 
   def hiv_pos_mother # see hiv_pos;
     return self.maternal_hiv_status == 'positive'
-  end
-
-  def hiv_status_word  # Obsolete
-    hiv_status
   end
 
   def current_drugs

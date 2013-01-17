@@ -9,7 +9,9 @@
 ############ THESE ARE FOR TESTING ONLY ############
 Patient.delete_all
 anderson = Patient.create(last_name: 'Anderson', first_name: 'Charity', sex: 'F', birth_date: '1989-05-15', ident: 'P001')
-audu = Patient.create(last_name: 'Audu', first_name: 'Mohammed', sex: 'M', birth_date: '2003-09-15', ident: 'P002')
+audu = Patient.create(last_name: 'Audu', first_name: 'Mohammed', sex: 'M', birth_date: '2003-09-15',
+                      ident: 'P002',
+                      hiv_status: 'P', maternal_hiv_status: 'P')
 
 Admission.delete_all
 Admission.create(patient: audu, date: audu.birth_date+12.months, diagnosis_1: 'malaria', meds: 'ampicillin')
@@ -25,10 +27,6 @@ Drug.create(name: 'artemether', drug_class: 'antimalarial', synonyms: 'Larither'
 DrugPrep.delete_all
 DrugPrep.create(drug_id: amox.id, xform: 'tablet', strength: '250 mg')
 DrugPrep.create(drug_id: amox.id, xform: 'suspension', strength: '250 mg/5 ml', synonyms: 'liquid')
-
-HealthData.delete_all
-HealthData.create(patient: audu, hiv_status: 'P', maternal_hiv_status: 'P' )
-HealthData.create(patient: anderson, hiv_status: '', maternal_hiv_status: '' )
 
 Icd9.delete_all
 Icd9.create(icd9: '011', description: 'pulmonary tuberculosis')

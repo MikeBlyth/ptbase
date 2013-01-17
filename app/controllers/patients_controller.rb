@@ -10,13 +10,37 @@ class PatientsController < ApplicationController
       :lab_results, :visits, :admissions, :prescriptions
     config.show.link.inline = false
     config.show.link.page = true
+    config.update.link.inline = false
+    config.update.link.page = true
+    config.create.link.inline = false
+    config.create.link.page = true
 
   end
 
-  include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
+#  include StdToActivescaffoldAdapter # NB THIS MUST COME *AFTER* THE active_scaffold configuration!
 
   def do_show
     super
+  end
+
+  def create
+    @record = patient = Patient.new(params[:patient])
+    if patient.save
+      flash[:notice] = "Created new patient #{patient}"
+      render :show
+    else
+      # render :create
+    end
+  end
+
+  def update
+    @record = patient = Patient.find params[:id]
+    if patient.update_attributes(params[:patient])
+      flash[:notice] = 'Patient updated'
+      redirect_to patient_path(patient.id)
+    else
+      render :edit
+    end
   end
 
   def growth_chart

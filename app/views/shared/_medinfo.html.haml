@@ -1,5 +1,4 @@
 - present @patient do |pt_presenter|
-  %legend Current medical info
   #med_info_table
     #med_info_1.row-fluid
       #growth_chart.span3
@@ -8,11 +7,10 @@
         %table
           %tr
             %td.med_info_label Age today:
-            %td
-              = @patient.age_human
+            %td= @patient.age_human
           %tr
             %td.med_info_label Attention:
-            %td= pt_presenter.comments
+          = pt_presenter.comments
           = pt_presenter.allergies
           = pt_presenter.hemoglobin_type
           = pt_presenter.hiv_status

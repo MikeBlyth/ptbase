@@ -5,7 +5,7 @@ feature "Prescriptions" do
 
   scenario "creating a new prescription" do
     create_logged_in_user
-    patient = FactoryGirl.create(:patient_with_health_data)
+    patient = FactoryGirl.create(:patient)
     pt_id = patient.id
     provider = FactoryGirl.create(:provider)
     path = "/prescriptions/new?patient_id=#{pt_id}"
@@ -36,7 +36,7 @@ feature "Prescriptions" do
 
   scenario "edit a prescription" do
     create_logged_in_user
-    patient = FactoryGirl.create(:patient_with_health_data)
+    patient = FactoryGirl.create(:patient)
     pt_id = patient.id
     rx = FactoryGirl.create :prescription_with_item, height: nil, weight: nil, date: Date.yesterday
     provider = FactoryGirl.create(:provider, first_name: 'Jimmy')

@@ -26,12 +26,12 @@ class PatientPresenter
   def comments
     if  @patient.comments.blank?
       to_show = '[Add comment] {need inplace edit field here!}'
-      tag = "<td id='attn'>"
+      tag = "<tr><td>Comments:</td><td id='attn'>"
     else
       to_show =  @patient.comments
-      tag = "<td id='attn', class='attention'>"
+      tag = "<tr><td>Comments:</td><td id='attn', class='attention'>"
     end
-    return "#{tag}#{to_show}</td>".html_safe
+    return "#{tag}#{to_show}</td></tr>".html_safe
   end
 
   def allergies

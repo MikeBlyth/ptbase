@@ -2,17 +2,25 @@
 #
 # Table name: patients
 #
-#  id               :integer          not null, primary key
-#  first_name       :string(255)
-#  last_name        :string(255)
-#  other_names      :string(255)
-#  birth_date       :datetime
-#  death_date       :date
-#  birth_date_exact :boolean
-#  ident            :string(255)
-#  sex              :string(255)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                  :integer          not null, primary key
+#  first_name          :string(255)
+#  last_name           :string(255)
+#  other_names         :string(255)
+#  birth_date          :datetime
+#  death_date          :date
+#  birth_date_exact    :boolean
+#  ident               :string(255)
+#  sex                 :string(255)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  residence           :string(255)
+#  phone               :string(255)
+#  caregiver           :string(255)
+#  hiv_status          :string(255)
+#  maternal_hiv_status :string(255)
+#  allergies           :string(255)
+#  hemoglobin_type     :string(255)
+#  comments            :string(255)
 #
 
 require "spec_helper"
@@ -74,7 +82,7 @@ describe Patient do
 
   # ToDo: Belongs in Prescriptions?
   describe 'Current drugs' do
-    let(:patient) {FactoryGirl.create(:patient_with_health_data)}
+    let(:patient) {FactoryGirl.create(:patient)}
     let(:prescription) {FactoryGirl.create(:prescription, :confirmed, patient: patient, date: Date.yesterday)}
     let(:current_item) {FactoryGirl.create(:prescription_item, duration: 100, prescription: prescription)}
     let(:non_current_item) {FactoryGirl.create(:prescription_item, duration: 0, prescription: prescription)}

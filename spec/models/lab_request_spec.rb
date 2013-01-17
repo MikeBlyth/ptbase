@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: lab_requests
+#
+#  id          :integer          not null, primary key
+#  provider_id :integer
+#  patient_id  :integer
+#  comments    :string(255)
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  date        :datetime
+#
+
 require "spec_helper"
 
 describe LabRequest do

@@ -5,7 +5,7 @@ feature "Admissions" do
 
   scenario "creating a new admission" do
     create_logged_in_user
-    patient = FactoryGirl.create(:patient_with_health_data)
+    patient = FactoryGirl.create(:patient)
     pt_id = patient.id
     # This path lets us go directly to new admission form, accomodating AS
     path = "/admissions/new?patient_id=#{pt_id}&association=admissions&parent_scaffold=patients&patient_id=#{pt_id}"

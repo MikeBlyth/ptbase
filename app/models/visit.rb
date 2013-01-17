@@ -113,6 +113,7 @@
 #  pe_tanner                  :string(255)
 #  created_at                 :datetime
 #  updated_at                 :datetime
+#  arv_regimen                :string(255)
 #
 
 # ToDo Refactor to Vital signs, diagnoses, visit info (date, time, provider), etc.

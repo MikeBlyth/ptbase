@@ -30,7 +30,6 @@ describe LatestParameters do
       @recent = Date.today
       @old = Date.today - 6.months
       @patient = FactoryGirl.create(:patient)
-      FactoryGirl.create(:health_data, patient: @patient)
       labs_factory = LabsFactory.new(patient: @patient, date: @recent)
       @nominal = {cd4: 300.0, hct: 28.0, cd4pct: 15.0}
       @recent_labs = labs_factory.add_labs({lab: 'cd4', result: @nominal[:cd4]},
@@ -79,7 +78,6 @@ describe LatestParameters do
   describe 'adds anthropometric data' do
     before(:each) do
       @patient = FactoryGirl.create(:patient)
-      FactoryGirl.create(:health_data, patient: @patient)
     end
 
     it 'adds all measures when required data is present' do
@@ -123,7 +121,6 @@ describe LatestParameters do
   describe 'Adds reminder' do
     before(:each) do
       @patient = FactoryGirl.create(:patient)
-      FactoryGirl.create(:health_data, patient: @patient)
     end
 
     let(:latest) {LatestParameters.new(@patient)}

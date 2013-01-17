@@ -25,7 +25,7 @@ feature "Patients" do
     fill_in "Ident", with: "V001"
     fill_in "Birth date", with: '21 Nov 2012'
     click_button "Create"
-    expect(page).to have_text("Created Antonio Vivaldi [V001]")
+    expect(page).to have_text("Created new patient Antonio Vivaldi [V001]")
     patient = Patient.last
     patient.last_name.should == 'Vivaldi'
     patient.first_name.should == 'Antonio'

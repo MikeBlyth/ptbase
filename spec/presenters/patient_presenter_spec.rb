@@ -6,8 +6,7 @@ require 'anthropometrics'
 describe PatientPresenter do
   include ActionView::TestCase::Behavior    # See RailsCast 287. This makes view available as local variable
 
-  let(:patient)   {FactoryGirl.create(:patient_with_health_data)}
-  let(:health_data) {patient.health_data}
+  let(:patient)   {FactoryGirl.create(:patient)}
   let(:presenter) {PatientPresenter.new(patient,view)} # No template ... what are templates used for in Presenters??
 
   it 'returns correct alive/dead status' do
@@ -20,13 +19,13 @@ describe PatientPresenter do
 
     it 'returns "Add comment" when no comments' do
       presenter.comments.should match /<td id='attn'>.*Add comment.*<\/td>/
-      health_data.comments = 'Some comments'
+      patient.comments = 'Some comments'
       presenter.comments.should match "<td id='attn', class='attention'>Some comments</td>"
 
     end
 
     it 'returns comments string when they exist' do
-      health_data.comments = 'Some comments'
+      patient.comments = 'Some comments'
       presenter.comments.should match "<td id='attn', class='attention'>Some comments</td>"
     end
   end
@@ -34,12 +33,12 @@ describe PatientPresenter do
   describe 'allergies' do
 
     it 'returns patient allergies when they exist' do
-      health_data.allergies = 'Penicillin'
+      patient.allergies = 'Penicillin'
       presenter.allergies.should eq "<tr><td class='med_info_label'>Allergies:</td><td class='attention'>Penicillin</td></tr>"
     end
 
     it 'returns nothing when field is empty' do
-      health_data.allergies = nil
+      patient.allergies = nil
       presenter.allergies.should be_nil
     end
   end
@@ -47,17 +46,17 @@ describe PatientPresenter do
   describe 'hemoglobin type' do
 
     it 'returns patient hemoglobin_type when known' do
-      health_data.hemoglobin_type = 'AS'
+      patient.hemoglobin_type = 'AS'
       presenter.hemoglobin_type.should match "<tr><td class='med_info_label'>Hb type:<\/td><td .*>AS</td><\/tr>"
     end
 
     it 'uses special CSS class for hemoglobin SS' do
-      health_data.hemoglobin_type = 'SS'
+      patient.hemoglobin_type = 'SS'
       presenter.hemoglobin_type.should match "class='attention'"
     end
 
     it 'returns nothing when field is empty' do
-      health_data.hemoglobin_type = nil
+      patient.hemoglobin_type = nil
       presenter.hemoglobin_type.should be_nil
     end
   end
@@ -66,36 +65,36 @@ describe PatientPresenter do
   describe 'HIV status' do
 
     it 'returns nothing when field is empty' do
-      health_data.hiv_status = nil
-      health_data.maternal_hiv_status = nil
+      patient.hiv_status = nil
+      patient.maternal_hiv_status = nil
       presenter.hiv_status.should be_nil
     end
 
     it 'returns patient hiv_status when known' do
-      health_data.hiv_status = 'negative'
-      health_data.maternal_hiv_status = nil
+      patient.hiv_status = 'negative'
+      patient.maternal_hiv_status = nil
       presenter.hiv_status.should
         match Regexp.new "<tr><td class='med_info_label'>HIV status:<\/td><td .*>negative</td><\/tr>",  Regexp::MULTILINE
       presenter.hiv_status.should_not match "class='attention'"
     end
 
     it 'highlights HIV positive status' do
-      health_data.hiv_status = 'positive'
+      patient.hiv_status = 'positive'
       presenter.hiv_status.should match "class='attention'"
     end
 
     context "when mother's status is known" do
 
       it 'appends mother''s status' do
-        health_data.hiv_status = 'negative'
-        health_data.maternal_hiv_status = 'negative'
+        patient.hiv_status = 'negative'
+        patient.maternal_hiv_status = 'negative'
         presenter.hiv_status.should match Regexp.new "negative.*mother.*negative", Regexp::MULTILINE
         presenter.hiv_status.should_not match "class='attention'"
       end
 
       it 'highlights when mother is HIV positive' do
-        health_data.hiv_status = 'negative'
-        health_data.maternal_hiv_status = 'positive'
+        patient.hiv_status = 'negative'
+        patient.maternal_hiv_status = 'positive'
         presenter.hiv_status.should match Regexp.new "attention.*negative.*mother.*positive", Regexp::MULTILINE
       end
 

@@ -2,37 +2,38 @@
 #
 # Table name: immunizations
 #
-#  id         :integer          not null, primary key
-#  patient_id :integer
-#  bcg        :date
-#  opv1       :date
-#  opv2       :date
-#  opv3       :date
-#  opv4       :date
-#  dpt1       :date
-#  dpt2       :date
-#  dpt3       :date
-#  dpt4       :date
-#  tt1        :date
-#  tt2        :date
-#  tt3        :date
-#  tt4        :date
-#  hepb1      :date
-#  hepb2      :date
-#  hepb3      :date
-#  hepb4      :date
-#  measles1   :date
-#  measles2   :date
-#  mmr1       :date
-#  mmr2       :date
-#  hib1       :date
-#  hib2       :date
-#  hib3       :date
-#  hib4       :date
-#  mening     :date
-#  pneumo     :date
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  patient_id  :integer
+#  bcg         :date
+#  opv1        :date
+#  opv2        :date
+#  opv3        :date
+#  opv4        :date
+#  dpt1        :date
+#  dpt2        :date
+#  dpt3        :date
+#  dpt4        :date
+#  tt1         :date
+#  tt2         :date
+#  tt3         :date
+#  tt4         :date
+#  hepb1       :date
+#  hepb2       :date
+#  hepb3       :date
+#  hepb4       :date
+#  measles1    :date
+#  measles2    :date
+#  mmr1        :date
+#  mmr2        :date
+#  hib1        :date
+#  hib2        :date
+#  hib3        :date
+#  hib4        :date
+#  mening      :date
+#  pneumo      :date
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  provider_id :integer
 #
 
 require "spec_helper"

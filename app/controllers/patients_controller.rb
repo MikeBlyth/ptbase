@@ -1,4 +1,4 @@
-require 'std_to_activescaffold_adapter'
+#require 'std_to_activescaffold_adapter'
 require 'growth_chart'
 
 class PatientsController < ApplicationController

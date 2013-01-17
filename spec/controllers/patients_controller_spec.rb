@@ -31,4 +31,25 @@ describe PatientsController do
     end
   end
 
+  describe 'updates patient' do
+    let(:patient) { FactoryGirl.create(:patient, birth_date: DateTime.new(2010,6,15,16,30,0))}
+    before(:each) do
+      controller_sign_in
+    end
+
+    it 'updates a new patient' do
+      patient.allergies = 'none'
+      put :update, {:patient => {allergies: 'none'}, id: patient.id}
+      response.status.should == 302 # Redirects to show page for the patient
+      patient.reload.allergies.should eq 'none'
+    end
+
+    #it 'splits date and time for form' do
+    #  get :edit, { id: patient.id}
+    #  birth_date = (assigns(:patient) || assigns(:record))[:birth_date]
+    #  puts birth_date
+    #  birth_date.class.should eq Date
+    #end
+  end
+
 end

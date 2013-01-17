@@ -34,7 +34,8 @@ class Patient < ActiveRecord::Base
   include DateValidators
   include NamesHelper
   attr_accessible :first_name, :ident, :last_name, :other_names, :residence, :phone, :caregiver, :birth_date,
-                  :death_date, :birth_date_exact
+                  :death_date, :birth_date_exact,
+                  :allergies, :hemoglobin_type, :hiv_status, :maternal_hiv_status
 
   has_many :visits
   has_many :lab_requests

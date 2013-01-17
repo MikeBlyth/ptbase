@@ -38,6 +38,10 @@ group :assets do
   gem 'bootstrap-sass'
 end
 
+group :test, :development do
+  gem "quiet_assets"
+end
+
 group :test do
   gem 'annotate'
   gem "rspec-rails"

@@ -16,6 +16,15 @@ class LabRequestsController < ApplicationController
     end
   end
 
+  # This is a bit unusual for an update controller. Although the lab request has many lab_results,
+  # (which at this point are actually requests for a given lab service), the form only handles the
+  # lab_service_ids and not the lab_result objects themselves, to avoid having to generate a large number
+  # of objects just to allow them to be selected. The form does not even handle the lab_result ids,
+  # only the service ids. This approach might need to be reworked completely
+  # or refactored. Presently, we simply delete all the pending lab_results and add fresh all the
+  # lab services specified in the incoming update form.
+  # The associated lab_result records are added not directly but by inserting their ids into the
+  # params hash in a way that causes them to be created via the accepts_nested_attributes feature.
   def update
     #   selected_services = params.delete(:services)
 #binding.pry

@@ -14,7 +14,7 @@ module StdToActivescaffoldAdapter
   # Get model symbol (e.g. :visit) from controller name (e.g. VisitsController)
   def my_model_sym
     # Override if this doesn't give the right symbol
-    @my_model_sym ||= self.class.to_s.sub('Controller','').singularize.downcase.to_sym
+    @my_model_sym ||= self.class.to_s.sub('Controller','').singularize.underscore.to_sym
   end
 
   def my_do_update
@@ -27,6 +27,7 @@ module StdToActivescaffoldAdapter
 
   def tweak_params_for_as
     params[:record] = params[my_model_sym]
+    return params if params[:record].nil?  # ToDo - log a warning
     # Convert refs to xxxx_id to xxxx
     params[:record].select {|k,v| k =~ /(.*)_id\Z/}.each do |k,v|
         params[:record][k[0..-4]] = v

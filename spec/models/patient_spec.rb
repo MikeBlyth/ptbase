@@ -103,24 +103,194 @@ describe Patient do
 
   end
 
-  ## ToDo: Move elsewhere
-  #describe 'get_last(table, column)' do
-  #  before(:each) do
-  #    @patient = FactoryGirl.create(:patient)
-  #    # Make an Immunization record for each of last three days
-  #    [1,2,3].each {|n| FactoryGirl.create(:immunization, patient: @patient, date: Date.today-n.days,
-  #      bcg: n)}
-  #  end
-  #
-  #  it 'gets value of column in most recent record of table' do
-  #    @patient.get_last(Immunization, :bcg)[:value].should eq '1'
-  #  end
-  #
-  #  it 'ignores records where column value is nil' do
-  #    Immunization.where("bcg = '1' ").first.update_attributes(bcg: nil)
-  #    @patient.get_last(Immunization, :bcg)[:value].should eq '2'
-  #  end
-  #end
-  #
+  # This drug regimen stuff will be reworked or at least refactored so we don't need separate methods
+  # for the different regimens.
+  describe 'identifying start and end of drug regimens' do
+    let(:patient) {FactoryGirl.create(:patient)}
+    let(:some_start_date) {DateTime.now - 1.year}
+    let(:some_end_date) {DateTime.now  - 6.months}
+    let(:second_start_date) {DateTime.now - 3.months}
+    let(:second_end_date) {DateTime.now  - 1.months}
 
+    def define_regimen(patient, type, started, ended=nil, regimen=nil )
+      FactoryGirl.create(:visit, patient: patient, date: started, "#{type}_status" => 'B', arv_regimen: regimen)
+      FactoryGirl.create(:visit, patient: patient, date: ended, "#{type}_status" => 'X') if ended
+    end
+
+    def change_regimen(patient, type, changed, regimen=nil )
+      start_rec = FactoryGirl.create(:visit, patient: patient, date: changed, "#{type}_status" => 'V', arv_regimen: regimen)
+    end
+
+    describe 'ARV regimen' do
+
+      context 'when patient has never started a regimen' do
+        it 'returns nil for start and end' do
+          patient.arv_begin.should be_nil
+          patient.arv_stop.should be_nil
+        end
+      end
+
+      context 'when patient is currently on first regimen' do
+        it 'returns beginning date, nil end date' do
+          define_regimen(patient, 'arv', some_start_date)
+          patient.arv_begin.should eq some_start_date
+          patient.arv_stop.should be_nil
+        end
+      end
+
+      context 'when patient has stopped a regimen' do
+        it 'returns correct begin and end dates' do
+          define_regimen(patient, 'arv', some_start_date, some_end_date)
+          patient.arv_begin.should eq some_start_date
+          patient.arv_stop.should eq some_end_date
+        end
+      end
+
+      context 'when patient has restarted a regimen' do
+        it 'returns newer start date and nil stop date' do
+          define_regimen(patient, 'arv', some_start_date, some_end_date)
+          define_regimen(patient, 'arv', second_start_date)
+          patient.arv_begin.should eq second_start_date
+          patient.arv_stop.should eq nil
+        end
+
+      end
+
+      context 'when patient has restarted a regimen and stopped it' do
+        it 'returns newer start and stop dates' do
+          define_regimen(patient, 'arv', some_start_date, some_end_date)
+          define_regimen(patient, 'arv', second_start_date, second_end_date)
+          patient.arv_begin.should eq second_start_date
+          patient.arv_stop.should eq second_end_date
+        end
+
+      end
+
+    end
+
+    describe 'Anti-TB regimen' do
+
+      context 'when patient has never started a regimen' do
+        it 'returns correct begin and end dates' do
+          patient.anti_tb_begin.should be_nil
+          patient.anti_tb_stop.should be_nil
+        end
+      end
+
+      context 'when patient is currently on first regimen' do
+        it 'returns correct begin and end dates' do
+          define_regimen(patient, 'anti_tb', some_start_date)
+          patient.anti_tb_begin.should eq some_start_date
+          patient.anti_tb_stop.should be_nil
+        end
+      end
+
+      context 'when patient has stopped a regimen' do
+        it 'returns correct begin and end dates' do
+          define_regimen(patient, 'anti_tb', some_start_date, some_end_date)
+          patient.anti_tb_begin.should eq some_start_date
+          patient.anti_tb_stop.should eq some_end_date
+        end
+      end
+
+      context 'when patient has restarted a regimen' do
+        it 'returns newer start date and nil stop date' do
+          define_regimen(patient, 'anti_tb', some_start_date, some_end_date)
+          define_regimen(patient, 'anti_tb', second_start_date)
+          patient.anti_tb_begin.should eq second_start_date
+          patient.anti_tb_stop.should eq nil
+        end
+
+      end
+
+      context 'when patient has restarted a regimen and stopped it' do
+        it 'returns newer start date and nil stop date' do
+          define_regimen(patient, 'anti_tb', some_start_date, some_end_date)
+          define_regimen(patient, 'anti_tb', second_start_date, second_end_date)
+          patient.anti_tb_begin.should eq second_start_date
+          patient.anti_tb_stop.should eq second_end_date
+        end
+
+      end
+
+    end
+
+    describe 'Current ARV regimen began' do
+
+      context 'no visits yet' do
+        it 'returns nil' do
+          patient.current_arv_regimen_began.should be_nil
+        end
+      end
+
+      context 'not on a regimen' do
+        it 'returns nil' do
+          FactoryGirl.create(:visit, patient: patient)
+          patient.current_arv_regimen_began.should be_nil
+        end
+      end
+
+      context 'started a regimen and is continuing it' do
+        it 'returns the beginning date' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          patient.current_arv_regimen_began.should eq some_start_date
+        end
+      end
+
+      context 'started a regimen and it was explicitly changed' do
+
+        it 'returns the changed date' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          change_regimen(patient, 'arv', second_start_date, 'Regimen 2')
+          patient.current_arv_regimen_began.should eq second_start_date
+        end
+      end
+
+      context 'regimen was changed but not noted (so was implicit)' do
+        it 'returns the changed date' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          define_regimen(patient, 'arv', second_start_date, nil, 'Regimen Q')
+          patient.current_arv_regimen_began.should eq second_start_date
+        end
+      end
+
+      context 'regimen was left blank in a subsequent visit, then re-established' do
+        it 'returns the original date, ignoring empty data' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          FactoryGirl.create(:visit, patient: patient, date: second_start_date)
+          FactoryGirl.create(:visit, patient: patient, date: second_end_date, arv_regimen: 'Regimen 1')
+          patient.current_arv_regimen_began.should eq some_start_date
+        end
+      end
+
+      context 'regimen was left blank in a many subsequent visits, not re-established' do
+        it 'returns the original date, ignoring empty data' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          FactoryGirl.create_list(:visit, 5, patient: patient, date: second_start_date)
+          patient.current_arv_regimen_began.should be_nil
+        end
+      end
+
+      context 'regimen was left blank in many subsequent visits, then re-established' do
+        it 'returns the latest date without long gap' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          FactoryGirl.create_list(:visit, 5, patient: patient, date: some_end_date)
+          FactoryGirl.create(:visit, patient: patient, date: second_start_date, arv_regimen: 'Regimen 1')
+          FactoryGirl.create(:visit, patient: patient, date: Date.today, arv_regimen: 'Regimen 1')
+          patient.current_arv_regimen_began.should eq second_start_date
+        end
+      end
+
+      context 'regimen was left blank in many subsequent visits but "Continuing" status was noted' do
+        it 'returns the original starting date' do
+          define_regimen(patient, 'arv', some_start_date, nil, 'Regimen 1')
+          FactoryGirl.create_list(:visit, 5, patient: patient, date: some_end_date, arv_status: 'C')
+          FactoryGirl.create(:visit, patient: patient, date: second_start_date, arv_regimen: 'Regimen 1')
+          FactoryGirl.create(:visit, patient: patient, date: Date.today, arv_regimen: 'Regimen 1')
+          patient.current_arv_regimen_began.should eq some_start_date
+        end
+      end
+
+    end
+  end
 end

@@ -65,32 +65,35 @@ class Patient < ActiveRecord::Base
     return self.name + " [#{self.ident}]"
   end
 
-  # ToDo - ** What is this for!?
-  %w(pepfar residence phone caregiver).each do |attr|
-    define_method attr do
-      "*#{attr}*"
-    end
-  end
-
   ## Demographics
   def died
     not death_date.nil?
   end
 
-  ############### HIV STATUS METHODS
-  # ToDo - Clean up this use of single character codes. Should be elsewhere in a constant or something.
+  ############### DRUG REGIMEN STATUS METHODS
+  #[ not on ART = 0 ],                        
+  #[ preparing = P ],                         
+  #[ begin today = B ],                       
+  #[ continue = C ],                         
+  #[ stop today = X ],                       
+  #[ change today = V ] ],                   
+  # ToDo - Clean up this use of single character codes. Should be elsewhere in a constant, class or something.
+  # ToDo - Fix so it does not need multiple DB queries
 
   # ToDo - move to health_data
 
 
+  # arv_ and anti_tb_begin and _end return the dates for the LATEST regimen, not the earliest
+  # so if someone started arv then stopped and began again later, it is the later date that will be
+  # returned
   def arv_begin
-    most_recent = self.visits.where(arv_status: ['B', 'C']).order("date ASC" ).first
+    most_recent = self.visits.where(arv_status: ['B', 'C']).order("date DESC" ).first
     most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def arv_stop
-    most_recent = self.visits.where(arv_status: 'X').order("date DESC" ).first
+    most_recent = self.visits.where(arv_status: 'X').where("date > ?", arv_begin).order("date DESC" ).first
     most_recent ? most_recent.date  : nil
   end
 
@@ -101,13 +104,13 @@ class Patient < ActiveRecord::Base
 
   # TODO: Outdated? See above
   def anti_tb_begin
-    most_recent = self.visits.where(anti_tb_status: ['B', 'C']).order("date ASC" ).first
+    most_recent = self.visits.where(anti_tb_status: ['B', 'C']).order("date DESC" ).first
     most_recent ? most_recent.date  : nil
   end
 
   # TODO: Outdated? See above
   def anti_tb_stop
-    most_recent = self.visits.where(anti_tb_status: 'X').order("date DESC" ).first
+    most_recent = self.visits.where(anti_tb_status: 'X').where("date > ?", anti_tb_begin).order("date DESC" ).first
     most_recent ? most_recent.date  : nil
   end
 
@@ -118,9 +121,9 @@ class Patient < ActiveRecord::Base
   # TODO: Outdated? See above
   def current_arv_regimen_began    # return date this regimen began, by whatever means we can find or guess
     visits = self.visits.order("date DESC") # if this gets to be too slow, could use SQL query to get only the needed columns
-    return '' if visits.nil?
+    return nil if visits.empty?
     current_regimen = visits[0].arv_regimen    # this is the latest reported regimen
-    return '' if current_regimen.blank?        # nothing reported
+    return nil if current_regimen.blank?        # nothing reported
     emptycount = 0
     max_allowed_empty_count = 2
     for visit in visits do
@@ -129,10 +132,10 @@ class Patient < ActiveRecord::Base
       break if visit.arv_status == 'V' || 		# regimen explicitly changed
           (!visit.arv_regimen.blank? && visit.arv_regimen != current_regimen) ||	# non-blank, different regimen
           visit.arv_regimen.blank? && ['O', 'X', 'P', 'V'].include?(visit.arv_status)  # empty, plus non-continuing status
-      emptycount = emptycount + 1 if visit.arv_regimen.blank?
+      emptycount = emptycount + 1 if visit.arv_regimen.blank? && visit.arv_status != 'C'
       break if emptycount > max_allowed_empty_count   # too many "empty" regimens ==> assume not on anything
     end
-    return first_date.strftime('%d %b %Y')
+    return first_date #.strftime('%d %b %Y')
   end
 
   # TODO: Outdated? See above

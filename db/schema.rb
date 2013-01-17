@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130114214045) do
+ActiveRecord::Schema.define(:version => 20130117105806) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -416,6 +416,7 @@ ActiveRecord::Schema.define(:version => 20130114214045) do
     t.string   "pe_tanner"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "arv_regimen"
   end
 
 end

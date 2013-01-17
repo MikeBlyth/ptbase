@@ -25,7 +25,7 @@ describe PatientsController do
       controller_sign_in
       patient = FactoryGirl.attributes_for(:patient)
       put :create, :patient => patient
-      response.status.should == 302 # Redirects after creating patient
+      response.status.should == 200 # Goes to show page for the patient
       new_patient= Patient.last
       patient.each {|k,v| new_patient.send(k).should eq v}
     end

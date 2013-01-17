@@ -1,10 +1,11 @@
 - visit = @record
 - patient = @record.patient
 - @patient = patient
-= render(:partial => '/shared/medinfo', :object => patient)
+%fieldset
+  %legend= "Current information for #{patient_name_link(patient)}".html_safe
+  = render(:partial => '/shared/medinfo', :object => patient)
 = render(:partial => 'shared/problem_list', :object => patient )
 = simple_fields_for visit do |form|
-  = patient_name_link(patient)
   %fieldset
     %legend Visit info
     = form.input :date, as: :string

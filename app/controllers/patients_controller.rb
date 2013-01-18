@@ -23,15 +23,24 @@ class PatientsController < ApplicationController
     super
   end
 
+  def new
+    @patient = Patient.new
+  end
+
   def create
     @record = patient = Patient.new(params[:patient])
- #   binding.pry
+   # binding.pry
     if patient.save
       flash[:notice] = "Created new patient #{patient}"
       render :show
     else
-      # render :create
+      params=nil
+      render :create
     end
+  end
+
+  def edit
+    @patient = Patient.find params[:id]
   end
 
   def update

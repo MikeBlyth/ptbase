@@ -12,3 +12,28 @@
 .footer_buttons {
   margin-top: 1.5em
 }
+
+// Bootstrap (?) overrides
+input, textarea, .uneditable-input {
+  width: 136px;
+}
+
+.form-horizontal .control-label {
+  float: left;
+  padding-top: 5px;
+  text-align: right;
+  width: 100px;
+}
+
+.form-horizontal .controls {
+  margin-left: 110px;
+}
+
+select {
+  background-color: white;
+  border: 1px solid #CCCCCC;
+  width: 140px;
+}
+select[multiple], select[size] {
+  height: auto;
+}

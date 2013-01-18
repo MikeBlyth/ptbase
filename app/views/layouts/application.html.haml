@@ -12,8 +12,9 @@
       .row-fluid
         .span2
           = render(:partial => '/shared/patient_menu', :object => @patient)
+          %br
+          = link_to 'Sign out', destroy_user_session_path, :method=> :delete
         .span10
           %p.notice= notice
           %p.alert= alert
           = yield
-          = link_to 'Sign out', destroy_user_session_path, :method=> :delete

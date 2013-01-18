@@ -1,50 +1,48 @@
-- @patient = @record
--#= "Record = #{@record.attributes}"
-= simple_fields_for(@patient, :html => {:class => 'form-horizontal' }) do |form|
+= simple_form_for(@patient, :html => {:class => 'form-horizontal' }) do |form|
   = form.error_notification
-  %fieldset
-    %legend Basic information
-    .row-fluid
-      .span2
-        = form.input :last_name, :input_html => {class: :span12 }
-      .span2
-        = form.input :first_name, :input_html => {class: :span12 }
-      .span2
-        = form.input :other_names,  :input_html => {class: :span12 }
-      .span2
-        = form.input :sex, as: :radio_buttons, collection: [['Male', 'M'],['Female', 'F']], label_html: {class: :inline}
-    .row-fluid
-      .span2
-        = form.input :ident,  :input_html => {class: :span12 }
-    .row-fluid
-      .span2
-        = form.input :birth_date_text, as: :string,  :input_html => {class: "span12" }
-      .span2
-        = form.input :birth_date_exact, label: "Exact birth date?"
-      .span2
-        = form.input :death_date, as: :string,  :input_html => {class: "span12 datepicker" }
+  %h4 Basic information
+  .row-fluid
+    .span4
+      = form.input :last_name
+    .span4
+      = form.input :first_name
+    .span4
+      = form.input :other_names
+  .row-fluid
+    .span4
+      = form.input :sex, collection: [['Male', 'M'],['Female', 'F']], label_html: {class: :inline}
+    .span4
+      = form.input :ident
+  .row-fluid
+    .span4
+      = form.input :birth_date_text, as: :string
+    .span4
+      = form.input :birth_date_exact, label: "Exact birth date?"
+    .span4
+      = form.input :death_date, as: :string,  :input_html => {class: "datepicker" }
+  .row-fluid
+    .span4
+      = form.input :residence, as: :string
+    .span4
+      = form.input :phone, as: :tel
+    .span4
+      = form.input :caregiver
+  #health_info
+    %h4.span12 Health information
     .row-fluid
       .span4
-        = form.input :residence, as: :string ,  :input_html => {class: :span12 }
-      .span2
-        = form.input :phone, as: :tel,  :input_html => {class: :span12 }
-      .span2
-        = form.input :caregiver,  :input_html => {class: :span12 }
-    %fieldset
-      %legend Health Information
-      .row-fluid
-      .span2
-        = form.input :allergies, :input_html => {class: :span12 }
-      .span2
-        = form.input :hemoglobin_type, :input_html => {class: :span10 }
-      #hiv_info
-        .span2
-          = form.input :hiv_status, :input_html => {class: :span10 },
-            :collection => ['pos', 'neg', '?']
-        .span2
-          = form.input :maternal_hiv_status, :input_html => {class: :span10 },
-            :collection => ['pos', 'neg', '?']
+        = form.input :allergies
+      .span4
+        = form.input :hemoglobin_type
+    #hiv_info.row-fluid
+      .span4
+        = form.input :hiv_status, label: 'HIV status',
+          :collection => ['pos', 'neg', '?']
+      .span4
+        = form.input :maternal_hiv_status, label: 'Mother\'s HIV status',
+          :collection => ['pos', 'neg', '?']
   = form.error :base
-
+  = form.submit
+  = link_to "Cancel", request.referer
 
 

@@ -1,10 +1,9 @@
 - @patient = @record
 - present @record do |pt_presenter|
-
   %h2
-    Main Info Page for #{@patient.name_id}
+    #{@patient.name_id}
   %fieldset
-    %legend Demographics
+    %legend Basic information
     .row-fluid
       .span3
         %table{:align => "left"}
@@ -37,8 +36,10 @@
       = render(:partial => 'shared/medinfo', :object => @patient )
     .row-fluid
       = render(:partial => 'shared/problem_list', :object => @patient )
+    %hr
   .row-fluid.footer_buttons
     = link_to 'Edit patient', {:action => 'edit', :id => @patient}, :class => 'btn'
+    = link_to 'Patient list', patients_path, class: 'btn'
     - if true || authorized_as_admin
       = link_to "Delete this patient", { :action => "destroy", :id => @patient.id} ,
        :confirm => 'Are you sure?', :class => 'btn btn-danger'

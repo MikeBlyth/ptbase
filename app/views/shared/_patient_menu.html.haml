@@ -1,7 +1,8 @@
 - patient = patient_menu
 - if ! patient.nil?
-  - new_visit = link_to "New Visit", new_visit_path(:patient => patient)
-  = new_visit
+  = link_to "New Visit", new_visit_path(patient: patient)
+  %br
+  = link_to "New Labs", new_lab_request_path(patient: patient)
   -#%div
   -#  %p.actionshead
   -#    Actions for #{@patient.name}

@@ -13,6 +13,7 @@ Date::DATE_FORMATS[:us_long] = "%B %-1e, %Y"   # March 9, 2011
 # TIME::DATE_FORMATS for formatting .to_s.
 
 Time::DATE_FORMATS[:date_long] = "%-1e %B %Y"
+Time::DATE_FORMATS[:day_mon_year] = "%-1e %b %Y"
 Time::DATE_FORMATS[:us_date_long] = "%B %-1e, %Y"
 Time::DATE_FORMATS[:date] = "%-1e %B"
 Time::DATE_FORMATS[:us_date] = "%B %-1e"

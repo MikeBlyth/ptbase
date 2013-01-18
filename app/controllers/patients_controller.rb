@@ -25,6 +25,7 @@ class PatientsController < ApplicationController
 
   def create
     @record = patient = Patient.new(params[:patient])
+ #   binding.pry
     if patient.save
       flash[:notice] = "Created new patient #{patient}"
       render :show
@@ -39,7 +40,8 @@ class PatientsController < ApplicationController
       flash[:notice] = 'Patient updated'
       redirect_to patient_path(patient.id)
     else
-      render :edit
+
+      render :update
     end
   end
 

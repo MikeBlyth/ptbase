@@ -35,8 +35,10 @@ class Patient < ActiveRecord::Base
   include NamesHelper
 
   attr_accessible :first_name, :ident, :last_name, :other_names, :sex, :residence, :phone, :caregiver, :birth_date,
-                  :death_date, :birth_date, :birth_date_exact,:death_date,
+                  :death_date, :birth_date_text, :birth_date_exact,:death_date,
                   :allergies, :hemoglobin_type, :hiv_status, :maternal_hiv_status
+
+  attr_writer :birth_date_text
 
   has_many :visits
   has_many :lab_requests
@@ -51,7 +53,9 @@ class Patient < ActiveRecord::Base
 
   validates_presence_of :last_name, :ident, :birth_date
   validates_uniqueness_of :ident
+  before_validation :save_birth_date_text
   validate :valid_birth_date
+
 
 
 ############ NAME METHODS
@@ -167,6 +171,15 @@ class Patient < ActiveRecord::Base
 
   ############### OTHER METHODS
 
+  def birth_date_text
+    @birth_date_text || birth_date.to_s(:day_mon_year)
+  end
+
+  def save_birth_date_text
+    self.birth_date = validate_birth_date_text unless  @birth_date_text.blank?
+    #binding.pry
+  end
+
   def date
     birth_date
   end
@@ -202,6 +215,23 @@ class Patient < ActiveRecord::Base
   def recent_drugs(since=3)
     recent_prescriptions = prescriptions.confirmed.valid.where('date >= ?', Date.today-since.months)
     RxDrugList.new.add_prescriptions(recent_prescriptions)
+  end
+
+  def validate_birth_date_text
+    if @birth_date_text.blank?
+      errors.add :birth_date_text, "cannot be blank"
+      return nil
+    end
+    parsed = Time.zone.parse(@birth_date_text)
+    if parsed
+      return parsed
+    else
+      errors.add :birth_date_text, "cannot be parsed"
+      return nil
+    end
+  rescue ArgumentError
+    errors.add :birth_date_text, "is out of range"
+    return nil
   end
 
   #def time_valid?(str)

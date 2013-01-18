@@ -33,7 +33,7 @@
   %fieldset
     %legend Current medical info
     .row-fluid
-      = render(:partial => 'shared/medinfo', :object => @patient )
+      = render(:partial => 'shared/medinfo', :object => @patient, as: :patient )
     .row-fluid
       = render(:partial => 'shared/problem_list', :object => @patient )
     %hr

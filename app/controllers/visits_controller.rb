@@ -8,36 +8,38 @@ class VisitsController < ApplicationController
     config.create.link.inline = false
   end
 
-  def do_edit
-#puts 'do_edit'
-    visit = Visit.find params[:id]
-    patient = Patient.find visit.patient_id
-    set_diagnosis_fields
-    @current_drugs = patient.current_drugs_formatted
-    super
-  end
-
-  def do_update
-#puts 'do_update'
-    params[:record] = params[:visit]
-    params.delete :visit
-#puts "Params[:record] = #{params[:record]}"
-    super
-  end
-
-  def do_create
-#puts 'do_create'
-    params[:record] = params[:visit]
-    params.delete :visit
-    super
-  end
-
-  def do_new
-#puts 'do_new'
+  def new
     patient = Patient.find params[:patient_id]
+    @visit = Visit.new(patient: patient) #ToDO Error checking!
+  end
+
+  def create
+    @visit = Visit.new(params[:visit].merge({patient_id: params[:patient_id]}))
+    # binding.pry
+    if @visit.save
+      flash[:notice] = "Created new visit #{@visit}"
+      @record = @visit # ToDo -- only while AS is handling :show
+      render :show
+    else
+      params=nil
+      render :new
+    end
+  end
+
+  def edit
+    @visit = Visit.find params[:id]
     set_diagnosis_fields
-    @current_drugs = patient.current_drugs_formatted
-    super
+    @current_drugs = @visit.patient.current_drugs_formatted
+  end
+
+  def update
+    @visit = Visit.find params[:id]
+    if @visit.update_attributes(params[:visit])
+      flash[:notice] = 'Visit updated'
+      redirect_to visit_path(@visit.id)
+    else
+      render :update
+    end
   end
 
   def set_diagnosis_fields

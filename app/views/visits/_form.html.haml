@@ -1,20 +1,17 @@
-- visit = @record
-- patient = @record.patient
-- @patient = patient
+- patient = @visit.patient
 %fieldset
   %legend= "Current information for #{patient_name_link(patient)}".html_safe
-  = render(:partial => '/shared/medinfo', :object => patient)
+  = render(:partial => '/shared/medinfo', :object => patient, as: :patient)
 = render(:partial => 'shared/problem_list', :object => patient )
-= simple_fields_for visit do |form|
+= simple_form_for @visit, {url: {patient_id: patient.id}} do |form|
   %fieldset
     %legend Visit info
     = form.input :date, as: :string
     = form.input :scheduled, label: 'Scheduled visit?'
     = form.input :next_visit, as: :string, label: 'Next visit (add js buttons to give choices)'
-    = form.input :provider
+    = form.association :provider
     = form.input :newpt, label: 'New patient?'
     = form.input :adm, label: 'Admitted?'
-
 
   %fieldset
     %legend Vital Signs
@@ -104,6 +101,10 @@
     = form.input :arv_status
     = form.input :arv_missed
     = form.input :arv_missed_week
-    = render(:partial => 'arv_regimen', object: visit )
-
+    = render(:partial => 'arv_regimen', object: @visit )
+  %hr
+  = form.error :base
+  = form.submit
+  = link_to "Cancel", request.referer
 %p Add JS validation for HIV pts
+

@@ -1,4 +1,4 @@
-- present @patient do |pt_presenter|
+- present patient do |pt_presenter|
   #med_info_table
     #med_info_1.row-fluid
       #growth_chart.span3
@@ -7,7 +7,7 @@
         %table
           %tr
             %td.med_info_label Age today:
-            %td= @patient.age_human
+            %td= patient.age_human
           %tr
             %td.med_info_label Attention:
           = pt_presenter.comments
@@ -24,5 +24,5 @@
           = pt_presenter.begin_stop_course(course: :arv, label: 'ARVs')
           = pt_presenter.begin_stop_course(course: :anti_tb, label: 'anti-TB regimen')
       #last_visit.span7
-        - @visit_summary = @patient.latest_parameters[:latest_visit]
+        - @visit_summary = patient.latest_parameters[:latest_visit]
         = render(:partial => '/visits/visit_summary', :object => @visit_summary)

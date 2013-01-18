@@ -46,6 +46,7 @@ Ptbase::Application.routes.draw do
   resources :diagnoses do as_routes end
 
   resources :visits do as_routes end
+  post '/visits/new', to: 'visits#create'
 
   resources :patients do as_routes end
 

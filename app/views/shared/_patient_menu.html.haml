@@ -1,8 +1,8 @@
 - patient = patient_menu
 - if ! patient.nil?
-  = link_to "New Visit", new_visit_path(patient: patient)
+  = link_to "New Visit", new_visit_path(patient_id: patient)
   %br
-  = link_to "New Labs", new_lab_request_path(patient: patient)
+  = link_to "New Labs", new_lab_request_path(patient_id: patient)
   -#%div
   -#  %p.actionshead
   -#    Actions for #{@patient.name}

@@ -38,8 +38,12 @@ Ptbase::Application.configure do
 end
 
 ######### IF YOU WANT TO USE FACTORYGIRL IN DEVELOPMENT
-require 'factory_girl'
-include FactoryGirl
-require "#{Rails.root}/spec/factories/factories.rb"
 require 'anthropometrics'
 require 'birth_date'
+require 'factory_girl'
+#include FactoryGirl
+#require "#{Rails.root}/spec/factories/factories.rb"
+def fg_load
+  include FactoryGirl
+  require "#{Rails.root}/spec/factories/factories.rb"
+end

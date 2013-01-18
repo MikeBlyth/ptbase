@@ -19,6 +19,8 @@ Ptbase::Application.routes.draw do
 
   resources :providers do as_routes end
 
+  resources :users do as_routes end
+
   resources :photos do as_routes end
 
   resources :labs do as_routes end

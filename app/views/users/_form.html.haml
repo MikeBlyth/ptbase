@@ -1,0 +1,5 @@
+= simple_fields_for @record do |f|
+  = f.input :username
+  = f.input :full_name
+  = f.input :email
+  = f.input :time_zone, priority: [ActiveSupport::TimeZone['West Central Africa']]

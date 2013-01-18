@@ -38,7 +38,7 @@ feature "Prescriptions" do
     create_logged_in_user
     patient = FactoryGirl.create(:patient)
     pt_id = patient.id
-    rx = FactoryGirl.create :prescription_with_item, height: nil, weight: nil, date: Date.yesterday
+    rx = FactoryGirl.create :prescription_with_item, height: nil, weight: nil, date: 1.day.ago
     provider = FactoryGirl.create(:provider, first_name: 'Jimmy')
     puts "path=#{edit_prescription_path(rx)}"
     visit edit_prescription_path(rx)

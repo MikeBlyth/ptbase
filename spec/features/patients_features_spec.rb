@@ -30,6 +30,6 @@ feature "Patients" do
     patient.last_name.should == 'Vivaldi'
     patient.first_name.should == 'Antonio'
     patient.ident.should == 'V001'
-    patient.birth_date.to_date.should == Date.new(2012, 11, 21)
+    patient.birth_date.should == Time.new(2012, 11, 21).in_time_zone
   end
 end

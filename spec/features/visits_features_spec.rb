@@ -16,7 +16,7 @@ feature "Visits" do
     filled_values = fill_all_inputs(Visit, exclude: ['dx2'],
                     warnings: true,
                     head_circ: 70.0 ,
-                    next_visit: Date.tomorrow
+                    next_visit: Time.zone.parse(Date.tomorrow.to_s)
                     )
     click_button 'Create'
     Visit.last.should_not be_nil

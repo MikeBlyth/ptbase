@@ -19,7 +19,7 @@ Ptbase::Application.routes.draw do
 
   resources :providers do as_routes end
 
-  resources :users do as_routes end
+  # resources :users do as_routes end   # Will probably be handled by authentication program
 
   resources :photos do as_routes end
 

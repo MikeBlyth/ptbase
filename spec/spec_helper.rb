@@ -196,6 +196,7 @@ RSpec.configure do |config|
       puts "Columns for #{model_name} not found in form: #{not_found}" if not_found.any?
       puts "Columns for #{model_name} found but not filled: #{not_filled}" if not_filled.any?
     end
+    #puts "Filled values = #{filled_values}"
     return filled_values
   end
 
@@ -203,7 +204,7 @@ RSpec.configure do |config|
   def fill_in_column(model_name, column, field_tag, value=nil)
     field_name = "#{model_name}[#{column.name}]"
     value ||= case column.type
-              when :datetime, :date then Date.today - 1.day
+              when :datetime, :date then Time.zone.parse(Date.today.to_s)  # just fills in date part, but keeps the TimeWithZone object
               when :string, :text then "Data for #{column.name}"
               when :integer then 5
               when :float then 40
@@ -228,8 +229,8 @@ RSpec.configure do |config|
       end
     end
     if mismatched.any?
-      puts "Attributes for #{record} do not match expected:"
-      mismatched.each {|m| puts "\t#{m[:name]}: expected #{m[:expected]} but got #{m[:found]}"}
+      puts "\nAttributes for #{record} do not match expected:"
+      mismatched.each {|m| puts "\t#{m[:name]}: expected #{m[:expected].inspect} (#{m[:expected].class}) but got #{m[:found].inspect} (#{m[:found].class})"}
     end
     return mismatched.empty?
   end

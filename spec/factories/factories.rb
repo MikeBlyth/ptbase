@@ -83,7 +83,7 @@ FactoryGirl.define do
   end
 
   factory :lab_request do
-    #date {Date.yesterday}
+    #date {1.day.ago}
     patient
     provider
   end
@@ -100,7 +100,7 @@ FactoryGirl.define do
     sequence(:first_name) {|n| "First_#{n}" }
     sequence(:ident) {|n| "P_#{n}" }
     sex 'M'
-    birth_date '2000-1-1'
+    birth_date Time.zone.parse '2000-1-1'
 
     trait :hiv_pos do
       hiv_status 'positive'
@@ -123,7 +123,7 @@ FactoryGirl.define do
     provider
 
     trait :recent do
-      date {Date.yesterday}
+      date {1.day.ago}
     end
 
     trait :old do
@@ -204,7 +204,7 @@ FactoryGirl.define do
     patient
 
     trait :recent do
-      date {Date.yesterday}
+      date {1.day.ago}
     end
 
     trait :old do

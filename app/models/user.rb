@@ -18,6 +18,7 @@
 #  username               :string(255)
 #  name                   :string(255)
 #  full_name              :string(255)
+#  time_zone              :string(255)
 #
 
 class User < ActiveRecord::Base

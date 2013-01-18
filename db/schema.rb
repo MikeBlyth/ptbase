@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(:version => 20130118073230) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "other_names"
-    t.datetime "birth_datetime"
+    t.datetime "birth_date"
     t.date     "death_date"
     t.boolean  "birth_date_exact"
     t.string   "ident"

@@ -36,8 +36,8 @@ class Patient < ActiveRecord::Base
 
   attr_accessor :birth_date, :birth_time
 
-  attr_accessible :first_name, :ident, :last_name, :other_names, :residence, :phone, :caregiver, :birth_date,
-                  :death_date, :birth_date_exact,
+  attr_accessible :first_name, :ident, :last_name, :other_names, :sex, :residence, :phone, :caregiver, :birth_date,
+                  :death_date, :birth_date, :birth_date_exact,:death_date,
                   :allergies, :hemoglobin_type, :hiv_status, :maternal_hiv_status
 
   has_many :visits
@@ -51,14 +51,9 @@ class Patient < ActiveRecord::Base
   has_many :photos, dependent: :delete_all
   has_many :visits
 
-  attr_accessible :birth_date, :birth_date_exact, :death_date, :first_name, :ident, :last_name, :other_names,
-                  :sex
-
   validates_presence_of :last_name, :ident, :birth_date
   validates_uniqueness_of :ident
   validate :valid_birth_date
-  after_find  :parse_birth_date_time
-  before_save :combine_birth_date_time
 
 
 ############ NAME METHODS
@@ -211,25 +206,12 @@ class Patient < ActiveRecord::Base
     RxDrugList.new.add_prescriptions(recent_prescriptions)
   end
 
-  def parse_birth_date_time
-    @birth_date = birth_datetime.to_date
-    @birth_time = birth_datetime.strftime("%H:%M")
-  end
-
-  def combine_birth_date_time
-    if time_valid? @birth_time
-      self.birth_datetime = DateTime.parse(@birth_date.strftime("%d %B  %Y ") + @birth_time)
-    else
-      self.birth_datetime = @birth_date
-    end
-  end
-
-  def time_valid?(str)
-    return false unless str =~ /\A\s*([0-9]{1,2}):([0-9]{2,2})(\s+|\Z)(am|pm)?/i
-    hour, minute, am_pm = $1, $2, $4
-    hour = hour.to_i
-    minute = minute.to_i
-    return false unless (0..59).include? minute
-    return am_pm ? (1..12).include?(hour) : (0..23).include?(hour)
-  end
+  #def time_valid?(str)
+  #  return false unless str =~ /\A\s*([0-9]{1,2}):([0-9]{2,2})(\s+|\Z)(am|pm)?/i
+  #  hour, minute, am_pm = $1, $2, $4
+  #  hour = hour.to_i
+  #  minute = minute.to_i
+  #  return false unless (0..59).include? minute
+  #  return am_pm ? (1..12).include?(hour) : (0..23).include?(hour)
+  #end
 end

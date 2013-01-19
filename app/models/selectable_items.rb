@@ -10,7 +10,7 @@ module SelectableItems
 
   module ClassMethods
     def visit_fields
-      self.where(show_visits: true).select{|f| Visit.column_names.include? f.to_tag}
+      self.where(show_visits: true)
     end
 
     def visit_names
@@ -18,8 +18,7 @@ module SelectableItems
     end
 
     def visit_tags
-      visit_fields.map(&:to_tag).keep_if{|f| Visit.column_names.include? f}
-      # ToDO -- the "keep if" won't be necessary when Visit is changed to be able to handle arbitrary diagnoses
+      visit_fields.map(&:to_tag)
     end
   end
 
@@ -28,7 +27,7 @@ module SelectableItems
   end
 
   def to_tag
-    prefix+name.downcase # prefix must be defined in the class including this module
+    name.downcase # prefix must be defined in the class including this module
   end
 
   def to_s

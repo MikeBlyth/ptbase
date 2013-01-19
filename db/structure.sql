@@ -98,7 +98,8 @@ CREATE TABLE diagnoses (
     show_visits boolean,
     sort_order integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    with_comment boolean
 );
 
 
@@ -590,7 +591,8 @@ CREATE TABLE physicals (
     sort_order integer,
     show_visits boolean,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    with_comment boolean
 );
 
 
@@ -818,7 +820,8 @@ CREATE TABLE symptoms (
     show_visits boolean,
     sort_order integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    with_comment boolean
 );
 
 
@@ -906,33 +909,6 @@ CREATE TABLE visits (
     adm boolean,
     sbp integer,
     dbp integer,
-    sx_wt_loss boolean,
-    sx_fever boolean,
-    sx_headache boolean,
-    sx_diarrhea boolean,
-    sx_numbness boolean,
-    sx_nausea boolean,
-    sx_rash boolean,
-    sx_vomiting boolean,
-    sx_cough boolean,
-    sx_night_sweats boolean,
-    sx_visual_prob_new boolean,
-    sx_pain_swallowing boolean,
-    sx_short_breath boolean,
-    sx_other character varying(255),
-    dx_hiv boolean,
-    dx_tb_pulm boolean,
-    dx_pneumonia boolean,
-    dx_malaria boolean,
-    dx_uri boolean,
-    dx_acute_ge boolean,
-    dx_otitis_media_acute boolean,
-    dx_otitis_media_chronic boolean,
-    dx_thrush boolean,
-    dx_tinea_capitis boolean,
-    dx_scabies boolean,
-    dx_parotitis boolean,
-    dx_dysentery boolean,
     scheduled boolean,
     provider_id integer,
     hiv_stage character varying(255),
@@ -953,7 +929,6 @@ CREATE TABLE visits (
     mid_arm_circ double precision,
     resp_rate integer,
     heart_rate integer,
-    sx_ear_pain_disch boolean,
     phys_exam text,
     diet_breast boolean,
     diet_breastmilk_substitute boolean,
@@ -965,40 +940,6 @@ CREATE TABLE visits (
     assessment_nonadherence boolean,
     arv_missed integer,
     arv_missed_week integer,
-    pe_scalp_ok boolean,
-    pe_scalp character varying(255),
-    pe_conjunct_ok boolean,
-    pe_conjunct character varying(255),
-    pe_eyes_ok boolean,
-    pe_eyes character varying(255),
-    pe_ears_ok boolean,
-    pe_ears character varying(255),
-    pe_mouth_ok boolean,
-    pe_mouth character varying(255),
-    pe_nose_ok boolean,
-    pe_nose character varying(255),
-    pe_chest_ok boolean,
-    pe_chest character varying(255),
-    pe_heart_ok boolean,
-    pe_heart character varying(255),
-    pe_abd_ok boolean,
-    pe_abd character varying(255),
-    pe_liver_ok boolean,
-    pe_liver character varying(255),
-    pe_spleen_ok boolean,
-    pe_spleen character varying(255),
-    pe_skin_ok boolean,
-    pe_skin character varying(255),
-    pe_lymph_ok boolean,
-    pe_lymph character varying(255),
-    pe_extr_ok boolean,
-    pe_extr character varying(255),
-    pe_neuro_ok boolean,
-    pe_neuro character varying(255),
-    pe_genitalia_ok boolean,
-    pe_genitalia character varying(255),
-    pe_tanner_ok boolean,
-    pe_tanner character varying(255),
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     arv_regimen character varying(255),
@@ -1514,3 +1455,7 @@ INSERT INTO schema_migrations (version) VALUES ('20130119170135');
 INSERT INTO schema_migrations (version) VALUES ('20130119170958');
 
 INSERT INTO schema_migrations (version) VALUES ('20130119171053');
+
+INSERT INTO schema_migrations (version) VALUES ('20130119195813');
+
+INSERT INTO schema_migrations (version) VALUES ('20130119210742');

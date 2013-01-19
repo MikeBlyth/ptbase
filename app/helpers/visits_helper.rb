@@ -2,6 +2,7 @@ require 'pry'
 module VisitsHelper
 
   def diagnosis_check_boxes(dx_fields, dx_columns=4)
+    dx_fields.try(:keep_if) {|dx| Visit.column_names.include? dx.to_tag} # ToDo ... this won't be needed when we change the way diagnoses are stored ... not in individual columns
     return nil if dx_fields.empty?
     dx_columns = 4
     dx_rows = ((dx_fields.length + dx_columns -1) / dx_columns).to_i   # how many rows
@@ -12,8 +13,8 @@ module VisitsHelper
             dx_i = column*dx_rows + row # which diagnosis to put here
             dx_field = dx_fields[dx_i]
             unless dx_i >= dx_fields.count
-                box = check_box :visit, dx_field
-                label = label_tag :visit, dx_field
+                box = check_box :visit, "dx_#{dx_field.name.downcase}"
+                label = label_tag :visit, dx_field.to_label
                 row_contents << content_tag(:td, box+label)
             end
           end

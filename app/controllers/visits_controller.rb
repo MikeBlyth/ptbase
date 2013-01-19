@@ -43,7 +43,7 @@ class VisitsController < ApplicationController
   end
 
   def set_diagnosis_fields
-    @dx_fields = Diagnosis.dx_visit_prefixed_names.sort
+    @dx_fields = Diagnosis.dx_visit_fields.sort
   end
 
   def make_growthchart

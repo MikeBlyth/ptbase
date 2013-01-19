@@ -11,6 +11,12 @@
     .container-fluid
       .row-fluid
         .span2
+          = link_to 'Visits', visits_path
+          %br
+          = link_to 'Diagnoses', diagnoses_path
+          %br
+          = link_to 'Lab services', lab_services_path
+          %br
           = render(:partial => '/shared/patient_menu', :object => @patient)
           %br
           = link_to 'Sign out', destroy_user_session_path, :method=> :delete

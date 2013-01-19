@@ -17,8 +17,8 @@ Admission.delete_all
 Admission.create(patient: audu, date: audu.birth_date+12.months, diagnosis_1: 'malaria', meds: 'ampicillin')
 
 Diagnosis.delete_all
-Diagnosis.create(name: 'pneumonia')
-Diagnosis.create(name: 'malaria')
+%w(pneumonia malaria HIV pulmonary_tb uri acute_ge otitis_media_acute otitis_media_chronic thrush
+  tinea_capitis scabies parotitis).each {|dx| Diagnosis.create(name: dx, show_visits: true)}
 
 Drug.delete_all
 amox = Drug.create(name: 'amoxycillin', drug_class: 'antibiotic', drug_subclass: 'penicillin', synonyms: 'amoxacillin; amoxyl; amoxil')

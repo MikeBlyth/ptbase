@@ -17,6 +17,18 @@ class Diagnosis < ActiveRecord::Base
   attr_protected
   validates_presence_of :name
 
+  def to_label
+    label || name.gsub('_',' ')
+  end
+
+  def to_tag
+    "dx_#{name.downcase}"
+  end
+
+  def to_s
+    name
+  end
+
   def self.dx_visit_fields
     self.where(show_visits: true)
   end
@@ -27,5 +39,9 @@ class Diagnosis < ActiveRecord::Base
 
   def self.dx_visit_prefixed_names
     dx_visit_fields.map {|dx| "dx_#{dx.name}"}
+  end
+
+  def <=>(other)
+    self.name <=> other.name
   end
 end

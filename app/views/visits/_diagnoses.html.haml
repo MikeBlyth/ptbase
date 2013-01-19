@@ -1,0 +1,3 @@
+= "Diagnoses/Assessment: #{[@visit.dx, @visit.dx2].join(', ')}"
+= check_box_diagnoses(@visit)
+= (@visit.assessment +".") if @visit.assessment

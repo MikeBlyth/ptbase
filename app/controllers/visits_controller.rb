@@ -43,9 +43,7 @@ class VisitsController < ApplicationController
   end
 
   def set_diagnosis_fields
-#puts "set dx fields"
-    @dx_fields = Diagnosis.where(:show_visits => true).order('name ASC')
-    @dx_fields.each { |dx| dx.name = 'dx_' + dx.name }   # prepend 'dx_' to each field name
+    @dx_fields = Diagnosis.dx_visit_prefixed_names.sort
   end
 
   def make_growthchart

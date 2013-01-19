@@ -1,0 +1,6 @@
+- @visit ||= @record
+- patient = @visit.patient
+%h2= "Visit for #{patient_name_link(patient)} on #{@visit.date}".html_safe
+%p= "Provider: #{@record.provider}"
+%p#diagnoses
+  = render "diagnoses"

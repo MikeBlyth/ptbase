@@ -16,4 +16,16 @@
 class Diagnosis < ActiveRecord::Base
   attr_protected
   validates_presence_of :name
+
+  def self.dx_visit_fields
+    self.where(show_visits: true)
+  end
+
+  def self.dx_visit_names
+    dx_visit_fields.map(&:name)
+  end
+
+  def self.dx_visit_prefixed_names
+    dx_visit_fields.map {|dx| "dx_#{dx.name}"}
+  end
 end

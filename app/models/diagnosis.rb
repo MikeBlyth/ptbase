@@ -37,8 +37,9 @@ class Diagnosis < ActiveRecord::Base
     dx_visit_fields.map(&:name)
   end
 
-  def self.dx_visit_prefixed_names
-    dx_visit_fields.map {|dx| "dx_#{dx.name}"}
+  def self.dx_visit_tags
+    dx_visit_fields.map(&:to_tag).keep_if{|dx| Visit.column_names.include? dx}
+      # ToDO -- the "keep if" won't be necessary when Visit is changed to be able to handle arbitrary diagnoses
   end
 
   def <=>(other)

@@ -57,19 +57,7 @@
     = text_area 'visit', 'phys_exam', {:rows => '1', :cols => '70' }
   %fieldset
     %legend Assessment and Diagnosis
-    = form.input :dx_hiv, label: "HIV"
-    = form.input :dx_pneumonia, label: "pneumonia"
-    = form.input :dx_tb_pulm, label: "pulmonary TB"
-    = form.input :dx_malaria, label: "malaria"
-    = form.input :dx_uri, label: "uri"
-    = form.input :dx_acute_ge, label: "acute_ge"
-    = form.input :dx_otitis_media_acute, label: "otitis_media_acute"
-    = form.input :dx_otitis_media_chronic, label: "otitis_media_chronic"
-    = form.input :dx_thrush, label: "thrush"
-    = form.input :dx_tinea_capitis, label: "tinea_capitis"
-    = form.input :dx_scabies, label: "scabies"
-    = form.input :dx_parotitis, label: "parotitis"
-    = form.input :dx_dysentery, label: "dysentery"
+    = diagnosis_check_boxes(@dx_fields)
     = form.input :dx, label: 'Other diagnoses'
     = form.input :newdx, label: 'New diagnosis given?'
     %br
@@ -78,10 +66,6 @@
     = form.input :assessment_drug_toxicity, label: "Drug toxicity"
     = form.input :assessment_nonadherence, label: "Nonadherence"
     = form.input :assessment
-
-  %fieldset
-    %legend Dx2
-    = diagnosis_check_boxes(@dx_fields)
   %fieldset
     %legend Other
     = form.input :development

@@ -24,8 +24,13 @@ module VisitsHelper
   end
 
   # To DISPLAY the diagnoses selected for this visit
-  def check_box_diagnoses(visit)
-    diagnoses = Diagnosis.dx_visit_prefixed_names.select {|dx| visit.send(dx) }.join('; ')
+  def show_diagnoses(visit)
+    diagnoses = (visit.diagnosis_labels << visit.dx << visit.dx2).join('; ')
+    return diagnoses.blank? ? nil : diagnoses + '.'
+  end
+
+  def show_symptoms(visit)
+    "--Symptom list--"
   end
 
   def phys_finding(afield, alabel=afield.capitalize)

@@ -8,7 +8,7 @@ gem 'rails', '3.2.11'
 gem 'pg'
 gem 'active_scaffold', :git => 'git://github.com/activescaffold/active_scaffold.git'
 gem 'devise'
-
+gem 'activerecord-postgres-hstore'
 
 
 # Gems used only for assets and not required

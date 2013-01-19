@@ -1,6 +1,27 @@
 require 'pry'
 module VisitsHelper
 
+  def section_check_boxes(section, columns=4)  # section is Class name for table to use e.g., Symptom
+    fields = section.visit_fields
+    return nil if fields.empty?
+    rows = ((fields.length + columns -1) / columns).to_i   # how many rows
+    table_contents = ''.html_safe
+    0.upto(rows-1) do |row|
+      row_contents = ''.html_safe
+      0.upto(columns-1) do |column|
+        i = column*rows + row # which diagnosis to put here
+        field = fields[i]
+        unless i >= fields.count
+          box = check_box :visit, field.to_tag
+          label = label_tag :visit, field.to_label
+          row_contents << content_tag(:td, box+label)
+        end
+      end
+      table_contents << content_tag(:tr, row_contents)
+    end
+    return content_tag(:table, table_contents)
+  end
+
   def diagnosis_check_boxes(dx_fields, dx_columns=4)
     dx_fields.try(:keep_if) {|dx| Visit.column_names.include? dx.to_tag} # ToDo ... this won't be needed when we change the way diagnoses are stored ... not in individual columns
     return nil if dx_fields.empty?

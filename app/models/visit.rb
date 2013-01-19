@@ -183,13 +183,13 @@ class Visit < ActiveRecord::Base
     date
   end
 
-  def diagnoses
+  def diagnoses_array
     Visit.column_names.select{|col| col =~ /\Adx_/ && self.send(col)}.
         map {|dx| Diagnosis.find_by_name(dx[3..-1])}.compact
   end
 
   def diagnosis_labels
-    diagnoses.map{|dx| dx.to_label}
+    diagnoses_array.map{|dx| dx.to_label}
   end
 
   # Default sort order will be on date

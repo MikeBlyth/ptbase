@@ -30,6 +30,9 @@ GEM
       activesupport (= 3.2.11)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
+    activerecord-postgres-hstore (0.5.3)
+      rails
+      rake
     activeresource (3.2.11)
       activemodel (= 3.2.11)
       activesupport (= 3.2.11)
@@ -255,6 +258,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_scaffold!
+  activerecord-postgres-hstore
   annotate
   bootstrap-sass
   capybara

@@ -1,5 +1,9 @@
 Ptbase::Application.routes.draw do
 
+  resources :physicals do as_routes end
+
+  resources :symptoms do as_routes end
+
   resources :lab_results do as_routes end
 
   resources :lab_groups do as_routes end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130118073230) do
+ActiveRecord::Schema.define(:version => 20130119125621) do
 
   create_table "admissions", :force => true do |t|
     t.integer  "patient_id"
@@ -223,6 +223,17 @@ ActiveRecord::Schema.define(:version => 20130118073230) do
     t.datetime "updated_at",   :null => false
   end
 
+  create_table "physicals", :force => true do |t|
+    t.string   "name"
+    t.string   "label"
+    t.string   "synonyms"
+    t.string   "comments"
+    t.integer  "sort_order"
+    t.boolean  "show_visits"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "pictures", :force => true do |t|
     t.integer  "patient_id"
     t.string   "comment"
@@ -277,6 +288,17 @@ ActiveRecord::Schema.define(:version => 20130118073230) do
     t.string   "first_name"
     t.string   "other_names"
     t.string   "ident"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "symptoms", :force => true do |t|
+    t.string   "name"
+    t.string   "label"
+    t.string   "synonyms"
+    t.string   "comments"
+    t.boolean  "show_visits"
+    t.integer  "sort_order"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end

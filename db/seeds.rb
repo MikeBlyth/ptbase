@@ -18,7 +18,15 @@ Admission.create(patient: audu, date: audu.birth_date+12.months, diagnosis_1: 'm
 
 Diagnosis.delete_all
 %w(pneumonia malaria HIV pulmonary_tb uri acute_ge otitis_media_acute otitis_media_chronic thrush
-  tinea_capitis scabies parotitis).each {|dx| Diagnosis.create(name: dx, show_visits: true)}
+  tinea_capitis scabies parotitis).each {|x| Diagnosis.create(name: x, show_visits: true)}
+
+Physical.delete_all
+%w(head eyes ears mouth nose neck chest heart abdomen genitalia extremities
+   neurologic back skin ).each {|x| Physical.create(name: x, show_visits: true)}
+
+Symptom.delete_all
+%w(wt_loss headache fever diarrhea numbness nausea rash vomiting cough night_sweats
+   visual_prob_new pain_swallowing short_breath ).each {|x| Symptom.create(name: x, show_visits: true)}
 
 Drug.delete_all
 amox = Drug.create(name: 'amoxycillin', drug_class: 'antibiotic', drug_subclass: 'penicillin', synonyms: 'amoxacillin; amoxyl; amoxil')

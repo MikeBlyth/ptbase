@@ -27,7 +27,7 @@
 
   %fieldset
     %legend Signs and Symptoms
-    *** SIGNS AND SYMPTOMS GO HERE ***
+    = check_boxes(@visit, :symptoms)
 
   %fieldset
     %legend History
@@ -35,16 +35,12 @@
   %fieldset
     %legend Physical Exam
     %p.form_instruction Tick box if this part of exam is normal.
-    %table
-      %tr{:valign => "top"}
-        = phys_findings_column(%w(scalp conjunct eyes ears mouth nose))
-        = phys_findings_column(%w(chest heart abd liver spleen))
-        = phys_findings_column(%w(skin lymph extr neuro genitalia tanner))
+    = check_boxes(@visit, :physical)
     %br
     = text_area 'visit', 'phys_exam', {:rows => '1', :cols => '70' }
   %fieldset
     %legend Assessment and Diagnosis
-    = diagnosis_check_boxes(@dx_fields)
+    = check_boxes(@visit, :diagnoses)
     = form.input :dx, label: 'Other diagnoses'
     = form.input :newdx, label: 'New diagnosis given?'
     %br

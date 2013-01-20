@@ -22,28 +22,6 @@ module VisitsHelper
     return content_tag(:table, table_contents)
   end
 
-  def diagnosis_check_boxes(dx_fields, dx_columns=4)
-    dx_fields.try(:keep_if) {|dx| Visit.column_names.include? dx.to_tag} # ToDo ... this won't be needed when we change the way diagnoses are stored ... not in individual columns
-    return nil if dx_fields.empty?
-    dx_columns = 4
-    dx_rows = ((dx_fields.length + dx_columns -1) / dx_columns).to_i   # how many rows
-      table_contents = ''.html_safe
-      0.upto(dx_rows-1) do |row|
-          row_contents = ''.html_safe
-          0.upto(dx_columns-1) do |column|
-            dx_i = column*dx_rows + row # which diagnosis to put here
-            dx_field = dx_fields[dx_i]
-            unless dx_i >= dx_fields.count
-                box = check_box :visit, "dx_#{dx_field.name.downcase}"
-                label = label_tag :visit, dx_field.to_label
-                row_contents << content_tag(:td, box+label)
-            end
-          end
-        table_contents << content_tag(:tr, row_contents)
-      end
-    return content_tag(:table, table_contents)
-  end
-
   # To DISPLAY the diagnoses selected for this visit
   def show_diagnoses(visit)
     diagnoses = ([visit.dx, visit.dx2, selections_to_string(visit, :diagnoses)]).join('; ')
@@ -55,7 +33,7 @@ module VisitsHelper
   end
 
   def show_exam(visit)
-    normal, noted = selected(visit, :physical).partition {|x| ['', 'normal'].include? x[1]}
+    normal, noted = selectable_selected(visit, :physical).partition {|x| ['', 'normal'].include? x[1]}
     noted_str = noted.any? ? noted.map{|x| "#{x[0]}: #{x[1]}"}.join('; ') + '. ' : ''
     normal_str = normal.any? ? [normal.map {|x| x[0]}.join(', '), all_both(normal.size), 'normal.'].join(' ') : ''
     return noted_str + normal_str.capitalize

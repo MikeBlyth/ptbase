@@ -1,8 +1,10 @@
 require 'pry'
 module SelectableItemsHelper
 
-  def check_boxes(record, section, columns=4)  # section is Class name for table to use e.g., Symptom
-    section_name = section.to_s.underscore.pluralize
+  # Set up HTML table containing checkboxes supplied by SectionName.visit_fields, and pre-checked
+  # according to their status in record.
+  def check_boxes(record, section_name, columns=4)  # section is Class name for table to use e.g., Symptom
+    section= section_name.singularize.camelize.constantize
     fields = section.visit_fields
     return nil if fields.empty?
     rows = ((fields.length + columns -1) / columns).to_i   # how many rows
@@ -25,5 +27,28 @@ module SelectableItemsHelper
     return content_tag(:table, table_contents)
   end
 
+  def selections_to_string(record, section_name)
+    merged = selected(record, section_name)
+    merged.map do |k,v|
+      v = v.blank? ? nil : v
+      [k,v].compact.join(': ')
+    end.join('; ')
+  end
+
+  # Given a store of features and associated comments, like
+  # {:headache=>'true', :fever=>'high', :cough => 'true', :headache_comment => 'improving', :fever_comment=>'night sweats'}
+  # return a hash like
+  # {:headache=>'improving', :fever=>'high--night sweats', :cough => ''}
+  def selected(record, section_name)
+    merged = Hash.new {|h,k| h[k] = ''}
+    comments, basic = record.send(section_name).partition {|x| x[0] =~ /_comment\Z/}
+    basic.each do |b|
+      merged[b[0]] = (b[1] == 'true') ? '' : b[1]
+    end
+    comments.each do |comment|
+      source_key = comment[0][0..-9]
+      merged[source_key] = [merged[source_key], comment[1]].join ('--')
+    end
+  end
 end
 

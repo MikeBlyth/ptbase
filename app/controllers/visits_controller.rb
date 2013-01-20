@@ -3,7 +3,7 @@ class VisitsController < ApplicationController
   before_filter :authenticate_user!
 
   active_scaffold :visit do |config|
-    config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm
+    config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm, :symptoms
     config.create.link.page = true
     config.create.link.inline = false
   end
@@ -43,7 +43,7 @@ class VisitsController < ApplicationController
   end
 
   def set_diagnosis_fields
-    @dx_fields = Diagnosis.dx_visit_fields.sort
+    @dx_fields = Diagnosis.visit_fields.sort
   end
 
   def make_growthchart

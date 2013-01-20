@@ -46,29 +46,27 @@ module VisitsHelper
 
   # To DISPLAY the diagnoses selected for this visit
   def show_diagnoses(visit)
-    diagnoses = (visit.diagnosis_labels << visit.dx << visit.dx2).join('; ')
+    diagnoses = ([visit.dx, visit.dx2, selections_to_string(visit, :diagnoses)]).join('; ')
     return diagnoses.blank? ? nil : diagnoses + '.'
   end
 
   def show_symptoms(visit)
-    "--Symptom list--"
+    selections_to_string(visit, :symptoms)
   end
 
-  def phys_finding(afield, alabel=afield.capitalize)
-
-    s = "<td><label for='visit_pe_#{afield}'>#{alabel}</label></td><td>" +
-        check_box('visit', "pe_"+afield+"_ok") +
-        text_field('visit', 'pe_'+afield, :size => 14) + "</td>"
-    return s.html_safe
+  def show_exam(visit)
+    normal, noted = selected(visit, :physical).partition {|x| ['', 'normal'].include? x[1]}
+    noted_str = noted.any? ? noted.map{|x| "#{x[0]}: #{x[1]}"}.join('; ') + '. ' : ''
+    normal_str = normal.any? ? [normal.map {|x| x[0]}.join(', '), all_both(normal.size), 'normal.'].join(' ') : ''
+    return noted_str + normal_str.capitalize
   end
 
-  def phys_findings_column(items)
-    s = "<td style='padding: 5px'><table>"
-    for item in items
-      s << '<tr>' + phys_finding(item) + '</tr>'
+  def all_both(n)
+    case n
+      when 0, 1 then nil
+      when 2 then 'both'
+      else 'all'
     end
-    s << '</table></td>'
-    return s.html_safe
   end
 
   # Not in use #########

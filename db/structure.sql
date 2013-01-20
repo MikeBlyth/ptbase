@@ -944,7 +944,7 @@ CREATE TABLE visits (
     updated_at timestamp without time zone,
     arv_regimen character varying(255),
     symptoms hstore,
-    exam hstore,
+    physical hstore,
     diagnoses hstore
 );
 
@@ -1330,7 +1330,7 @@ CREATE INDEX visits_diagnoses ON visits USING gin (diagnoses);
 -- Name: visits_exam; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX visits_exam ON visits USING gin (exam);
+CREATE INDEX visits_exam ON visits USING gin (physical);
 
 
 --
@@ -1459,3 +1459,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130119171053');
 INSERT INTO schema_migrations (version) VALUES ('20130119195813');
 
 INSERT INTO schema_migrations (version) VALUES ('20130119210742');
+
+INSERT INTO schema_migrations (version) VALUES ('20130120135959');

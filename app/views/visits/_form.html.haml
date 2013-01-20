@@ -3,73 +3,90 @@
   %legend= "Current information for #{patient_name_link(patient)}".html_safe
   = render(:partial => '/shared/medinfo', :object => patient, as: :patient)
 = render(:partial => 'shared/problem_list', :object => patient )
-= simple_form_for @visit, {url: {patient_id: patient.id}} do |form|
+= simple_form_for @visit, {url: {patient_id: patient.id},
+     :html => { :class => 'form-horizontal' } } do |form|
   %fieldset
     %legend Visit info
-    = form.input :date, as: :string
-    = form.input :scheduled, label: 'Scheduled visit?'
-    = form.input :next_visit, as: :string, label: 'Next visit (add js buttons to give choices)'
-    = form.association :provider
-    = form.input :newpt, label: 'New patient?'
-    = form.input :adm, label: 'Admitted?'
+    .row-fluid
+      .span3= form.input :date, as: :string
+      .span3= form.association :provider
+      .span2= form.input :scheduled, label: 'Scheduled?'
+      .span2= form.input :newpt, label: 'New patient?'
+      .span1= form.input :adm, label: 'Admitted?'
 
   %fieldset
     %legend Vital Signs
-    = form.input :weight
-    = form.input :height
-    = form.input :head_circ
-    = form.input :mid_arm_circ
-    = form.input :temperature
-    = form.input :resp_rate
-    = form.input :heart_rate
-    = form.input :sbp
-    = form.input :dbp
-
-  %fieldset
-    %legend Signs and Symptoms
-    = check_boxes(@visit, :symptoms)
+    .row-fluid
+      .span2= form.input :weight
+      .span2= form.input :height
+      .span2= form.input :head_circ
+      .span2= form.input :mid_arm_circ
+    .row-fluid
+      .span2= form.input :temperature
+      .span2= form.input :heart_rate
+      .span2= form.input :resp_rate
+      .span2= form.input :sbp, label: 'SBP'
+      .span2= form.input :dbp, label: 'DBP'
 
   %fieldset
     %legend History
-    = form.input :hpi, label: "History of present illness"
+    .row-fluid
+      .span6= form.input :hpi, label: "History of present illness",
+        input_html: {rows: '1', columns: '80', style: 'width: 350px'}
+    %h4 Signs and Symptoms
+    .row-fluid
+      .span10= check_boxes(@visit, :symptoms, 3)
+    .row-fluid
+      = form.input :other_symptoms
+
   %fieldset
     %legend Physical Exam
     %p.form_instruction Tick box if this part of exam is normal.
     = check_boxes(@visit, :physical)
-    %br
-    = text_area 'visit', 'phys_exam', {:rows => '1', :cols => '70' }
+    .row-fluid
+    .span6= form.input :phys_exam, input_html: {rows: '1', columns: '80', style: 'width: 350px'}
   %fieldset
     %legend Assessment and Diagnosis
     = check_boxes(@visit, :diagnoses)
     = form.input :dx, label: 'Other diagnoses'
     = form.input :newdx, label: 'New diagnosis given?'
-    %br
-    = form.input :assessment_stable, label: "Stable"
-    = form.input :assessment_oi, label: "Active OI"
-    = form.input :assessment_drug_toxicity, label: "Drug toxicity"
-    = form.input :assessment_nonadherence, label: "Nonadherence"
-    = form.input :assessment
+    .row-fluid
+    .span2= form.input :assessment_stable, label: "Stable"
+    .span2= form.input :assessment_oi, label: "Active OI"
+    .span2= form.input :assessment_drug_toxicity, label: "Drug toxicity"
+    .span2= form.input :assessment_nonadherence, label: "Nonadherence"
+    .row-fluid
+    .span6= form.input :assessment, input_html: {rows: '1', columns: '80', style: 'width: 350px'}
   %fieldset
     %legend Other
-    = form.input :development
-    = form.input :diet_breast
-    = form.input :diet_breastmilk_substitute
-    = form.input :diet_pap
-    = form.input :diet_solids
-
-    = form.input :meds
-    = form.input :plan
-    = form.input :comments
-
-    = form.input :anti_tb_status
+    .row-fluid
+    .span6= form.input :development, input_html: {rows: '1', columns: '80', style: 'width: 350px'}
+    .row-fluid
+    %p Diet
+    .span2= form.input :diet_breast, label: 'Breast'
+    .span2= form.input :diet_breastmilk_substitute, label: 'Breast subst.'
+    .span2= form.input :diet_pap, label: 'Pap'
+    .span2= form.input :diet_solids, label: 'Solids'
+    .row-fluid
+    .span4= form.input :meds
+    .span4= form.input :comments
+    .span2= form.input :anti_tb_status
   %fieldset
     %legend HIV related
-    = form.input :hiv_stage
-    = form.input :arv_status
-    = form.input :arv_missed
-    = form.input :arv_missed_week
-    = render(:partial => 'arv_regimen', object: @visit )
+    .span2= form.input :hiv_stage
+    .span2= form.input :arv_status
+    .span2= form.input :arv_missed
+    .span2= form.input :arv_missed_week
+    .row-fluid
+    .span2= render(:partial => 'arv_regimen', object: @visit )
+  %fieldset
+    %legend Plan
+    .row-fluid
+    .span6= form.input :plan, input_html: {rows: '1', columns: '80', style: 'width: 350px'}
+    .span4= form.input :next_visit, as: :string, label: 'Next visit (add js buttons to give choices)'
+
   %hr
+
   = form.error :base
   = form.submit
   = link_to "Cancel", request.referer

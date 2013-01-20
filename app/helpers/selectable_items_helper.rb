@@ -16,15 +16,15 @@ module SelectableItemsHelper
         field = fields[i]
         unless i >= fields.count
           #box = check_box :visit, field.to_tag
-          box = check_box_tag("visit[#{section_name}][#{field.name}]", 1, record.send(section_name)[field.name])
           label = label_tag :visit, field.to_label
+          box = check_box_tag("visit[#{section_name}][#{field.name}]", 1, record.send(section_name)[field.name])
           comment = field.with_comment ? text_field_tag("visit[#{section_name}][#{field.name}_comment]") : nil
           row_contents << content_tag(:td, box+label+comment)
         end
       end
       table_contents << content_tag(:tr, row_contents)
     end
-    return content_tag(:table, table_contents)
+    return content_tag(:table, table_contents, {class: 'table-striped', style: 'width: 100%'})
   end
 
   def selections_to_string(record, section_name)

@@ -945,7 +945,8 @@ CREATE TABLE visits (
     arv_regimen character varying(255),
     symptoms hstore,
     physical hstore,
-    diagnoses hstore
+    diagnoses hstore,
+    other_symptoms character varying(255)
 );
 
 
@@ -1461,3 +1462,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130119195813');
 INSERT INTO schema_migrations (version) VALUES ('20130119210742');
 
 INSERT INTO schema_migrations (version) VALUES ('20130120135959');
+
+INSERT INTO schema_migrations (version) VALUES ('20130120192230');

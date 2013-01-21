@@ -19,7 +19,7 @@ module SelectableItemsHelper
           label = label_tag :visit, field.to_label
           box = check_box_tag("visit[#{section_name}][#{field.name}]", 1, record.send(section_name)[field.name])
           comment = field.with_comment ? text_field_tag("visit[#{section_name}][#{field.name}_comment]") : nil
-          row_contents << content_tag(:td, box+label+comment)
+          row_contents << content_tag(:td, label+box+comment)
         end
       end
       table_contents << content_tag(:tr, row_contents)

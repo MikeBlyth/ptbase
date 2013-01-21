@@ -31,7 +31,6 @@ gem 'prawn'
 # gem 'activeadmin'
 gem 'therubyracer'
 gem 'multi_json'
-gem 'simple_form'
 
 group :assets do
 #  gem 'less-rails-bootstrap'

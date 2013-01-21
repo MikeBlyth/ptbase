@@ -1,17 +1,20 @@
-= simple_form_for(@admission, :html => {:class => 'form-vertical' }) do |form|
-  = form.input :patient_id
+= form_for @admission, builder: LabeledFormBuilder do |form|
+  = :patient_id
   #adm-data
-  = form.input :date, as: :string
-  = form.input :ward
-  = form.input :bed
-  = form.association :provider
-  = form.input :weight_admission
-  = form.input :diagnosis_1
-  = form.input :diagnosis_2
-  = form.input :meds
-  = form.input :comments
-  #disch-data
-    = form.input :discharge_date, as: :string
-    = form.input :weight_discharge
-    = form.input :discharge_status, collection: Admission::DISCHARGE_STATUSES
+  = form.text_field(:date)
+  <label class="checkbox">
+  <input type="checkbox"> Check me out
+  </label>-#= form.input :date, as: :string
+  -#= form.input :ward
+  -#= form.input :bed
+  -#= form.association :provider
+  -#= form.input :weight_admission
+  -#= form.input :diagnosis_1
+  -#= form.input :diagnosis_2
+  -#= form.input :meds
+  = form.text_area :comments
+  -##disch-data
+  -#  = form.input :discharge_date, as: :string
+  -#  = form.input :weight_discharge
+  -#  = form.input :discharge_status, collection: Admission::DISCHARGE_STATUSES
   = form.button :submit

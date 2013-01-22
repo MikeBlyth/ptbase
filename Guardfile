@@ -2,7 +2,7 @@
 # More info at https://github.com/guard/guard#readme
 
 guard 'annotate' do
-  watch( 'db/schema.rb' )
+  watch( 'db/structure.sql' )
 
   # Uncomment the following line if you also want to run annotate anytime
   # a model file changes

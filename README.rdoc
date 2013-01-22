@@ -230,7 +230,7 @@ config
   and other dependencies.
 
 db
-  Contains the database schema in schema.rb. db/migrate contains all the
+  Contains the database schema in structure.sql. db/migrate contains all the
   sequence of Migrations for your schema.
 
 doc

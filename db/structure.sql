@@ -935,9 +935,9 @@ CREATE TABLE visits (
     diet_pap boolean,
     diet_solids boolean,
     assessment_stable boolean,
-    assessment_oi boolean,
+    assessment_opportunistic_infection boolean,
     assessment_drug_toxicity boolean,
-    assessment_nonadherence boolean,
+    assessment_non_adherence boolean,
     arv_missed integer,
     arv_missed_week integer,
     created_at timestamp without time zone,
@@ -1464,3 +1464,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130119210742');
 INSERT INTO schema_migrations (version) VALUES ('20130120135959');
 
 INSERT INTO schema_migrations (version) VALUES ('20130120192230');
+
+INSERT INTO schema_migrations (version) VALUES ('20130122130641');

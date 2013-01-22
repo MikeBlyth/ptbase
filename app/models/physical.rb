@@ -2,15 +2,16 @@
 #
 # Table name: physicals
 #
-#  id          :integer          not null, primary key
-#  name        :string(255)
-#  label       :string(255)
-#  synonyms    :string(255)
-#  comments    :string(255)
-#  sort_order  :integer
-#  show_visits :boolean
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id           :integer          not null, primary key
+#  name         :string(255)
+#  label        :string(255)
+#  synonyms     :string(255)
+#  comments     :string(255)
+#  sort_order   :integer
+#  show_visits  :boolean
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  with_comment :boolean
 #
 
 class Physical < ActiveRecord::Base

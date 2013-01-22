@@ -137,9 +137,10 @@ class Visit < ActiveRecord::Base
   end
 
   def arv_status_summary
-    %w(stable drug_toxicity opportunistic_infection nonadherence).map |status|
-        self.send "assessment_#{status}" ? status : nil
+    result = %w(stable drug_toxicity opportunistic_infection non_adherence).map do |status|
+        self.send("assessment_#{status}") ? status : nil
     end.compact.join('; ')
+    return "#{result}." if result
   end
 
   # Default sort order will be on date

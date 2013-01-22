@@ -5,7 +5,7 @@
 #  id                  :integer          not null, primary key
 #  first_name          :string(255)
 #  last_name           :string(255)
-#  other_names         :string(255)
+#  middle_name         :string(255)
 #  birth_date          :datetime
 #  death_date          :date
 #  birth_date_exact    :boolean
@@ -34,7 +34,7 @@ class Patient < ActiveRecord::Base
   include DateValidators
   include NamesHelper
 
-  attr_accessible :first_name, :ident, :last_name, :other_names, :sex, :residence, :phone, :caregiver, :birth_date,
+  attr_accessible :first_name, :ident, :last_name, :middle_name, :sex, :residence, :phone, :caregiver, :birth_date,
                   :death_date, :birth_date_text, :birth_date_exact,:death_date,
                   :allergies, :hemoglobin_type, :hiv_status, :maternal_hiv_status
 
@@ -191,7 +191,7 @@ class Patient < ActiveRecord::Base
   # Has HIV concern if own status is positive OR (mother's status is positive and own is not Negative)
   def hiv?
     return hiv_status == 'positive' ||
-        (hiv_pos_mother && hiv_status != 'negative')
+        (age_years < 18.months && hiv_pos_mother && hiv_status != 'negative')
   end
 
   def hiv_pos

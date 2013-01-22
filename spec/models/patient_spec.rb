@@ -5,7 +5,7 @@
 #  id                  :integer          not null, primary key
 #  first_name          :string(255)
 #  last_name           :string(255)
-#  other_names         :string(255)
+#  middle_name         :string(255)
 #  birth_date          :datetime
 #  death_date          :date
 #  birth_date_exact    :boolean
@@ -58,7 +58,7 @@ describe Patient do
     end
 
     it 'uses first and last name with middle initial' do
-      patient.other_names = 'Artexerxes'
+      patient.middle_name = 'Artexerxes'
       patient.name.should eq 'Bernard A. Jones'
     end
 

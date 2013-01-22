@@ -191,7 +191,7 @@ FactoryGirl.define do
   factory :provider, aliases: [:prescriber] do
     last_name 'Hertz'
     first_name 'Joshua'
-    other_names 'Kernigan'
+    middle_name 'Kernigan'
     sequence(:ident) {|n| "Prov #{n}"  }
   end
 

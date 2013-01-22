@@ -16,10 +16,11 @@
   %p.span6#labs
     Labs at this visit:
     = visit_labs(@visit)
-.row-fluid
-  %p.span6#hiv
-    HIV status:
-    = hiv_status_summary(@visit)
+-if @visit.patient.hiv?
+  .row-fluid
+    %p.span6#hiv
+      HIV status:
+      = hiv_status_summary(@visit)
 .row-fluid
   %p.span6#drugs
     Drugs prescribed:

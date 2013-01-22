@@ -505,7 +505,7 @@ CREATE TABLE patients (
     id integer NOT NULL,
     first_name character varying(255),
     last_name character varying(255),
-    other_names character varying(255),
+    middle_name character varying(255),
     birth_date timestamp without time zone,
     death_date date,
     birth_date_exact boolean,
@@ -772,10 +772,13 @@ CREATE TABLE providers (
     id integer NOT NULL,
     last_name character varying(255),
     first_name character varying(255),
-    other_names character varying(255),
+    middle_name character varying(255),
     ident character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    title character varying(255),
+    "position" character varying(255),
+    degree character varying(255)
 );
 
 
@@ -1466,3 +1469,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130120135959');
 INSERT INTO schema_migrations (version) VALUES ('20130120192230');
 
 INSERT INTO schema_migrations (version) VALUES ('20130122130641');
+
+INSERT INTO schema_migrations (version) VALUES ('20130122200043');

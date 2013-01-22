@@ -1,8 +1,16 @@
 module NamesHelper
 
   def name
-    initial = other_names.blank? ? '' : " #{other_names[0]}."
+    initial = middle_name.blank? ? '' : " #{middle_name[0]}."
     return (first_name || '') + initial + ' ' + (last_name || '')
+  end
+
+  def with_title(a_name)
+    (self.respond_to? :title) && self.title.present? ? "#{title} #{a_name}" : a_name
+  end
+
+  def with_degree(a_name)
+    (self.respond_to? :degree) && self.degree.present? ? "#{a_name}, #{degree}" : a_name
   end
 
   def name_last_first

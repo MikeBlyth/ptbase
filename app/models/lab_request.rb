@@ -13,7 +13,7 @@
 
 
 class LabRequest < ActiveRecord::Base
-  attr_accessible :date, :hct, :patient_id, :provider_id, :patient, :provider, :lab_results_attributes
+  attr_accessible :date, :hct, :patient_id, :provider_id, :patient, :provider, :lab_results_attributes, :comments
   belongs_to :patient
   belongs_to :provider
   has_many :lab_results, :dependent => :delete_all

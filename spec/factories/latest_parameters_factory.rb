@@ -8,7 +8,7 @@ class LatestParametersFactory < LatestParameters
 
   def initialize(options={})
     self[:patient] = options[:patient] || Patient.new(
-                {id: 88, first_name: "Mohammed", last_name: "Audu", other_names: nil,
+                {id: 88, first_name: "Mohammed", last_name: "Audu", middle_name: nil,
                 birth_date: "2003-09-15", death_date: nil, birth_date_exact: nil,
                 ident: "P002", sex: "M"}
                 )

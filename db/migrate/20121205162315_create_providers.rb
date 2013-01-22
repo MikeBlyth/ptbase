@@ -3,7 +3,7 @@ class CreateProviders < ActiveRecord::Migration
     create_table :providers do |t|
       t.string :last_name
       t.string :first_name
-      t.string :other_names
+      t.string :middle_name
       t.string :ident
 
       t.timestamps

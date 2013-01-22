@@ -28,7 +28,16 @@ module ApplicationHelper
 
   def patient_name_link(patient)
     link_to "#{patient.name} [#{patient.ident}]", patient_path(patient)
- end
+  end
+
+  def twitter_box(id, name, label, checked)
+    #id = "#{name}_id"
+    #box = check_box_tag("#{object_name}[#{section_name}][#{field.name}]", 1, record.send(section_name)[field.name])
+    #label = label_tag "#{object_name}_#{section_name}_#{field.name}", box+field.to_label, class: 'checkbox inline'
+    is_checked = checked ? " checked='checked'" : ''
+    box = "<input type='checkbox' id='#{id}' name='#{name}' value='1' #{is_checked}>".html_safe
+    "<label for='#{id}' class='checkbox inline' >".html_safe + box + label.html_safe + "</label>".html_safe
+  end
 
   # ToDo These should probably go into a presenter
   # The following methods logically should be in visit_helper, but they're needed when the visit is

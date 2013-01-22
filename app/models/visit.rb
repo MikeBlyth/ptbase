@@ -107,6 +107,9 @@ class Visit < ActiveRecord::Base
   # X = Stop
   # V = change
 
+  def self.arv_statuses
+    {'0'=> 'none', 'P'=>'preparing', 'B'=>'beginning', 'C'=>'Continuing', 'X' => 'stopping', 'V'=>'changing' }
+  end
 
   def self.starting_arv
     self.where("arv_status =?", 'B')
@@ -131,6 +134,12 @@ class Visit < ActiveRecord::Base
 
   def diagnosis_labels
     diagnoses_array.map{|dx| dx.to_label}
+  end
+
+  def arv_status_summary
+    %w(stable drug_toxicity opportunistic_infection nonadherence).map |status|
+        self.send "assessment_#{status}" ? status : nil
+    end.compact.join('; ')
   end
 
   # Default sort order will be on date

@@ -16,15 +16,21 @@ module SelectableItemsHelper
         field = fields[i]
         unless i >= fields.count
           #box = check_box :visit, field.to_tag
-          label = label_tag :visit, field.to_label
-          box = check_box_tag("visit[#{section_name}][#{field.name}]", 1, record.send(section_name)[field.name])
+          #box = check_box_tag("visit[#{section_name}][#{field.name}]", 1, record.send(section_name)[field.name])
+          #box_with_label = label_tag "visit_#{section_name}_#{field.name}", box+field.to_label, class: 'checkbox inline'
+          # **************************
+            name = "visit[#{section_name}][#{field.name}]"
+            id = "visit_#{section_name}_#{field.name}"
+            checked = record.send(section_name)[field.name]
+            box_with_label = twitter_box(id, name, field.name, checked)
+          # **************************
           comment = field.with_comment ? text_field_tag("visit[#{section_name}][#{field.name}_comment]") : nil
-          row_contents << content_tag(:td, label+box+comment)
+          row_contents << content_tag(:td, box_with_label+comment)
         end
       end
       table_contents << content_tag(:tr, row_contents)
     end
-    return content_tag(:table, table_contents, {class: 'table-striped', style: 'width: 100%'})
+    return content_tag(:table, table_contents, {class: 'table-striped checkbox-table', style: 'width: 100%'})
   end
 
   def selections_to_string(record, section_name)
@@ -44,8 +50,8 @@ module SelectableItemsHelper
     stored_hash =  record.send(section_name)
     return {} if stored_hash.nil?
     comments, basic =stored_hash.partition {|x| x[0] =~ /_comment\Z/}
-    basic.each { |b| merged[b[0]] = (b[1] == 'true') ? '' : b[1] }
-    comments.each do |comment|
+    basic.each { |b| merged[b[0]] = (b[1] == 'true' || b[1] == '1') ? '' : b[1] }
+    comments.select{|comment| comment[1].present?}.each do |comment|
       source_key = comment[0][0..-9]
       merged[source_key] = [merged[source_key], comment[1]].join ('--')
     end

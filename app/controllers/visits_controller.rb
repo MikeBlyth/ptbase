@@ -3,11 +3,22 @@ class VisitsController < ApplicationController
   before_filter :authenticate_user!
 
   active_scaffold :visit do |config|
-    config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm, :symptoms
-    config.create.link.page = true
-    config.create.link.inline = false
+    config.list.columns = :patient, :date,:weight, :dx, :dx2, :meds, :adm
+    # ToDo - when refactoring, put this lambda or a method somewhere where all the controllers can access it,
+    # if still using AS
+    as_no_inline = lambda do |action|
+      config.send(action).link.page = true
+      config.send(action).link.inline = false
+    end
+    [:create, :update, :show].each &as_no_inline
+    %w(weight dx meds adm).each {|col| config.columns[col].inplace_edit = true}
   end
-
+  #
+  #def as_not_inline(config, action)
+  #  config.send(action).link.page = true
+  #  config.send(action).link.inline = false
+  #end
+  #
   def new
     patient = Patient.find params[:patient_id]
     @visit = Visit.new(patient: patient) #ToDO Error checking!

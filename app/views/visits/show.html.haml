@@ -1,12 +1,29 @@
 - @visit ||= @record
 - patient = @visit.patient
 %h2= "Visit for #{patient_name_link(patient)} on #{@visit.date}".html_safe
-%p= "Provider: #{@record.provider}"
-%p#diagnoses
-  = render "diagnoses"
-%p#hpi
-  History:
-  = render "history"
-%p#exam
-  Exam:
-  = render "physical_exam"
+.row-fluid
+  %p.span6= "Provider: #{@record.provider}"
+  %p.span6#diagnoses
+    = render "diagnoses"
+.row-fluid
+  %p.span6#history
+    History:
+    = render "history"
+  %p.span6#exam
+    Exam:
+    = render "physical_exam"
+.row-fluid
+  %p.span6#labs
+    Labs at this visit:
+    = render "visit_labs"
+.row-fluid
+  %p.span6#hiv
+    HIV status:
+    = render "hiv_status_para"
+.row-fluid
+  %p.span6#drugs
+    Drugs prescribed:
+    = render "visit_drugs"
+  %p.span6#plan
+    Other planned treatment:
+    = @visit.plan

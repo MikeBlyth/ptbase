@@ -1,2 +1,14 @@
 Physical exam:
+= "Vital signs: T #{@visit.temperature}C, P #{@visit.heart_rate}/min, Resp #{@visit.resp_rate}/min."
+- if @visit.sbp || @visit.dbp
+  = "BP #{@visit.sbp || '--'}/#{@visit.dbp || '--'}"
+  = "Weight #{@visit.weight} kg."
+- if @visit.weight
+  = "Weight #{@visit.weight} kg."
+- if @visit.height
+  = "Height #{@visit.weight} cm."
+- if @visit.mid_arm_circ
+  = "Mid-arm circ #{@visit.mid_arm_circ} cm."
+- if @visit.head_circ
+  = "Head circ #{@visit.weight} cm."
 = show_exam(@visit)

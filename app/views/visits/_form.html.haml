@@ -40,17 +40,18 @@
 
   %fieldset
     %legend Physical Exam
-    %p.form_instruction Tick box if this part of exam is normal.
+    %p.form_instruction Tick box if this part of exam is normal. Put findings or comments into the boxes.
     = check_boxes(@visit, :physical)
     .controls
-      .span6= form.input :phys_exam, input_html: {rows: '1', class: "input-block-level"}
+      .span6= form.input :phys_exam, label: 'Other findings', input_html: {rows: '1', class: "input-block-level"}
   %fieldset
     %legend Assessment and Diagnosis
     .controls-row.controls
       = check_boxes(@visit, :diagnoses)
     .controls-row.controls
       .span6= form.input :dx, label: 'Other diagnoses', :input_html=>{:class=>'input-xlarge'}
-      .span4= form.input :newdx, label: 'New diagnosis given?', :input_html=>{:class=>'input-mini'}
+      .span4= twitter_box('newdx', 'newdx', 'New diagnosis given?', @visit.newdx)
+      -#.span4= form.input :newdx, label: 'New diagnosis given?', :input_html=>{:class=>'input-mini'}
     .controls-row.controls
       .span2= form.input :assessment_stable, label: "Stable", :input_html=>{:class=>'input-mini'}
       .span2= form.input :assessment_oi, label: "Active OI", :input_html=>{:class=>'input-mini'}
@@ -63,6 +64,7 @@
     .controls-row.controls
       .span6= form.input :development, input_html: {rows: '1', class: "input-block-level"}
     .controls-row.controls
+      %p.span2.pull-left <b>Diet</b>
       .span2= form.input :diet_breast, label: 'Breast', :input_html=>{:class=>'input-mini'}
       .span2= form.input :diet_breastmilk_substitute, label: 'Breast subst.' , :input_html=>{:class=>'input-mini'}
       .span2= form.input :diet_pap, label: 'Pap', :input_html=>{:class=>'input-mini'}
@@ -70,14 +72,14 @@
     .controls-row.controls
       .span4= form.input :meds
       .span4= form.input :comments
-      .span2= form.input :anti_tb_status, label: 'Anti-TB status'
+      .span2= form.input :anti_tb_status, label: 'Anti-TB status', collection: %w(preparing beginning stopping continuing changing)
   %fieldset
     %legend HIV related
     .controls-row.controls
-      .span2= form.input :hiv_stage, :input_html=>{:class=>'input-mini'}
-      .span2= form.input :arv_status, :input_html=>{:class=>'input-mini'}
-      .span2= form.input :arv_missed, :input_html=>{:class=>'input-mini'}
-      .span3= form.input :arv_missed_week, label: 'ARV missed weeks', :input_html=>{:class=>'input-mini'}
+      .span2= form.input :hiv_stage, label: 'HIV Stage (1-4)', :input_html=>{:class=>'input-small'}
+      .span3= form.input :arv_status, label: 'ARV Status',  :input_html=>{:class=>'input-small'}, collection: %w(preparing beginning stopping continuing changing)
+      .span3= form.input :arv_missed, label: 'ARV doses missed', :input_html=>{:class=>'input-small'}
+      .span3= form.input :arv_missed_week, label: 'ARV weeks missed', :input_html=>{:class=>'input-small'}
     .controls-row.controls
       .span12= render(:partial => 'arv_regimen', object: @visit )
   %fieldset

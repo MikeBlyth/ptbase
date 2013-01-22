@@ -39,6 +39,33 @@ module VisitsHelper
     return noted_str + normal_str.capitalize
   end
 
+  def hiv_status_summary(visit)
+    para = []
+    para << "HIV stage #{visit.hiv_stage || 'not noted'}"
+    para << "ARV status: #{Visit.arv_statuses[visit.arv_status] || visit.arv_status || 'not noted'}"
+    regimen = visit.arv_reg_str
+    para << "ARV regimen: #{regimen}" if regimen
+    assessment_choices = %w(stable drug_toxicity opportunistic_infection non_adherence).map do |status|
+      visit.send("assessment_#{status}") ? status.spacerize : nil
+    end.compact.join('; ').capitalize
+    para <<  assessment_choices if  assessment_choices
+    return para.join('. ') +'.'
+  end
+
+  def visit_labs(visit)
+    visit.patient.lab_results.where(:date => (visit.date-4.hours)..(visit.date+24.hours)).
+        map {|lab| "#{lab.lab_service.abbrev}: #{lab.result}"}.join("; ")
+  end
+
+  def visit_drugs(visit)
+    visit.patient.prescriptions.where(:date => (visit.date)..(visit.date+24.hours)).map do |prescription|
+        prescription.prescription_items.map do |item|
+          "#{item.drug} #{item.dose} #{item.route} q#{item.interval} hr x #{item.duration} days."
+        end
+    end.join("; ")
+
+  end
+
   def all_both(n)
     case n
       when 0, 1 then nil

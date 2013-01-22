@@ -136,13 +136,6 @@ class Visit < ActiveRecord::Base
     diagnoses_array.map{|dx| dx.to_label}
   end
 
-  def arv_status_summary
-    result = %w(stable drug_toxicity opportunistic_infection non_adherence).map do |status|
-        self.send("assessment_#{status}") ? status : nil
-    end.compact.join('; ')
-    return "#{result}." if result
-  end
-
   # Default sort order will be on date
   def <=>(x,y)
     x.date <=> y.date

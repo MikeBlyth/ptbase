@@ -20,6 +20,10 @@ class String
   def to_f_if_numeric
     Float(self) rescue self
   end
+
+  def spacerize
+    gsub!('_', ' ')
+  end
 end
 
 class NilClass

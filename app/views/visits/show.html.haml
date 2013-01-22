@@ -15,15 +15,15 @@
 .row-fluid
   %p.span6#labs
     Labs at this visit:
-    = render "visit_labs"
+    = visit_labs(@visit)
 .row-fluid
   %p.span6#hiv
     HIV status:
-    = render "hiv_status_para"
+    = hiv_status_summary(@visit)
 .row-fluid
   %p.span6#drugs
     Drugs prescribed:
-    = render "visit_drugs"
+    = visit_drugs(@visit)
   %p.span6#plan
     Other planned treatment:
     = @visit.plan

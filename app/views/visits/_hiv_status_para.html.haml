@@ -1,5 +1,5 @@
 = "HIV stage #{@visit.hiv_stage}." if @visit.hiv_stage
 = "ARV status: #{Visit.arv_statuses[@visit.arv_status] || @visit.arv_status }." if @visit.arv_status
 = "ARV regimen: #{@visit.arv_reg_str}."
-= "Assessment:"
-= "stabl"
+= "Assessment: #{arv_status_summary(@visit)}"
+

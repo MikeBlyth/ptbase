@@ -53,10 +53,10 @@
       .span4= twitter_box('newdx', 'newdx', 'New diagnosis given?', @visit.newdx)
       -#.span4= form.input :newdx, label: 'New diagnosis given?', :input_html=>{:class=>'input-mini'}
     .controls-row.controls
-      .span2= form.input :assessment_stable, label: "Stable", :input_html=>{:class=>'input-mini'}
-      .span2= form.input :assessment_oi, label: "Active OI", :input_html=>{:class=>'input-mini'}
-      .span2= form.input :assessment_drug_toxicity, label: "Drug toxicity", :input_html=>{:class=>'input-mini'}
-      .span2= form.input :assessment_nonadherence, label: "Nonadherence", :input_html=>{:class=>'input-mini'}
+      .span3= form.input :assessment_stable, label: "Stable", :input_html=>{:class=>'input-mini'}
+      .span3= form.input :assessment_opportunistic_infection, label: "Active opportunistic infection", :input_html=>{:class=>'input-mini'}
+      .span3= form.input :assessment_drug_toxicity, label: "Drug toxicity", :input_html=>{:class=>'input-mini'}
+      .span3= form.input :assessment_non_adherence, label: "Non-adherence", :input_html=>{:class=>'input-mini'}
     .controls-row.controls
       .span8= form.input :assessment, input_html: {rows: '1', class: "input-block-level"}
   %fieldset

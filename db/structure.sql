@@ -229,42 +229,49 @@ ALTER SEQUENCE icd9s_id_seq OWNED BY icd9s.id;
 
 
 --
+-- Name: immunization_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE immunization_types (
+    id integer NOT NULL,
+    name character varying(255),
+    abbrev character varying(255),
+    notes character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: immunization_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE immunization_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: immunization_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE immunization_types_id_seq OWNED BY immunization_types.id;
+
+
+--
 -- Name: immunizations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE immunizations (
     id integer NOT NULL,
+    immunization_type_id integer,
     patient_id integer,
-    bcg date,
-    opv1 date,
-    opv2 date,
-    opv3 date,
-    opv4 date,
-    dpt1 date,
-    dpt2 date,
-    dpt3 date,
-    dpt4 date,
-    tt1 date,
-    tt2 date,
-    tt3 date,
-    tt4 date,
-    hepb1 date,
-    hepb2 date,
-    hepb3 date,
-    hepb4 date,
-    measles1 date,
-    measles2 date,
-    mmr1 date,
-    mmr2 date,
-    hib1 date,
-    hib2 date,
-    hib3 date,
-    hib4 date,
-    mening date,
-    pneumo date,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    provider_id integer
+    datetime date,
+    provider_id integer,
+    comments character varying(255)
 );
 
 
@@ -1012,6 +1019,13 @@ ALTER TABLE ONLY icd9s ALTER COLUMN id SET DEFAULT nextval('icd9s_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY immunization_types ALTER COLUMN id SET DEFAULT nextval('immunization_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY immunizations ALTER COLUMN id SET DEFAULT nextval('immunizations_id_seq'::regclass);
 
 
@@ -1165,6 +1179,14 @@ ALTER TABLE ONLY drugs
 
 ALTER TABLE ONLY icd9s
     ADD CONSTRAINT icd9s_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: immunization_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY immunization_types
+    ADD CONSTRAINT immunization_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -1474,3 +1496,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130122130641');
 INSERT INTO schema_migrations (version) VALUES ('20130122200043');
 
 INSERT INTO schema_migrations (version) VALUES ('20130124133253');
+
+INSERT INTO schema_migrations (version) VALUES ('20130124163521');

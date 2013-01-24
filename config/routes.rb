@@ -1,5 +1,7 @@
 Ptbase::Application.routes.draw do
 
+  resources :immunization_types do as_routes end
+
   resources :physicals do as_routes end
 
   resources :symptoms do as_routes end

@@ -41,6 +41,10 @@ Icd9.create(icd9: '011', description: 'pulmonary tuberculosis')
 Icd9.create(icd9: '084', description: 'malaria')
 Icd9.create(icd9: '042', description: 'HIV')
 
+ImmunizationType.delete_all
+bcg = ImmunizationType.create(name: 'BCG', abbrev: 'BCG')
+opv = ImmunizationType.create(name: 'polio, oral', abbrev: 'OPV')
+
 Immunization.delete_all
 birth = audu.birth_date
 Immunization.create(patient: audu, bcg: birth+2.weeks, opv1: birth+6.weeks, opv2: birth+10.weeks, dpt1: birth+6.weeks, dpt2: birth+10.weeks)

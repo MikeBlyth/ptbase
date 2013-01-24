@@ -1,17 +1,19 @@
-= simple_form_for(@admission, :html => {:class => 'form-vertical' }) do |form|
-  = form.input :patient_id
-  #adm-data
-  = form.input :date, as: :string
-  = form.input :ward
-  = form.input :bed
-  = form.association :provider
-  = form.input :weight_admission
-  = form.input :diagnosis_1
-  = form.input :diagnosis_2
-  = form.input :meds
-  = form.input :comments
-  #disch-data
-    = form.input :discharge_date, as: :string
-    = form.input :weight_discharge
-    = form.input :discharge_status, collection: Admission::DISCHARGE_STATUSES
-  = form.button :submit
+- patient = @admission.patient
+= simple_form_for @admission, {url: {patient_id: patient.id} } do |form|
+  .row-fluid.controls-row
+    .span3= form.input :date, as: :string, label: 'Adm. date', :input_html => {:class=>'input-small'}
+    .span3= form.input :discharge_date, as: :string , :input_html => {:class=>'input-small'}
+    .span2= form.input :discharge_status, collection: Admission::DISCHARGE_STATUSES, :input_html => {:class=>'input-small'}
+    .span2= form.input :weight_admission, label: 'Adm. weight', :input_html=>{:class=>'input-mini'}
+    .span2= form.input :weight_discharge, label: 'Disch. Weight',  :input_html=>{:class=>'input-mini'}
+  .row-fluid.controls-row
+    .span3= form.association :provider
+    .span3= form.input :ward, :input_html => {:class=>'input-small'}
+    .span2= form.input :bed,  :input_html=>{:class=>'input-mini'}
+  .row-fluid.controls-row
+    .span3= form.input :diagnosis_1
+    .span3= form.input :diagnosis_2
+    .span4= form.input :meds, :input_html=>{:class=>'input-xlarge'}
+  .row-fluid.control-row
+    .span6= form.input :comments, input_html: {class: 'input-block-level'}
+  = form.button :submit, class: 'btn btn-primary'

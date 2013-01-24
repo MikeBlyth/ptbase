@@ -18,7 +18,7 @@ class LabRequest < ActiveRecord::Base
   belongs_to :provider
   has_many :lab_results, :dependent => :delete_all
   has_many :lab_services, :through => :lab_results
-  validates_presence_of :provider_id, :patient_id
+  validates_presence_of :provider_id, :patient_id, :date
   before_validation :default_date
   accepts_nested_attributes_for :lab_results
 

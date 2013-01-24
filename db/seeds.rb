@@ -80,10 +80,10 @@ audu_lab_1.created_at = Date.today - 1.year
 audu_lab_1.save
 
 LabResult.delete_all
-LabResult.create(lab_request: audu_lab_1, lab_service: cd4, result: '1500')
-LabResult.create(lab_request: audu_lab_1, lab_service: hct, result: '35')
-LabResult.create(lab_request: audu_lab_2, lab_service: cd4, result: '450')
-LabResult.create(lab_request: audu_lab_2, lab_service: hct, result: '28')
+LabResult.create(patient: audu, lab_request: audu_lab_1, lab_service: cd4, result: '1500')
+LabResult.create(patient: audu, lab_request: audu_lab_1, lab_service: hct, result: '35')
+LabResult.create(patient: audu, lab_request: audu_lab_2, lab_service: cd4, result: '450')
+LabResult.create(patient: audu, lab_request: audu_lab_2, lab_service: hct, result: '28')
 
 Photo.delete_all
 Photo.create(patient: audu, date: audu.birth_date+5.months)

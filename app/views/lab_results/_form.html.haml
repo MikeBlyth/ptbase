@@ -1,10 +1,14 @@
-lab_results/form
-results = @record
-= simple_fields_for @record do |form|
-  = patient_name_link(@record.patient)
-  = form.input :date, as: :string
-  = form.input :result
-  = form.input :status
-  = form.input :abnormal
-  = form.input :panic
-  = form.input :comments
+- @lab_result ||= @record
+= simple_fields_for @lab_result do |form|
+  .controls-row.controls
+    .span4= form.association :patient, input_html: {:class => 'input-large'}
+  .controls-row.controls
+    .span2= form.input :date, as: :string, input_html: {class: 'input-small'}
+    .span3= form.association :lab_service, input_html: {class: 'input-medium'}
+    .span3= form.input :result, input_html: {class: 'input-medium'}
+    .span3= form.input :status, input_html: {class: 'input-small'}
+  .controls-row.controls
+    .span1= form.input :abnormal, input_html: {class: 'input-mini'}
+    .span1= form.input :panic, input_html: {class: 'input-mini'}
+    .span5= form.input :comments , input_html: {:class => 'input-xlarge'}     
+    

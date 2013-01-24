@@ -1,7 +1,7 @@
 module LabRequestsHelper
 
-  def available_labs
-    current_results =  @record.lab_results
+  def available_labs(lab_request)
+    current_results =  lab_request.lab_results
     selected = current_results.map {|r| r.lab_service_id}
     frozen = current_results.select {|r| r.status != 'pending'}.map {|r| r.lab_service_id}
     available = {}

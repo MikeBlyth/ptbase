@@ -42,7 +42,7 @@ class Patient < ActiveRecord::Base
 
   has_many :visits
   has_many :lab_requests
-  has_many :lab_results, through: :lab_requests
+  has_many :lab_results
   has_many :problems, dependent: :delete_all
   has_many :admissions
   has_one :immunization, dependent: :delete

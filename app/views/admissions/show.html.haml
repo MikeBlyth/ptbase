@@ -1,0 +1,25 @@
+- @admission = @record
+%h2= "Admission for #{patient_name_link(@admission.patient)}".html_safe
+= "Admitted: #{@admission.date}"
+%br
+= "Provider: #{@admission.provider}"
+%br
+= "Ward: #{@admission.ward || '--'}, bed #{@admission.bed || '--'}"
+%br
+= "Diagnoses: #{[@admission.diagnosis_1, @admission.diagnosis_2].compact.join('; ')}"
+%br
+= "Medications: #{@admission.meds}"
+%br
+= "Comments: #{@admission.comments}"
+%br
+- if @admission.discharge_date
+  = "Discharge #{@admission.discharge_date}, status #{@admission.discharge_status  || '--'}"
+- elsif @admission.discharge_status
+  = "Discharge status #{@admission.discharge_status}, but no discharge date on record."
+- else
+  = "Still on admission."
+
+
+  %br
+= "Weight on admission #{@admission.weight_admission} kg."  if @admission.weight_admission
+= "Weight on discharge #{@admission.weight_discharge} kg."  if @admission.weight_discharge

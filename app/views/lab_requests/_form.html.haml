@@ -1,6 +1,10 @@
-= render 'shared/form_header'
-= simple_fields_for @record do |form|
-  - available_labs.each do |group, services|
+- @lab_request ||= @record
+= simple_form_for @lab_request, {url: {patient_id: @lab_request.patient_id} } do |form|
+  .row-fluid.controls-row
+    .span3= form.association :patient
+    .span3= form.input :date, as: :string
+    .span3= form.association :provider
+  - available_labs(@lab_request).each do |group, services|
     .span3
       .lab_group= group
       = render partial: 'lab_results/select', collection: services, as: :service

@@ -368,7 +368,8 @@ CREATE TABLE lab_results (
     panic boolean,
     comments character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    patient_id integer
 );
 
 
@@ -1471,3 +1472,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130120192230');
 INSERT INTO schema_migrations (version) VALUES ('20130122130641');
 
 INSERT INTO schema_migrations (version) VALUES ('20130122200043');
+
+INSERT INTO schema_migrations (version) VALUES ('20130124133253');

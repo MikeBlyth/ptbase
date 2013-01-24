@@ -19,6 +19,7 @@ class Provider < ActiveRecord::Base
   attr_accessible :first_name, :ident, :last_name, :middle_name, :title, :degree, :position
 
   validates_presence_of :first_name, :last_name
+  validates_uniqueness_of :ident
   has_many :visits
   has_many :admissions
   has_many :immunizations

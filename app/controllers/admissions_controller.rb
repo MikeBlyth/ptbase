@@ -6,6 +6,11 @@ class AdmissionsController < ApplicationController
     config.columns[:discharge_status].inplace_edit = true
     config.columns[:discharge_status].options[:options] = Admission::DISCHARGE_STATUSES
     config.columns[:discharge_status].form_ui = :select
+    as_no_inline = lambda do |action|
+      config.send(action).link.page = true
+      config.send(action).link.inline = false
+    end
+    %w(create update show).each &as_no_inline
   end
 
   def new

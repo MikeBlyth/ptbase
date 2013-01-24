@@ -16,11 +16,11 @@
 #
 
 class LabResult < ActiveRecord::Base
-  attr_accessible :comments, :lab_request_id, :lab_request,  :result, :date,
+  attr_accessible :comments, :lab_request_id, :lab_request,  :result, :date,:patient_id,
                   :lab_service_id, :lab_service, :status, :abnormal, :panic, :comments
   belongs_to :lab_request
   belongs_to :lab_service
-  has_one :patient, through: :lab_request
+  belongs_to :patient
   before_validation :set_default_status
   validates_presence_of  :lab_service_id
   after_find :numerify_result

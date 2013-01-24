@@ -8,6 +8,9 @@ class PatientsController < ApplicationController
     config.columns.exclude :created_at, :updated_at
     config.list.columns = :ident, :last_name, :first_name, :middle_name, :birth_date, :sex,
       :lab_results, :visits, :admissions, :prescriptions
+    config.columns[:lab_results].associated_limit = 0
+    config.columns[:visits].associated_limit = 1
+    config.columns[:prescriptions].associated_limit = 1
     config.show.link.inline = false
     config.show.link.page = true
     config.update.link.inline = false

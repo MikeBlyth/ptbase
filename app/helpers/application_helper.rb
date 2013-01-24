@@ -27,7 +27,9 @@ module ApplicationHelper
   end
 
   def patient_name_link(patient)
-    link_to "#{patient.name} [#{patient.ident}]", patient_path(patient)
+    if patient
+      link_to "#{patient.name} [#{patient.ident}]", patient_path(patient)
+    end
   end
 
   def twitter_box(id, name, label, checked)
@@ -49,43 +51,6 @@ module ApplicationHelper
     VSIZE = VARBASE.size
     SUFFIX = '_ok'
     SSIZE = SUFFIX.size
-  end
-
-
-  def show_pe_findings(model)
-    columns = Visit.content_columns
-    pe_columns = []
-    # Get list of all the columns (variables) with form like 'pe_mouth', excluding the matching
-    # items, 'pe_mouth_ok' etc. This gives a list of the elements in the physical exam
-    for column in Visit.content_columns
-      if (column.name.slice(0,VSIZE) == VARBASE) && (column.name.slice(-3,3) != SUFFIX)
-        pe_columns << column.name.slice(VSIZE,column.name.size-VSIZE)
-      end
-    end
-    # First, generate list of all the items which have some text.
-    s = ''
-    for column in pe_columns
-      s << ' ' if s > ''
-      finding = model.send(VARBASE+column)
-      s << (column.capitalize) + ': ' + finding.to_s + '.' unless finding.blank?
-    end
-    s_findings = s
-    s_normal = ''
-    # Second, generate a list of items ticked as normal. This could be optional.
-    normal_count = 0
-    for column in pe_columns
-      if (model.send(VARBASE+column+SUFFIX) || 0) == 1    # append the name if ticked
-        s_normal << ', ' if s_normal > ''
-        s_normal << column
-        normal_count = normal_count + 1
-      end
-    end
-    if s_normal > ''
-      s_normal << ' all' if normal_count > 1  # just for style, to say 'mouth, eyes ... all normal'
-      s_normal << ' normal.'
-    end
-
-    return s_findings + ' ' + s_normal.capitalize
   end
 
   # ToDo - Needs work (and tests)

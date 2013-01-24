@@ -4,6 +4,40 @@ class LabRequestsController < ApplicationController
     config.columns[:provider].inplace_edit = true
     config.columns[:provider].form_ui = :select
     config.columns[:comments].inplace_edit = true
+    as_no_inline = lambda do |action|
+      config.send(action).link.page = true
+      config.send(action).link.inline = false
+    end
+    %w(create update show).each &as_no_inline
+  end
+
+  def new
+    @lab_request = LabRequest.new(patient_id: params[:patient_id])
+  end
+
+  def edit
+    @lab_request = LabRequest.find params[:id]
+    @patient = Patient.find @lab_request.patient_id
+  end
+
+  def create
+    #   selected_services = params.delete(:services)
+    add_services
+    if @record = LabRequest.create(params[:lab_request])
+      flash[:notice] = 'Successfully created lab request'
+    else
+      render :new
+    end
+  end
+
+  def update
+    @lab_request = lab_request.find(params[:id])
+    if @lab_request.update_attributes(params[:lab_request])
+      flash[:notice] = 'Lab request was successfully updated.'
+      redirect_to :action => 'show', :id => @lab_request
+    else
+      render :action => 'edit'
+    end
   end
 
   def create

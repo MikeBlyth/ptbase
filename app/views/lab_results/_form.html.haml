@@ -11,4 +11,5 @@
     .span1= form.input :abnormal, input_html: {class: 'input-mini'}
     .span1= form.input :panic, input_html: {class: 'input-mini'}
     .span5= form.input :comments , input_html: {:class => 'input-xlarge'}     
-    
+  = form.button :submit, class: 'btn btn-primary'
+  = link_to "Cancel", request.referer,  class: 'btn'

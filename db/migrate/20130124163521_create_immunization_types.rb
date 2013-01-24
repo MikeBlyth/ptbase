@@ -1,10 +1,10 @@
 class CreateImmunizationTypes < ActiveRecord::Migration
   def change
-    drop_table :immunizations
+    #drop_table :immunizations
     create_table :immunizations do |t|
       t.integer :immunization_type_id
       t.integer :patient_id
-      t.date    :datetime
+      t.datetime    :date
       t.integer :provider_id
       t.string  :comments
     end

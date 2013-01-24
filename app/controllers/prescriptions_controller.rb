@@ -12,7 +12,8 @@ class PrescriptionsController < ApplicationController
 
   def new
     @patient = Patient.find params[:patient_id]
-    @prescription = @patient.prescriptions.new(provider_id: current_user.id)
+    @prescription = @patient.prescriptions.new(patient_id: params[:patient_id], provider_id: current_user.id,
+                                               date: Date.current)
     @selected = get_selected_drugs(params)  # need to use empty array if no drugs already selected
     @preselect = @selected.any?  # means user has preselected drugs, so we'll "tick" each one's box on prescr. form
     @doses = suggested_doses(@selected, @patient)

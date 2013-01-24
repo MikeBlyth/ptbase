@@ -15,7 +15,8 @@ class AdmissionsController < ApplicationController
 
   def new
     @patient = Patient.find params[:patient_id]
-    @admission = @patient.admissions.new
+    @admission = Admission.new(patient_id: params[:patient_id], provider_id: params[:provider_id],
+                               date: Date.zone.now)
   end
 
   def edit
@@ -35,7 +36,7 @@ class AdmissionsController < ApplicationController
   end
 
   def update
-    @admission = admission.find(params[:id])
+    @admission = Admission.find(params[:id])
     if @admission.update_attributes(params[:admission])
       flash[:notice] = 'admission was successfully updated.'
       redirect_to :action => 'show', :id => @admission

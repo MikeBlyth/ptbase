@@ -269,7 +269,7 @@ CREATE TABLE immunizations (
     id integer NOT NULL,
     immunization_type_id integer,
     patient_id integer,
-    datetime date,
+    date timestamp without time zone,
     provider_id integer,
     comments character varying(255)
 );

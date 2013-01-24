@@ -22,4 +22,5 @@
   #prescription-items
     = form.simple_fields_for :prescription_items do |builder|
       = render 'prescription_items/form', f: builder
-  = form.submit
+  = form.button :submit, class: 'btn btn-primary'
+  = link_to "Cancel", request.referer,  class: 'btn'

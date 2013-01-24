@@ -91,7 +91,7 @@
   %hr
 
   = form.error :base
-  = form.submit
-  = link_to "Cancel", request.referer
+  = form.button :submit, class: 'btn btn-primary'
+  = link_to "Cancel", request.referer,  class: 'btn'
 
 

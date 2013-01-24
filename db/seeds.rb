@@ -9,9 +9,13 @@
 ############ THESE ARE FOR TESTING ONLY ############
 Patient.delete_all
 anderson = Patient.create(last_name: 'Anderson', first_name: 'Charity', sex: 'F', birth_date: '1989-05-15', ident: 'P001')
-audu = Patient.create(last_name: 'Audu', first_name: 'Mohammed', sex: 'M', birth_date: '2003-09-15',
+audu = Patient.create(last_name: 'Audu', first_name: 'Mohammed', sex: 'M', birth_date: '2000-01-1',
                       ident: 'P002',
                       hiv_status: 'P', maternal_hiv_status: 'P')
+
+Provider.delete_all
+hertz = Provider.create(last_name: 'Hertz', first_name: 'Joshua', ident: 'Prov 001', degree: 'M.D.', position: 'staff physician')
+yu = Provider.create(last_name: 'Yu', first_name: 'Debora', ident: 'Prov 002', degree: 'M.D.', position: 'staff physician')
 
 Admission.delete_all
 Admission.create(patient: audu, date: audu.birth_date+12.months, diagnosis_1: 'malaria', meds: 'ampicillin')
@@ -44,10 +48,15 @@ Icd9.create(icd9: '042', description: 'HIV')
 ImmunizationType.delete_all
 bcg = ImmunizationType.create(name: 'BCG', abbrev: 'BCG')
 opv = ImmunizationType.create(name: 'polio, oral', abbrev: 'OPV')
+dpt = ImmunizationType.create(name: 'diphtheria-tetanus-pertussis', abbrev: 'DPT')
 
 Immunization.delete_all
 birth = audu.birth_date
-Immunization.create(patient: audu, bcg: birth+2.weeks, opv1: birth+6.weeks, opv2: birth+10.weeks, dpt1: birth+6.weeks, dpt2: birth+10.weeks)
+Immunization.create(patient: audu, immunization_type: bcg, date: birth+1.week, provider: yu )
+Immunization.create(patient: audu, immunization_type: opv, date: birth+4.weeks, provider: yu  )
+Immunization.create(patient: audu, immunization_type: dpt, date: birth+4.weeks, provider: yu  )
+Immunization.create(patient: audu, immunization_type: opv, date: birth+8.weeks, provider: yu  )
+Immunization.create(patient: audu, immunization_type: dpt, date: birth+8.weeks, provider: yu  )
 
 LabGroup.delete_all
 heme = LabGroup.create(name: 'Hematology', abbrev: 'heme')
@@ -77,7 +86,7 @@ LabService.create(name: 'Bicarbonate, serum', abbrev: 'Bicarb', cost: 700, lab_g
 
 LabRequest.delete_all
 audu_lab_1 = LabRequest.create(patient: audu)
-audu_lab_1.created_at = audu.birth_date+5.months
+audu_lab_1.created_at = audu.birth_date+12.months
 audu_lab_1.save
 audu_lab_2 = LabRequest.create(patient: audu)
 audu_lab_1.created_at = Date.today - 1.year
@@ -92,13 +101,10 @@ LabResult.create(patient: audu, lab_request: audu_lab_2, lab_service: hct, resul
 Photo.delete_all
 Photo.create(patient: audu, date: audu.birth_date+5.months)
 
-Provider.delete_all
-hertz = Provider.create(last_name: 'Hertz', first_name: 'Joshua', ident: 'Prov 001')
-
 Prescription.delete_all
-prescription = Prescription.create(patient: audu, date: audu.birth_date+5.months, provider: hertz,
+prescription = Prescription.create(patient: audu, date: audu.birth_date+12.months, provider: hertz,
                                    confirmed: true)
-recent_prescription = Prescription.create(patient: audu, date: Date.yesterday, provider: hertz,
+recent_prescription = Prescription.create(patient: audu, date: Date.yesterday, provider: yu,
                                    confirmed: true)
 
 PrescriptionItem.delete_all
@@ -114,7 +120,7 @@ User.delete_all
 User.create(email: 'admin@example.com', password: 'appendix', username: 'admin', name: 'Administrator')
 
 Visit.delete_all
-audu.visits.create(patient_id: audu.id, date: '2011-07-30', dx: 'pneumonia')
-audu.visits.create(patient_id: audu.id, date: '2012-04-12', dx: 'malaria', dx2: 'gastroenteritis',
-    weight: 30, meds: 'artequine')
+audu.visits.create(patient_id: audu.id, date: birth+12.months, dx: 'pneumonia')
+audu.visits.create(patient_id: audu.id, date: birth+18.months, dx: 'malaria', dx2: 'gastroenteritis',
+    weight: 11, meds: 'artequine')
 

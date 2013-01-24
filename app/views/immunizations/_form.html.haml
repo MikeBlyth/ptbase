@@ -1,0 +1,10 @@
+- @immunization ||= @record
+= simple_form_for @immunization, html: {class: 'form-horizontal'} do |form|
+  .rowx-fluid
+    = form.association :patient
+    = form.input :date, as: :string
+    = form.association :immunization_type
+    = form.association :provider
+    = form.input :comments
+  = form.button :submit, class: 'btn btn-primary'
+  = link_to "Cancel", request.referer,  class: 'btn'

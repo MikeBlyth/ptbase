@@ -17,3 +17,4 @@
   .row-fluid.control-row
     .span6= form.input :comments, input_html: {class: 'input-block-level'}
   = form.button :submit, class: 'btn btn-primary'
+  = link_to "Cancel", request.referer,  class: 'btn'

@@ -12,7 +12,8 @@ class LabRequestsController < ApplicationController
   end
 
   def new
-    @lab_request = LabRequest.new(patient_id: params[:patient_id])
+    @lab_request = LabRequest.new(patient_id: params[:patient_id],
+                                  date: Date.zone.now)
   end
 
   def edit

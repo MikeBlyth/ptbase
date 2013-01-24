@@ -12,7 +12,11 @@ class Immunization < ActiveRecord::Base
   belongs_to :patient
   belongs_to :provider
   belongs_to :immunization_type
-  validates_presence_of :patient_id
+  validates_presence_of :patient_id, :immunization_type, :date
+
+  def to_s
+    "#{immunization_type.abbrev} on #{date.to_date}"
+  end
 
   # ToDo: Refactor
   def summary()

@@ -45,7 +45,7 @@ class Patient < ActiveRecord::Base
   has_many :lab_results
   has_many :problems, dependent: :delete_all
   has_many :admissions
-  has_one :immunization, dependent: :delete
+  has_many :immunizations, dependent: :delete_all
   has_many :prescriptions
   has_many :prescription_items, through: :prescriptions
   has_many :photos, dependent: :delete_all

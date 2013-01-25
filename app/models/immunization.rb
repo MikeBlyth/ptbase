@@ -8,6 +8,8 @@
 # NB This model is not used yet and it's not clear how it should be organized!
 class Immunization < ActiveRecord::Base
   include DateValidators
+  delegate :abbrev, to: :immunization_type
+
   attr_protected
   belongs_to :patient
   belongs_to :provider

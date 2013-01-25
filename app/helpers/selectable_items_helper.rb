@@ -21,7 +21,7 @@ module SelectableItemsHelper
           # **************************
             name = "visit[#{section_name}][#{field.name}]"
             id = "visit_#{section_name}_#{field.name}"
-            checked = record.send(section_name)[field.name]
+            checked = record.send(section_name).try(:[], field.name)
             box_with_label = twitter_box(id, name, field.name, checked)
           # **************************
           comment = field.with_comment ? text_field_tag("visit[#{section_name}][#{field.name}_comment]") : nil

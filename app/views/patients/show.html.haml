@@ -33,10 +33,12 @@
   %fieldset
     %legend Current medical info
     .row-fluid
-      = render(:partial => 'shared/medinfo', :object => @patient, as: :patient )
+      = render(:partial => 'shared/medinfo', object: @patient, as: :patient )
     .row-fluid
-      = render(:partial => 'shared/problem_list', :object => @patient )
+      = render(:partial => 'shared/problem_list', object: @patient )
     %hr
+  .row-fluid
+    = render :partial => 'immunizations/summary', object: @patient, as: :patient
   .row-fluid.footer_buttons
     = link_to 'Edit patient', {:action => 'edit', :id => @patient}, :class => 'btn'
     = link_to 'Patient list', patients_path, class: 'btn'

@@ -46,9 +46,9 @@ Icd9.create(icd9: '084', description: 'malaria')
 Icd9.create(icd9: '042', description: 'HIV')
 
 ImmunizationType.delete_all
-bcg = ImmunizationType.create(name: 'BCG', abbrev: 'BCG')
-opv = ImmunizationType.create(name: 'polio, oral', abbrev: 'OPV')
-dpt = ImmunizationType.create(name: 'diphtheria-tetanus-pertussis', abbrev: 'DPT')
+bcg = ImmunizationType.create(name: 'BCG', abbrev: 'BCG', sort_order: 10)
+opv = ImmunizationType.create(name: 'polio, oral', abbrev: 'OPV', sort_order: 2)
+dpt = ImmunizationType.create(name: 'diphtheria-tetanus-pertussis', abbrev: 'DPT', sort_order: 1)
 
 Immunization.delete_all
 birth = audu.birth_date

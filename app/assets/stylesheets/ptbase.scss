@@ -41,3 +41,10 @@ select[multiple], select[size] {
 .checkbox-table {
   margins: 1em 0 1em
 }
+
+.imm_table {
+  td {
+    padding: 0.1em 0.7em ;
+    &:first-of-type {font-weight: bold}
+  }
+}

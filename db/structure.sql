@@ -238,7 +238,8 @@ CREATE TABLE immunization_types (
     abbrev character varying(255),
     notes character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    sort_order integer
 );
 
 
@@ -1498,3 +1499,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130122200043');
 INSERT INTO schema_migrations (version) VALUES ('20130124133253');
 
 INSERT INTO schema_migrations (version) VALUES ('20130124163521');
+
+INSERT INTO schema_migrations (version) VALUES ('20130126144856');

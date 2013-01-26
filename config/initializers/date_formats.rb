@@ -14,11 +14,13 @@ Date::DATE_FORMATS[:us_long] = "%B %-1e, %Y"   # March 9, 2011
 
 Time::DATE_FORMATS[:date_long] = "%-1e %B %Y"
 Time::DATE_FORMATS[:day_mon_year] = "%-1e %b %Y"
+Time::DATE_FORMATS[:day_mon_yr] = "%-1e %b %y"
 Time::DATE_FORMATS[:us_date_long] = "%B %-1e, %Y"
 Time::DATE_FORMATS[:date] = "%-1e %B"
 Time::DATE_FORMATS[:us_date] = "%B %-1e"
 Time::DATE_FORMATS[:time] = "%I:%M %p"
 Time::DATE_FORMATS[:date_time] = "%-1e %b %y %H:%M"
 Time::DATE_FORMATS[:date_time_short] = "%-1e %b %H:%M"
+Time::DATE_FORMATS[:date_short] = Time::DATE_FORMATS[:day_mon_yr]
 
 Time::DATE_FORMATS[:default]  = "%-1e %b %y" # 9 Mar 11

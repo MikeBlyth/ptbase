@@ -8,13 +8,14 @@
     %meta{:content => "width=device-width, initial-scale=1.0", :name => "viewport"}
     = csrf_meta_tags
   %body
+    = render 'layouts/header'
     .container-fluid
       .row-fluid
         .span2
         %p.notice.span5= notice
         %p.alert.span5= alert
       .row-fluid
-        .span2
+        %nav.span2
           = link_to 'Admissions', admissions_path
           %br
           = link_to 'Diagnoses', diagnoses_path

@@ -1,0 +1,10 @@
+%header#page_header{role: "banner"}
+  %nav#utility
+    %p
+      = "You are logged in as #{current_user.name || 'user'}"
+      = (link_to "[Your Account]", "#" or link_to "[Logout]", "#" )
+  = link_to(image_tag("logo.png", size: '100x100',
+                  alt: "Medibase",
+                  id: "logo"),
+        root_path,
+        title: "Dashboard")

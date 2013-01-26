@@ -7,12 +7,12 @@
     .span4
       = form.input :first_name
     .span4
-      = form.input :other_names
+      = form.input :middle_name
   .row-fluid
     .span4
-      = form.input :sex, collection: [['Male', 'M'],['Female', 'F']], label_html: {class: :inline}
+      = form.input :sex, collection: [['Male', 'M'],['Female', 'F']], input_html: {class: 'input-small'}
     .span4
-      = form.input :ident
+      = form.input :ident, input_html: {class: 'input-small'}
   .row-fluid
     .span4
       = form.input :birth_date_text, as: :string
@@ -33,13 +33,13 @@
       .span4
         = form.input :allergies
       .span4
-        = form.input :hemoglobin_type
+        = form.input :hemoglobin_type, input_html: {class: 'input-small'}, collection: %w(AA AS SS SC Other)
     #hiv_info.row-fluid
       .span4
-        = form.input :hiv_status, label: 'HIV status',
+        = form.input :hiv_status, label: 'HIV status' , input_html: {class: 'input-small'},
           :collection => ['pos', 'neg', '?']
       .span4
-        = form.input :maternal_hiv_status, label: 'Mother\'s HIV status',
+        = form.input :maternal_hiv_status, input_html: {class: 'input-small'}, label: 'Mother\'s HIV status',
           :collection => ['pos', 'neg', '?']
   = form.error :base
   = form.submit

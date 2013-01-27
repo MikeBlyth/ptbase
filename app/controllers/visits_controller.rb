@@ -20,8 +20,7 @@ class VisitsController < ApplicationController
   #end
   #
   def new
-    patient = Patient.find params[:patient_id]
-    @visit = Visit.new(patient: params[:patient_id], provider_id: current_user.id, date: Date.current ) #ToDO Error checking!
+    @visit = Visit.new(patient_id: params[:patient_id], provider_id: current_user.id, date: Date.current ) #ToDO Error checking!
   end
 
   def create

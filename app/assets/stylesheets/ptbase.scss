@@ -48,3 +48,11 @@ select[multiple], select[size] {
     &:first-of-type {font-weight: bold}
   }
 }
+
+// Side Menu
+#side-menu {
+  h4 {
+    font-size: small;
+    margin-top: 1em;
+  }
+}

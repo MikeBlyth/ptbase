@@ -15,33 +15,6 @@
         %p.notice.span5= notice
         %p.alert.span5= alert
       .row-fluid
-        %nav.span2
-          = link_to 'Admissions', admissions_path
-          %br
-          = link_to 'Diagnoses', diagnoses_path
-          %br
-          = link_to 'Drugs', drugs_path
-          %br
-          = link_to 'Drug preps', drug_preps_path
-          %br
-          = link_to 'Lab groups', lab_groups_path
-          %br
-          = link_to 'Lab requests', lab_requests_path
-          %br
-          = link_to 'Lab services', lab_services_path
-          %br
-          = link_to 'Patients', patients_path
-          %br
-          = link_to 'Phys exam features', physicals_path
-          %br
-          = link_to 'Providers', providers_path
-          %br
-          = link_to 'Symptoms', symptoms_path
-          %br
-          = link_to 'Visits', visits_path
-          %br
-          = render(:partial => '/shared/patient_menu', :object => @patient)
-          %br
-          = link_to 'Sign out', destroy_user_session_path, :method=> :delete
+        = render :partial => 'layouts/side_menu'
         .span10
           = yield

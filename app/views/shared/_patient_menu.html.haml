@@ -1,8 +1,11 @@
-- patient = patient_menu
-- if ! patient.nil?
-  = link_to "New Visit", new_visit_path(patient_id: patient)
-  %br
-  = link_to "New Labs", new_lab_request_path(patient_id: patient)
+- if patient.present?
+  #patient-side-menu
+    %h4 For this patient:
+    = link_to "New Visit", new_visit_path(patient_id: patient)
+    %br
+    = link_to "New Lab Request", new_lab_request_path(patient_id: patient)
+    %br
+    = link_to "Immunizations", immunizations_path(patient_id: patient)
   -#%div
   -#  %p.actionshead
   -#    Actions for #{@patient.name}

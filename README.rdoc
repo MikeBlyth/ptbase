@@ -3,4 +3,4 @@ This project is a basic, web-based electronic medical record system which was de
 It included demographics, outpatient visits, admissions, problem list, drug prescribing with automated calculation for 
 common and anti-retroviral drugs, lab orders and results, growth charts, graphs of HIV-related parameters, alerts, and reports.
 While it did serve our needs at the time, it would probably no longer be a useful starting point and is kept on GitHub mainly 
-for reference purposes. Some user and maintenance documentation can be found at http://bit.ly/18JmH2J.
+for reference purposes. Some user and maintenance documentation can be found at http://bit.ly/14VJBkK.
